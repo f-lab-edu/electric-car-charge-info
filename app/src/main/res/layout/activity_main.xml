@@ -9,7 +9,7 @@
         <variable
             name="vm"
             type="com.example.ecarchargeinfo.view.main.MainViewModel" />
-    </data>
+    </data> 
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
