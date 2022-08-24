@@ -1,153 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="vm"
+            type="com.example.ecarchargeinfo.view.main.MainViewModel" />
+    </data>
 
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:context=".MapsActivity" />
+        tools:context=".view.main.MainActivity">
 
-    <LinearLayout
-        android:id="@+id/lay_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello World!"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/layout_background"
-            android:hint="@string/search"
-            android:textSize="20sp" />
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <LinearLayout
+            android:id="@+id/lay_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <EditText
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn_combo"
-                    android:layout_width="70dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/custom_button_true"
-                    android:text="@string/combo"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toStartOf="@id/btn_demo"
-                    app:layout_constraintStart_toStartOf="parent"
-
-                    />
-
-                <Button
-                    android:id="@+id/btn_demo"
-                    android:layout_width="70dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/custom_button_true"
-                    android:text="@string/demo"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toStartOf="@id/btn_ac"
-                    app:layout_constraintStart_toEndOf="@id/btn_combo"
-
-                    />
-
-                <Button
-                    android:id="@+id/btn_ac"
-                    android:layout_width="70dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/custom_button_true"
-                    android:text="@string/ac"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toStartOf="@id/btn_slow"
-                    app:layout_constraintStart_toEndOf="@id/btn_demo"
-
-                    />
-
-                <Button
-                    android:id="@+id/btn_slow"
-                    android:layout_width="70dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/custom_button_true"
-                    android:text="@string/slow"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toStartOf="@id/btn_speed"
-                    app:layout_constraintStart_toEndOf="@id/btn_ac" />
-
-                <Button
-                    android:id="@+id/btn_speed"
-                    android:layout_width="70dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/custom_button_false"
-                    android:text="@string/charge_speed"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/btn_slow" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_height="40dp"
+                android:background="@drawable/layout_background"
+                android:hint="@string/search"
+                android:textSize="20sp" />
 
             <LinearLayout
-                android:id="@+id/lay_speed"
                 android:layout_width="match_parent"
-                android:background="@color/white"
-                android:visibility="gone"
-                android:layout_height="70dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical">
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_combo"
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:background="@{vm.combo == true? @drawable/custom_button_true : @drawable/custom_button_false}"
+                        android:text="@string/combo"
+                        android:onClick="@{() -> vm.changeComboState()}"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/main_btn_text"
+                        app:layout_constraintEnd_toStartOf="@id/btn_demo"
+                        app:layout_constraintStart_toStartOf="parent"
+
+                        />
+
+                    <Button
+                        android:id="@+id/btn_demo"
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:background="@{vm.demo == true? @drawable/custom_button_true : @drawable/custom_button_false}"
+                        android:text="@string/demo"
+                        android:onClick="@{() -> vm.changeDemoState()}"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/main_btn_text"
+                        app:layout_constraintEnd_toStartOf="@id/btn_ac"
+                        app:layout_constraintStart_toEndOf="@id/btn_combo"
+
+                        />
+
+                    <Button
+                        android:id="@+id/btn_ac"
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:background="@{vm.ac == true? @drawable/custom_button_true : @drawable/custom_button_false}"
+                        android:onClick="@{() -> vm.changeAcState()}"
+                        android:text="@string/ac"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/main_btn_text"
+                        app:layout_constraintEnd_toStartOf="@id/btn_slow"
+                        app:layout_constraintStart_toEndOf="@id/btn_demo"
+
+                        />
+
+                    <Button
+                        android:id="@+id/btn_slow"
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:onClick="@{() -> vm.changeSlowState()}"
+                        android:background="@{vm.slow == true? @drawable/custom_button_true : @drawable/custom_button_false}"
+                        android:text="@string/slow"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/main_btn_text"
+                        app:layout_constraintEnd_toStartOf="@id/btn_speed"
+                        app:layout_constraintStart_toEndOf="@id/btn_ac" />
+
+                    <Button
+                        android:id="@+id/btn_speed"
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:background="@{vm.speed == true? @drawable/custom_button_true : @drawable/custom_button_false}"
+                        android:text="@string/charge_speed"
+                        android:onClick="@{() -> vm.changeSpeedState()}"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/main_btn_text"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/btn_slow" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:id="@+id/lay_speed"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:visibility="@{vm.speed==true ? View.VISIBLE : View.GONE}">
+
+
+                </LinearLayout>
 
             </LinearLayout>
 
+
         </LinearLayout>
 
+        <ImageButton
+            android:id="@+id/btn_1"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_baseline_my_location_24"
+            android:background="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lay_1" />
 
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btn_1"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lay_1" />
-
-    <Button
-        android:id="@+id/btn_2"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintRight_toRightOf="@id/btn_1"
-        app:layout_constraintTop_toBottomOf="@id/btn_1" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/btn_2"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintRight_toRightOf="@id/btn_1"
+            app:layout_constraintTop_toBottomOf="@id/btn_1" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

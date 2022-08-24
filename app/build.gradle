@@ -6,6 +6,10 @@ plugins {
 android {
     compileSdk 32
 
+    dataBinding{
+        enabled = true
+    }
+
     defaultConfig {
         applicationId "com.example.ecarchargeinfo"
         minSdk 28
@@ -15,9 +19,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    viewBinding {
-        enabled = true
-    }
     buildTypes {
         release {
             minifyEnabled false

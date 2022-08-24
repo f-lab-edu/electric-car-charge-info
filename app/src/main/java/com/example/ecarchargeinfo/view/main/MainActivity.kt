@@ -1,4 +1,4 @@
-package com.example.ecarchargeinfo
+package com.example.ecarchargeinfo.view.main
 
 import android.Manifest
 import android.content.Context
@@ -6,12 +6,14 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.ActivityMainBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -24,32 +26,36 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mMap: GoogleMap
     private lateinit var locationManager: LocationManager
+    private lateinit var viewModel: MainViewModel
+    private var userLocation: Location? = null
     private var REQUEST_PERMISSION = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
-    private var userLocation: Location? = null
-    private var dcCombo = true
-    private var dcDemo = true
-    private var ac = true
-    private var slow = true
-    private var speed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+
+        /*binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)*/
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        binding.vm = viewModel
+        binding.lifecycleOwner = this
+
         checkPermission()
         getLocation()
-
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+
 
         binding.btn1.setOnClickListener {
             getLocation()
             mapFragment.getMapAsync(this)
         }
+        /*
         binding.btnCombo.setOnClickListener {
             dcCombo = changeButton(dcCombo, binding.btnCombo)
         }
@@ -72,22 +78,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 binding.laySpeed.visibility = View.GONE
                 binding.btnSpeed.setBackgroundResource(R.drawable.custom_button_false)
             }
-        }
+        }*/
 
     }
 
-    private fun changeButton(state: Boolean, button: Button): Boolean {
-        when (state) {
-            true -> {
-                button.setBackgroundResource(R.drawable.custom_button_false)
-                return false
-            }
-            else -> {
-                button.setBackgroundResource(R.drawable.custom_button_true)
-                return true
-            }
-        }
-    }
 
     private fun getLocation() {
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
