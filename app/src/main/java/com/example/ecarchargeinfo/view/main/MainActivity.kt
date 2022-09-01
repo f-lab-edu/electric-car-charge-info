@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -21,6 +20,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.slider.RangeSlider
+
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMainBinding
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var locationManager: LocationManager
     private lateinit var viewModel: MainViewModel
     private var userLocation: Location? = null
+    private lateinit var mapFragment: SupportMapFragment
     private var REQUEST_PERMISSION = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION
@@ -36,53 +38,37 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        /*binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)*/
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         binding.vm = viewModel
         binding.lifecycleOwner = this
-
         checkPermission()
         getLocation()
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+
+        mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-
 
         binding.btn1.setOnClickListener {
             getLocation()
             mapFragment.getMapAsync(this)
         }
-        /*
-        binding.btnCombo.setOnClickListener {
-            dcCombo = changeButton(dcCombo, binding.btnCombo)
-        }
-        binding.btnDemo.setOnClickListener {
-            dcDemo = changeButton(dcDemo, binding.btnDemo)
-        }
-        binding.btnAc.setOnClickListener {
-            ac = changeButton(ac, binding.btnAc)
-        }
-        binding.btnSlow.setOnClickListener {
-            slow = changeButton(slow, binding.btnSlow)
-        }
-        binding.btnSpeed.setOnClickListener {
-            if (speed)  {
-                speed = !speed
-                binding.laySpeed.visibility = View.VISIBLE
-                binding.btnSpeed.setBackgroundResource(R.drawable.custom_button_true)
-            }   else {
-                speed = !speed
-                binding.laySpeed.visibility = View.GONE
-                binding.btnSpeed.setBackgroundResource(R.drawable.custom_button_false)
+
+        binding.sliderChargeSpeed.addOnSliderTouchListener(object : RangeSlider.OnSliderTouchListener{
+            override fun onStartTrackingTouch(slider: RangeSlider) {
+                binding.tvSlider.text = slider.values.toString()
             }
-        }*/
 
+            override fun onStopTrackingTouch(slider: RangeSlider) {
+                binding.tvSlider.text = slider.values.toString()
+            }
+
+        })
+        binding.sliderChargeSpeed.addOnChangeListener{ slider, value, fromUser ->
+            val values = slider.values
+
+        }
     }
-
-
+    
     private fun getLocation() {
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         userLocation = getLatLng()
@@ -147,11 +133,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(p0: GoogleMap) {
-        if (userLocation != null) {
-            mMap = p0
-            val nowLocation = LatLng(userLocation!!.latitude, userLocation!!.longitude)
-            mMap.addMarker(MarkerOptions().position(nowLocation).title("현 위치"))
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nowLocation, 15f))
+        if (p0 == null) {
+            if (userLocation != null) {
+                mMap = p0
+                val nowLocation = LatLng(userLocation!!.latitude, userLocation!!.longitude)
+                mMap.addMarker(MarkerOptions().position(nowLocation!!).title("현 위치"))
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nowLocation!!, 15f))
+            }
         }
     }
 }

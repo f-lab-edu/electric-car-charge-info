@@ -4,17 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
-
         <variable
             name="vm"
             type="com.example.ecarchargeinfo.view.main.MainViewModel" />
-    </data> 
-
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/lay_main"
         tools:context=".view.main.MainActivity">
 
         <TextView
@@ -68,25 +66,26 @@
 
                     <Button
                         android:id="@+id/btn_combo"
+                        background="@{vm.combo}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
-                        android:background="@{vm.combo == true? @drawable/custom_button_true : @drawable/custom_button_false}"
-                        android:text="@string/combo"
+                        android:background="@drawable/custom_button_true"
+                        android:lineSpacingExtra="2dp"
                         android:onClick="@{() -> vm.changeComboState()}"
+                        android:text="@string/combo"
                         android:textColor="@color/white"
                         android:textSize="@dimen/main_btn_text"
                         app:layout_constraintEnd_toStartOf="@id/btn_demo"
-                        app:layout_constraintStart_toStartOf="parent"
-
-                        />
+                        app:layout_constraintStart_toStartOf="parent" />
 
                     <Button
                         android:id="@+id/btn_demo"
+                        background="@{vm.demo}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
-                        android:background="@{vm.demo == true? @drawable/custom_button_true : @drawable/custom_button_false}"
-                        android:text="@string/demo"
+                        android:background="@drawable/custom_button_true"
                         android:onClick="@{() -> vm.changeDemoState()}"
+                        android:text="@string/demo"
                         android:textColor="@color/white"
                         android:textSize="@dimen/main_btn_text"
                         app:layout_constraintEnd_toStartOf="@id/btn_ac"
@@ -96,9 +95,10 @@
 
                     <Button
                         android:id="@+id/btn_ac"
+                        background="@{vm.ac}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
-                        android:background="@{vm.ac == true? @drawable/custom_button_true : @drawable/custom_button_false}"
+                        android:background="@drawable/custom_button_true"
                         android:onClick="@{() -> vm.changeAcState()}"
                         android:text="@string/ac"
                         android:textColor="@color/white"
@@ -107,13 +107,15 @@
                         app:layout_constraintStart_toEndOf="@id/btn_demo"
 
                         />
+                    <!--android:background="@{vm.slow == true? @drawable/custom_button_true : @drawable/custom_button_false}"-->
 
                     <Button
                         android:id="@+id/btn_slow"
+                        background="@{vm.slow}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
+                        android:background="@drawable/custom_button_false"
                         android:onClick="@{() -> vm.changeSlowState()}"
-                        android:background="@{vm.slow == true? @drawable/custom_button_true : @drawable/custom_button_false}"
                         android:text="@string/slow"
                         android:textColor="@color/white"
                         android:textSize="@dimen/main_btn_text"
@@ -122,11 +124,12 @@
 
                     <Button
                         android:id="@+id/btn_speed"
+                        background="@{vm.speed}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
-                        android:background="@{vm.speed == true? @drawable/custom_button_true : @drawable/custom_button_false}"
-                        android:text="@string/charge_speed"
+                        android:background="@drawable/custom_button_false"
                         android:onClick="@{() -> vm.changeSpeedState()}"
+                        android:text="@string/charge_speed"
                         android:textColor="@color/white"
                         android:textSize="@dimen/main_btn_text"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -134,17 +137,41 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/lay_speed"
+                    visible="@{vm.speed}"
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
+                    android:layout_height="100dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/white"
-                    android:orientation="vertical"
-                    android:visibility="@{vm.speed==true ? View.VISIBLE : View.GONE}">
+                    android:background="@color/white">
 
+                    <com.google.android.material.slider.RangeSlider
+                        android:id="@+id/slider_charge_speed"
+                        style="@style/RangeSliderStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stepSize="10.0"
+                        android:valueFrom="0.0"
+                        android:valueTo="100.0"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:values="@array/charge_speed" />
 
-                </LinearLayout>
+                    <TextView
+                        android:id="@+id/tv_slider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="123123123"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/slider_charge_speed" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
 
@@ -157,8 +184,8 @@
             android:layout_height="45dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_baseline_my_location_24"
             android:background="@android:color/transparent"
+            android:src="@drawable/ic_baseline_my_location_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/lay_1" />
 

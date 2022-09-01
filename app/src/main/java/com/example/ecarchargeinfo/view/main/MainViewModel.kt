@@ -3,6 +3,8 @@ package com.example.ecarchargeinfo.view.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class MainViewModel : ViewModel() {
     val model = MaInModel()
@@ -12,19 +14,31 @@ class MainViewModel : ViewModel() {
     private var _slow = MutableLiveData<Boolean>(false)
     private var _speed = MutableLiveData<Boolean>(false)
 
-    val combo : LiveData<Boolean> = _combo
-    val demo : LiveData<Boolean> = _demo
-    val ac : LiveData<Boolean> = _ac
-    val slow : LiveData<Boolean> = _slow
-    val speed : LiveData<Boolean> = _speed
+    val combo: LiveData<Boolean>
+        get() = _combo
+    val demo: LiveData<Boolean>
+        get() = _demo
+    val ac: LiveData<Boolean>
+        get() = _ac
+    val slow: LiveData<Boolean>
+        get() = _slow
+    val speed: LiveData<Boolean>
+        get() = _speed
 
+init {
+    getType("combo")
+    getType("demo")
+    getType("ac")
+    getType("slow")
+    getType("speed")
+}
 
-    fun changeComboState()  {
+    fun changeComboState() {
         model.changeTypeState("combo")
         getType("combo")
     }
 
-    fun changeDemoState()   {
+    fun changeDemoState() {
         model.changeTypeState("demo")
         getType("demo")
     }
@@ -34,12 +48,12 @@ class MainViewModel : ViewModel() {
         getType("ac")
     }
 
-    fun changeSlowState()   {
+    fun changeSlowState() {
         model.changeTypeState("slow")
         getType("slow")
     }
 
-    fun changeSpeedState()  {
+    fun changeSpeedState() {
         model.changeTypeState("speed")
         getType("speed")
     }
