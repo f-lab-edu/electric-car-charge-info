@@ -14,6 +14,8 @@ class MainViewModel : ViewModel() {
     private var _ac = MutableLiveData<Boolean>(true)
     private var _slow = MutableLiveData<Boolean>(false)
     private var _speed = MutableLiveData<Boolean>(false)
+    private var _startRange = MutableLiveData<Int>(50)
+    private var _endRange = MutableLiveData<Int>(350)
 
     private val __combo: Flow<Boolean> = flow {
         emit(model.combo)
@@ -30,6 +32,8 @@ class MainViewModel : ViewModel() {
         get() = _slow
     val speed: LiveData<Boolean>
         get() = _speed
+    val startRange = _startRange
+    val endRange = _endRange
 
     init {
         getType("combo")
@@ -37,6 +41,7 @@ class MainViewModel : ViewModel() {
         getType("ac")
         getType("slow")
         getType("speed")
+        getRange()
     }
 
 
@@ -75,5 +80,11 @@ class MainViewModel : ViewModel() {
             "speed" -> _speed.value = model.getType(type = type)
             else -> return
         }
+    }
+
+    fun getRange() {
+        val range = model.getRange()
+        _startRange.value = range[0]
+        _endRange.value = range[1]
     }
 }

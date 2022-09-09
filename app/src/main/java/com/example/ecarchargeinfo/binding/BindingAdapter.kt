@@ -4,6 +4,9 @@ import android.view.View
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LiveData
 import com.example.ecarchargeinfo.R
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.material.slider.RangeSlider
 
 object BindingAdapter {
 
