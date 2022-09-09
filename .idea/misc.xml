@@ -3,8 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.245" />
+        <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/drawable/custom_button_false.xml" value="0.245" />
         <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/drawable/custom_button_true.xml" value="0.1165" />
-        <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/layout/activity_main.xml" value="0.20224719101123595" />
+        <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/drawable/ic_baseline_my_location_24.xml" value="0.245" />
+        <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/drawable/ic_launcher_background.xml" value="0.245" />
+        <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/drawable/layout_background.xml" value="0.245" />
+        <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.245" />
+        <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
       </map>
     </option>
   </component>

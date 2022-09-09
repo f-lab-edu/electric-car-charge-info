@@ -3,6 +3,7 @@ package com.example.ecarchargeinfo.view.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -13,6 +14,11 @@ class MainViewModel : ViewModel() {
     private var _ac = MutableLiveData<Boolean>(true)
     private var _slow = MutableLiveData<Boolean>(false)
     private var _speed = MutableLiveData<Boolean>(false)
+
+    private val __combo: Flow<Boolean> = flow {
+        emit(model.combo)
+        delay(60000)
+    }
 
     val combo: LiveData<Boolean>
         get() = _combo
@@ -25,13 +31,14 @@ class MainViewModel : ViewModel() {
     val speed: LiveData<Boolean>
         get() = _speed
 
-init {
-    getType("combo")
-    getType("demo")
-    getType("ac")
-    getType("slow")
-    getType("speed")
-}
+    init {
+        getType("combo")
+        getType("demo")
+        getType("ac")
+        getType("slow")
+        getType("speed")
+    }
+
 
     fun changeComboState() {
         model.changeTypeState("combo")

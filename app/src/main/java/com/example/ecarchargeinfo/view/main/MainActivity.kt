@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.ActivityMainBinding
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -26,7 +27,6 @@ import com.google.android.material.slider.RangeSlider
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mMap: GoogleMap
-    private lateinit var locationManager: LocationManager
     private lateinit var viewModel: MainViewModel
     private var userLocation: Location? = null
     private lateinit var mapFragment: SupportMapFragment
@@ -48,12 +48,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+
         binding.btn1.setOnClickListener {
             getLocation()
             mapFragment.getMapAsync(this)
         }
 
-        binding.sliderChargeSpeed.addOnSliderTouchListener(object : RangeSlider.OnSliderTouchListener{
+//
+        binding.sliderChargeSpeed.addOnSliderTouchListener(object :
+            RangeSlider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: RangeSlider) {
                 binding.tvSlider.text = slider.values.toString()
             }
@@ -63,27 +66,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
 
         })
-        binding.sliderChargeSpeed.addOnChangeListener{ slider, value, fromUser ->
+        binding.sliderChargeSpeed.addOnChangeListener { slider, value, fromUser ->
             val values = slider.values
 
         }
+
     }
-    
+
     private fun getLocation() {
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         userLocation = getLatLng()
     }
 
     private fun getLatLng(): Location? {
-        var currentLatLng: Location? = null
+        var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
             PackageManager.PERMISSION_GRANTED &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) ==
             PackageManager.PERMISSION_GRANTED
         ) {
-            currentLatLng = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            var currentLatLng =
+                locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?:
+                locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            return currentLatLng
         }
-        return currentLatLng
+        return null
     }
 
     private fun checkPermission() {
@@ -114,9 +120,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     break
                 }
             }
-            if (checkResult) {
-
-            } else {
+            if (!checkResult) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(
                         this,
                         REQUEST_PERMISSION[0]
@@ -133,13 +137,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(p0: GoogleMap) {
-        if (p0 == null) {
-            if (userLocation != null) {
-                mMap = p0
-                val nowLocation = LatLng(userLocation!!.latitude, userLocation!!.longitude)
-                mMap.addMarker(MarkerOptions().position(nowLocation!!).title("현 위치"))
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nowLocation!!, 15f))
-            }
+        if (userLocation != null) {
+            mMap = p0
+            val nowLocation = LatLng(userLocation!!.latitude, userLocation!!.longitude)
+            mMap.addMarker(MarkerOptions().position(nowLocation).title("현 위치"))
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nowLocation, 15f))
         }
     }
 }
