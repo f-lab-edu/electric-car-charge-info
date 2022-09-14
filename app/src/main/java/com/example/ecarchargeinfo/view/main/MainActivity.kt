@@ -26,14 +26,16 @@ import com.google.android.material.slider.RangeSlider
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var mMap: GoogleMap
     private lateinit var viewModel: MainViewModel
-    private var userLocation: Location? = null
-    private lateinit var mapFragment: SupportMapFragment
     private var REQUEST_PERMISSION = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
+
+    private var userLocation: Location? = null
+    private lateinit var mMap: GoogleMap
+    private lateinit var mapFragment: SupportMapFragment
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,20 +47,14 @@ class MainActivity : AppCompatActivity() {
         checkPermission()
 
         val mapFragment = MapFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.main_map, mapFragment, "MAP").commit()
-
-        //getLocation()
-
-       /* mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)*/
-
+        supportFragmentManager.beginTransaction().
+        replace(R.id.main_map, mapFragment, "MAP").commit()
 
         /*binding.btn1.setOnClickListener {
             //getLocation()
             mapFragment.getMapAsync(this)
         }*/
 
-//
         binding.sliderChargeSpeed.addOnSliderTouchListener(object :
             RangeSlider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: RangeSlider) {
@@ -70,17 +66,10 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-        binding.sliderChargeSpeed.addOnChangeListener { slider, value, fromUser ->
-            val values = slider.values
-
-        }
 
     }
 
-    /*private fun getLocation() {
-        userLocation = getLatLng()
-    }
-
+  /*
     private fun getLatLng(): Location? {
         var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==

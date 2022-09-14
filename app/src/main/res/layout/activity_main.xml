@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="vm"
             type="com.example.ecarchargeinfo.view.main.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lay_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/lay_main"
         tools:context=".view.main.MainActivity">
 
         <TextView
@@ -31,10 +32,8 @@
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/lay_1"
@@ -146,11 +145,11 @@
 
                     <com.google.android.material.slider.RangeSlider
                         android:id="@+id/slider_charge_speed"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
                         style="@style/RangeSliderStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
                         android:stepSize="50.0"
                         android:valueFrom="50.0"
                         android:valueTo="350.0"

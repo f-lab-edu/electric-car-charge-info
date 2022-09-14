@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class MainViewModel : ViewModel() {
-    val model = MaInModel()
+    val model = SearchFilterEntity()
     private var _combo = MutableLiveData<Boolean>(true)
     private var _demo = MutableLiveData<Boolean>(true)
     private var _ac = MutableLiveData<Boolean>(true)
@@ -41,50 +41,39 @@ class MainViewModel : ViewModel() {
         getType("ac")
         getType("slow")
         getType("speed")
-        getRange()
     }
 
 
     fun changeComboState() {
-        model.changeTypeState("combo")
         getType("combo")
     }
 
     fun changeDemoState() {
-        model.changeTypeState("demo")
         getType("demo")
     }
 
     fun changeAcState() {
-        model.changeTypeState("ac")
         getType("ac")
     }
 
     fun changeSlowState() {
-        model.changeTypeState("slow")
         getType("slow")
     }
 
     fun changeSpeedState() {
-        model.changeTypeState("speed")
         getType("speed")
     }
 
 
     private fun getType(type: String) {
         when (type) {
-            "combo" -> _combo.value = model.getType(type = type)
-            "demo" -> _demo.value = model.getType(type = type)
-            "ac" -> _ac.value = model.getType(type = type)
-            "slow" -> _slow.value = model.getType(type = type)
-            "speed" -> _speed.value = model.getType(type = type)
+            "combo" -> _combo.value = model.combo
+            "demo" -> _demo.value = model.demo
+            "ac" -> _ac.value = model.ac
+            "slow" -> _slow.value = model.slow
+            "speed" -> _speed.value = model.speed
             else -> return
         }
     }
 
-    fun getRange() {
-        val range = model.getRange()
-        _startRange.value = range[0]
-        _endRange.value = range[1]
-    }
 }

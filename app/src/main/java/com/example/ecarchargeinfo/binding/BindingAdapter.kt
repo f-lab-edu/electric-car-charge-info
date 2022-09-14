@@ -14,21 +14,23 @@ object BindingAdapter {
     @BindingAdapter("visible")
     fun isGone(view: View, shouldBeGone: LiveData<Boolean>) {
         view.visibility =
-            if (shouldBeGone.value == false) {
-                View.GONE
-            } else {
+            if (shouldBeGone.value == true) {
                 View.VISIBLE
+            } else {
+                View.GONE
             }
     }
 
     @JvmStatic
     @BindingAdapter("background")
-    fun background(view: View, shouldBeChange: LiveData<Boolean>) {
-        if (shouldBeChange.value == true) {
-            view.setBackgroundResource(R.drawable.custom_button_true)
-        } else {
-            view.setBackgroundResource(R.drawable.custom_button_false)
-        }
+    fun setBackground(view: View, shouldBeChange: LiveData<Boolean>) {
+        view.setBackgroundResource(
+            if (shouldBeChange.value == true) {
+                R.drawable.custom_button_true
+            } else {
+                R.drawable.custom_button_false
+            }
+        )
     }
 
 }

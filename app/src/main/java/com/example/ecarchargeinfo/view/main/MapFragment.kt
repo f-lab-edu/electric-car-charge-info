@@ -1,21 +1,24 @@
 package com.example.ecarchargeinfo.view.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.FragmentMapBinding
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
 
 
 class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var gMap: MapView
     private lateinit var rootView : View
     private lateinit var binding: FragmentMapBinding
+    private var mainActivity: MainActivity? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -23,11 +26,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
         rootView = inflater.inflate(R.layout.fragment_map, container, false)
-        gMap = rootView.findViewById<View>(R.id.mapview) as MapView
+        gMap = binding.mapview
         gMap.onCreate(savedInstanceState)
         gMap.onResume()
         gMap.getMapAsync(this)
-        return rootView
+        return binding.root
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mainActivity = (activity as MainActivity)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        mainActivity = null
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -43,11 +56,25 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
     }
 
+    override fun onStart() {
+        super.onStart()
+        gMap.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        gMap.onStop()
+    }
+
     override fun onResume() {
         super.onResume()
         gMap.onResume()
     }
 
+    override fun onPause() {
+        super.onPause()
+        gMap.onPause()
+    }
     override fun onDestroy() {
         super.onDestroy()
         gMap.onDestroy()
@@ -59,6 +86,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(p0: GoogleMap) {
-
+        val location = LatLng(37.654601, 127.060530)
+        p0.moveCamera(CameraUpdateFactory.newLatLng(location))
+        p0.moveCamera(CameraUpdateFactory.zoomTo(15f))
     }
 }
