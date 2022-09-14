@@ -1,42 +1,30 @@
-package com.example.ecarchargeinfo.view.main
+package com.example.ecarchargeinfo.main.presentation.ui
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.ActivityMainBinding
-import com.google.android.gms.maps.CameraUpdateFactory
+import com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel
+import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
+import com.example.ecarchargeinfo.main.presentation.helper.PermissionHelper
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.slider.RangeSlider
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
-    private var REQUEST_PERMISSION = arrayOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    )
 
     private var userLocation: Location? = null
     private lateinit var mMap: GoogleMap
     private lateinit var mapFragment: SupportMapFragment
 
-
+    companion object {
+        const val LOCATION_PERMISSION = 100
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         binding.vm = viewModel
         binding.lifecycleOwner = this
-        checkPermission()
+        PermissionHelper.checkPermission(this@MainActivity)
 
         val mapFragment = MapFragment()
         supportFragmentManager.beginTransaction().
@@ -85,49 +73,6 @@ class MainActivity : AppCompatActivity() {
         return null
     }*/
 
-    private fun checkPermission() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_DENIED ||
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_DENIED
-        ) {
-            ActivityCompat.requestPermissions(this, REQUEST_PERMISSION, 100)
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 100 && grantResults.size == REQUEST_PERMISSION.size) {
-            var checkResult = true
-            for (result in grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    checkResult = false
-                    break
-                }
-            }
-            if (!checkResult) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
-                        REQUEST_PERMISSION[0]
-                    ) ||
-                    ActivityCompat.shouldShowRequestPermissionRationale(this, REQUEST_PERMISSION[1])
-                ) {
-                    Toast.makeText(this, "권한이 거부되었습니다. 다시실행해주세요", Toast.LENGTH_SHORT).show()
-                    finish()
-                } else {
-                    Toast.makeText(this, "권한이 거부되었습니다. 설정에서 허용해주세요.", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
 
     /*override fun onMapReady(p0: GoogleMap) {
         if (userLocation != null) {

@@ -1,8 +1,9 @@
-package com.example.ecarchargeinfo.view.main
+package com.example.ecarchargeinfo.main.presentation.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.ecarchargeinfo.main.domain.entity.SearchFilterEntity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

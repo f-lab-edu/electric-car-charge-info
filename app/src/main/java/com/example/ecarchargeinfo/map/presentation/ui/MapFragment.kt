@@ -1,4 +1,4 @@
-package com.example.ecarchargeinfo.view.main
+package com.example.ecarchargeinfo.map.presentation.ui
 
 import android.content.Context
 import android.os.Bundle
@@ -7,6 +7,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.FragmentMapBinding
+import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
+import com.example.ecarchargeinfo.map.domain.model.MapConstants
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -86,8 +88,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(p0: GoogleMap) {
-        val location = LatLng(37.654601, 127.060530)
+        val location = LatLng(MapConstants.DEFAULT_LOCATION[0], MapConstants.DEFAULT_LOCATION[1])
         p0.moveCamera(CameraUpdateFactory.newLatLng(location))
-        p0.moveCamera(CameraUpdateFactory.zoomTo(15f))
+        p0.moveCamera(CameraUpdateFactory.zoomTo(MapConstants.DEFAULT_ZOOM))
     }
 }

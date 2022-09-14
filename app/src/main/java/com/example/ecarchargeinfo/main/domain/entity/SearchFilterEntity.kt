@@ -1,4 +1,4 @@
-package com.example.ecarchargeinfo.view.main
+package com.example.ecarchargeinfo.main.domain.entity
 
 data class SearchFilterEntity(
     var combo: Boolean = true,

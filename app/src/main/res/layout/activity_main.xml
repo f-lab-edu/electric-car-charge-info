@@ -7,14 +7,14 @@
 
         <variable
             name="vm"
-            type="com.example.ecarchargeinfo.view.main.MainViewModel" />
+            type="com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/lay_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.main.MainActivity">
+        tools:context=".main.presentation.ui.MainActivity">
 
         <TextView
             android:layout_width="wrap_content"
