@@ -16,11 +16,8 @@ import com.google.android.material.slider.RangeSlider
 
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var viewModel: MainViewModel
-
-    private var userLocation: Location? = null
-    private lateinit var mMap: GoogleMap
-    private lateinit var mapFragment: SupportMapFragment
+    lateinit var viewModel: MainViewModel
+    private val mapFragment = MapFragment()
 
     companion object {
         const val LOCATION_PERMISSION = 100
@@ -34,44 +31,30 @@ class MainActivity : BaseActivity() {
         binding.lifecycleOwner = this
         PermissionHelper.checkPermission(this@MainActivity)
 
-        val mapFragment = MapFragment()
-        supportFragmentManager.beginTransaction().
-        replace(R.id.main_map, mapFragment, "MAP").commit()
+        supportFragmentManager.beginTransaction().replace(R.id.main_map, mapFragment, "MAP")
+            .commit()
 
-        /*binding.btn1.setOnClickListener {
-            //getLocation()
-            mapFragment.getMapAsync(this)
-        }*/
-
-        binding.sliderChargeSpeed.addOnSliderTouchListener(object :
-            RangeSlider.OnSliderTouchListener {
-            override fun onStartTrackingTouch(slider: RangeSlider) {
-                binding.tvSlider.text = slider.values.toString()
-            }
-
-            override fun onStopTrackingTouch(slider: RangeSlider) {
-                binding.tvSlider.text = slider.values.toString()
-            }
-
-        })
+        binding.btn1.setOnClickListener{
+            mapFragment.initMap()
+        }
 
     }
 
-  /*
-    private fun getLatLng(): Location? {
-        var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-            PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) ==
-            PackageManager.PERMISSION_GRANTED
-        ) {
-            var currentLatLng =
-                locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?:
-                locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            return currentLatLng
-        }
-        return null
-    }*/
+    /*
+      private fun getLatLng(): Location? {
+          var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+          if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+              PackageManager.PERMISSION_GRANTED &&
+              ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) ==
+              PackageManager.PERMISSION_GRANTED
+          ) {
+              var currentLatLng =
+                  locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?:
+                  locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+              return currentLatLng
+          }
+          return null
+      }*/
 
 
     /*override fun onMapReady(p0: GoogleMap) {

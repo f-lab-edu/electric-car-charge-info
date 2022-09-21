@@ -10,4 +10,6 @@
     <string name="slow">완속</string>
     <string name="charge_speed">속도</string>
 
+    <string name="denied_permission">권한이 거부되었습니다. 다시실행해주세요"</string>
+
 </resources>

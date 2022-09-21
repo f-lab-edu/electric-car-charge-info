@@ -7,5 +7,6 @@ data class SearchFilterEntity(
     var slow: Boolean = false,
     var speed: Boolean = false,
     var startRange: Int = 50,
-    var endRange: Int = 350
+    var endRange: Int = 350,
+    var viewInfo: Boolean = false
 )
