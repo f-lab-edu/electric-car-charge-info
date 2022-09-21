@@ -112,7 +112,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     }
 
     override fun onMarkerClick(p0: Marker): Boolean {
-        mainActivity!!.viewModel.changeViewInfoState()
+        // TODO
+//        mainActivity!!.viewModel.changeViewInfoState()
 
         return true
     }

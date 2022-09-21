@@ -3,15 +3,21 @@ package com.example.ecarchargeinfo.main.presentation.ui
 import android.location.Location
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.ActivityMainBinding
 import com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel
 import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
 import com.example.ecarchargeinfo.main.presentation.helper.PermissionHelper
+import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.slider.RangeSlider
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 class MainActivity : BaseActivity() {
@@ -27,7 +33,9 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        binding.vm = viewModel
+
+        observeUIState()
+        binding.inputs = viewModel.inputs
         binding.lifecycleOwner = this
         PermissionHelper.checkPermission(this@MainActivity)
 
@@ -38,6 +46,18 @@ class MainActivity : BaseActivity() {
             mapFragment.initMap()
         }
 
+    }
+
+    private fun observeUIState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.outputs.searchFilterState.collect {
+                    if (it is MainSearchFilterState.Main) {
+                        binding.searchFilterEntity = it.searchFilters
+                    }
+                }
+            }
+        }
     }
 
     /*
