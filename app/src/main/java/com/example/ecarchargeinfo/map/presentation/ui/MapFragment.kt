@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.FragmentMapBinding
 import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
@@ -26,12 +28,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     private lateinit var gMap: MapView
     private lateinit var binding: FragmentMapBinding
     private var mainActivity: MainActivity? = null
+    lateinit var viewModel: MainViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
+        viewModel = ViewModelProvider(activity as ViewModelStoreOwner)[MainViewModel::class.java]
         gMap = binding.mapview
         gMap.onCreate(savedInstanceState)
         gMap.onResume()
@@ -106,7 +111,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         p0.addMarker(MarkerOptions().position(location).title("현 위치"))
         p0.moveCamera(CameraUpdateFactory.newLatLngZoom(location ,MapConstants.DEFAULT_ZOOM))
         p0.setOnMarkerClickListener(this)
-
+        viewModel.initSearchFilter()
     }
 
     override fun onMarkerClick(p0: Marker): Boolean {

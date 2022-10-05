@@ -1,15 +1,15 @@
 package com.example.ecarchargeinfo.main.domain.entity
 
 data class MainSearchFilterEntity(
-    var combo: Boolean = true,
-    var demo: Boolean = true,
-    var ac: Boolean = true,
-    var slow: Boolean = false,
-    var speedEntity: MainSearchFilterSpeedEntity = MainSearchFilterSpeedEntity()
+    var combo: Boolean,
+    var demo: Boolean,
+    var ac: Boolean,
+    var slow: Boolean,
+    var speedEntity: MainSearchFilterSpeedEntity
 )
 
 data class MainSearchFilterSpeedEntity(
-    var speed: Boolean = false,
-    var startRange: Int = 50,
-    var endRange: Int = 350
+    var speed: Boolean,
+    var startRange: Int,
+    var endRange: Int
 )

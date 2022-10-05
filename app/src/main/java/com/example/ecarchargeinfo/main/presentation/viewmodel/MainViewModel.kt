@@ -1,19 +1,19 @@
 package com.example.ecarchargeinfo.main.presentation.viewmodel
 
-import android.nfc.Tag
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
+import com.example.ecarchargeinfo.main.domain.model.SearchFilter
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
 import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
 class MainViewModel : ViewModel(), MainInputs, MainOutputs {
 
@@ -31,105 +31,110 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
         Log.e("ECarChargeInfo", throwable.message ?: "")
     }
 
+    fun initSearchFilter() {
+        _searchFilterState.value = MainSearchFilterState.Main(
+            searchFilters = MainSearchFilterEntity(
+                combo = SearchFilter.DEFAULT_COMBO,
+                demo = SearchFilter.DEFAULT_DEMO,
+                ac = SearchFilter.DEFAULT_AC,
+                slow = SearchFilter.DEFAULT_SLOW,
+                speedEntity = MainSearchFilterSpeedEntity(
+                    speed = SearchFilter.SpeedEntity.DEFAULT_SPEED,
+                    startRange = SearchFilter.SpeedEntity.START_RANGE,
+                    endRange = SearchFilter.SpeedEntity.END_RANGE
+                )
+            )
+        )
+    }
+
     override fun onComboClick() {
         println("onComboClick() start")
         if (_searchFilterState.value is MainSearchFilterState.Main) {
-            println("a")
-            viewModelScope.launch(coroutineExceptionHandler) {
-                _searchFilterState.emit(
-                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-                            combo = !this.combo
-                        }
+            _searchFilterState.update {
+                if (it is MainSearchFilterState.Main) {
+                    it.copy(
+                        searchFilters = it.searchFilters.copy (
+                            combo = !it.searchFilters.combo
+                        )
                     )
-                )
+                } else {
+                    it
+                }
             }
         }
     }
 
     override fun onDemoClick() {
-        if (_searchFilterState.value is MainSearchFilterState.Main) {
-            viewModelScope.launch(coroutineExceptionHandler) {
-                _searchFilterState.emit(
-                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-                            combo = !this.combo
-                        }
-                    )
-                )
-            }
-        }
+//        if (_searchFilterState.value is MainSearchFilterState.Main) {
+//                _searchFilterState.emit(
+//                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
+//                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
+//                            combo = !this.combo
+//                        }
+//                    )
+//                )
+//        }
     }
 
     override fun onACClick() {
-        if (_searchFilterState.value is MainSearchFilterState.Main) {
-            viewModelScope.launch(coroutineExceptionHandler) {
-                _searchFilterState.emit(
-                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-                            ac = !this.ac
-                        }
-                    )
-                )
-            }
-        }
+//        if (_searchFilterState.value is MainSearchFilterState.Main) {
+//                _searchFilterState.emit(
+//                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
+//                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
+//                            ac = !this.ac
+//                        }
+//                    )
+//                )
+//        }
     }
 
     override fun onSlowClick() {
-        if (_searchFilterState.value is MainSearchFilterState.Main) {
-            viewModelScope.launch(coroutineExceptionHandler) {
-                _searchFilterState.emit(
-                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-                            slow = !this.slow
-                        }
-                    )
-                )
-            }
-        }
+//            viewModelScope.launch(coroutineExceptionHandler) {
+//                _searchFilterState.emit(
+//                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
+//                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
+//                            slow = !this.slow
+//                        }
+//                    )
+//                )
+//        }
     }
 
     override fun onSpeedClick() {
-        if (_searchFilterState.value is MainSearchFilterState.Main) {
-            viewModelScope.launch(coroutineExceptionHandler) {
-                _searchFilterState.emit(
-                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-                            speedEntity.speed = !this.speedEntity.speed
-                        }
-                    )
-                )
-            }
-        }
+//        if (_searchFilterState.value is MainSearchFilterState.Main) {
+//                _searchFilterState.emit(
+//                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
+//                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
+//                            speedEntity.speed = !this.speedEntity.speed
+//                        }
+//                    )
+//                )
+//        }
     }
 
     override fun onSpeedChange(thisSpeedEntity: MainSearchFilterSpeedEntity) {
-        if (_searchFilterState.value is MainSearchFilterState.Main) {
-            viewModelScope.launch(coroutineExceptionHandler) {
-                _searchFilterState.emit(
-                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-                            speedEntity.startRange = thisSpeedEntity.startRange
-                            speedEntity.endRange = thisSpeedEntity.endRange
-                        }
-                    )
-                )
-            }
-        }
+//        if (_searchFilterState.value is MainSearchFilterState.Main) {
+//                _searchFilterState.emit(
+//                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
+//                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
+//                            speedEntity.startRange = thisSpeedEntity.startRange
+//                            speedEntity.endRange = thisSpeedEntity.endRange
+//                        }
+//                    )
+//                )
+//        }
     }
 
     val onValueChanged = fun(a: Int, b: Int) {
-        if (_searchFilterState.value is MainSearchFilterState.Main) {
-            viewModelScope.launch(coroutineExceptionHandler) {
-                _searchFilterState.emit(
-                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-                            speedEntity.startRange = a
-                            speedEntity.endRange = b
-                        }
-                    )
-                )
-            }
-        }
+//        if (_searchFilterState.value is MainSearchFilterState.Main) {
+//            _searchFilterState.emit(
+//                (_searchFilterState.value as MainSearchFilterState.Main).copy(
+//                    searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
+//                        speedEntity.startRange = a
+//                        speedEntity.endRange = b
+//                    }
+//                )
+//            )
+//        }
     }
 }
