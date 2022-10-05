@@ -1,10 +1,13 @@
 package com.example.ecarchargeinfo.main.presentation.binding
 
 import android.view.View
-import androidx.lifecycle.LiveData
 import com.example.ecarchargeinfo.R
 import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseBindingAdapter
+import androidx.databinding.InverseBindingListener
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
+import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
+
 import com.google.android.material.slider.RangeSlider
 
 object BindingAdapter {
@@ -39,8 +42,8 @@ object BindingAdapter {
             val firstValue = this.values[0].toInt()
             val lastValue = this.values[1].toInt()
 
-            onSpeedChange (
-                MainSearchFilterSpeedEntity (
+            onSpeedChange(
+                MainSearchFilterSpeedEntity(
                     speed = true,
                     startRange = firstValue,
                     endRange = lastValue

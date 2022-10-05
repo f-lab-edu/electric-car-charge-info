@@ -24,7 +24,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private lateinit var gMap: MapView
-    private lateinit var rootView : View
     private lateinit var binding: FragmentMapBinding
     private var mainActivity: MainActivity? = null
     override fun onCreateView(
@@ -33,7 +32,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
-        rootView = inflater.inflate(R.layout.fragment_map, container, false)
         gMap = binding.mapview
         gMap.onCreate(savedInstanceState)
         gMap.onResume()

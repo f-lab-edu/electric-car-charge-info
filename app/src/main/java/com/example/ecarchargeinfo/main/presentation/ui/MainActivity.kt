@@ -1,6 +1,5 @@
 package com.example.ecarchargeinfo.main.presentation.ui
 
-import android.location.Location
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
@@ -13,10 +12,6 @@ import com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel
 import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
 import com.example.ecarchargeinfo.main.presentation.helper.PermissionHelper
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.material.slider.RangeSlider
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 

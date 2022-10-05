@@ -1,6 +1,8 @@
 package com.example.ecarchargeinfo.main.presentation.viewmodel
 
+import android.nfc.Tag
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
@@ -11,6 +13,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 class MainViewModel : ViewModel(), MainInputs, MainOutputs {
 
@@ -29,7 +32,9 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
     }
 
     override fun onComboClick() {
+        println("onComboClick() start")
         if (_searchFilterState.value is MainSearchFilterState.Main) {
+            println("a")
             viewModelScope.launch(coroutineExceptionHandler) {
                 _searchFilterState.emit(
                     (_searchFilterState.value as MainSearchFilterState.Main).copy(
@@ -113,4 +118,18 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
         }
     }
 
+    val onValueChanged = fun(a: Int, b: Int) {
+        if (_searchFilterState.value is MainSearchFilterState.Main) {
+            viewModelScope.launch(coroutineExceptionHandler) {
+                _searchFilterState.emit(
+                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
+                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
+                            speedEntity.startRange = a
+                            speedEntity.endRange = b
+                        }
+                    )
+                )
+            }
+        }
+    }
 }

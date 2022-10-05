@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="kotlin.jvm.functions.Function1" />
         <import type="com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity" />
         <import type="kotlin.Unit" />
@@ -11,14 +12,15 @@
         <variable
             name="searchFilterEntity"
             type="com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity" />
-
         <variable
             name="inputs"
             type="com.example.ecarchargeinfo.main.presentation.input.MainInputs" />
-
         <variable
             name="setRange"
-            type="Function1&lt;MainSearchFilterSpeedEntity, Unit>"/>
+            type="Function1&lt;MainSearchFilterSpeedEntity, Unit>" />
+        <variable
+            name="vm"
+            type="com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -65,25 +67,23 @@
 
                     <Button
                         android:id="@+id/btn_combo"
-                        background="@{searchFilterEntity.combo}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_true"
                         android:lineSpacingExtra="2dp"
-                        android:onClick="@{() -> inputs.onComboClick()}"
                         android:text="@string/combo"
                         android:textColor="@color/white"
                         android:textSize="@dimen/main_btn_text"
+                        background = "@{searchFilterEntity.combo}"
+                        android:onClick="@{() -> inputs.onComboClick()}"
                         app:layout_constraintEnd_toStartOf="@id/btn_demo"
                         app:layout_constraintStart_toStartOf="parent" />
 
                     <Button
                         android:id="@+id/btn_demo"
-                        background="@{searchFilterEntity.demo}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_true"
-                        android:onClick="@{() -> inputs.onDemoClick()}"
                         android:text="@string/demo"
                         android:textColor="@color/white"
                         android:textSize="@dimen/main_btn_text"
@@ -94,11 +94,9 @@
 
                     <Button
                         android:id="@+id/btn_ac"
-                        background="@{searchFilterEntity.ac}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_true"
-                        android:onClick="@{() -> inputs.onACClick}"
                         android:text="@string/ac"
                         android:textColor="@color/white"
                         android:textSize="@dimen/main_btn_text"
@@ -106,15 +104,12 @@
                         app:layout_constraintStart_toEndOf="@id/btn_demo"
 
                         />
-                    <!--android:background="@{vm.slow == true? @drawable/custom_button_true : @drawable/custom_button_false}"-->
 
                     <Button
                         android:id="@+id/btn_slow"
-                        background="@{searchFilterEntity.slow}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_false"
-                        android:onClick="@{() -> inputs.onSlowClick()}"
                         android:text="@string/slow"
                         android:textColor="@color/white"
                         android:textSize="@dimen/main_btn_text"
@@ -123,11 +118,9 @@
 
                     <Button
                         android:id="@+id/btn_speed"
-                        background="@{searchFilterEntity.speedEntity.speed}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_false"
-                        android:onClick="@{() -> inputs.onSpeedClick()}"
                         android:text="@string/charge_speed"
                         android:textColor="@color/white"
                         android:textSize="@dimen/main_btn_text"
@@ -138,7 +131,6 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/lay_speed"
-                    visible="@{searchFilterEntity.speedEntity.speed}"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:layout_marginTop="8dp"
@@ -147,7 +139,6 @@
                     <com.google.android.material.slider.RangeSlider
                         android:id="@+id/slider_charge_speed"
                         style="@style/RangeSliderStyle"
-                        range="@{inputs::onSpeedChange}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -165,7 +156,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@{searchFilterEntity.speedEntity.startRange}"
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -178,7 +168,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@{searchFilterEntity.speedEntity.endRange}"
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -213,160 +202,160 @@
             app:layout_constraintRight_toRightOf="@id/btn_1"
             app:layout_constraintTop_toBottomOf="@id/btn_1" />
 
-        <RelativeLayout
-            android:id="@+id/lay_charger_info"
-            visible="@{vm.viewInfo}"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:visibility="visible">
+        <!-- <RelativeLayout
+             android:id="@+id/lay_charger_info"
+             visible="@{vm.viewInfo}"
+             android:layout_width="match_parent"
+             android:layout_height="250dp"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="parent"
+             tools:visibility="visible">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="0dp"
-                android:weightSum="3">
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="40dp"
+                 android:layout_alignParentTop="true"
+                 android:layout_marginTop="0dp"
+                 android:weightSum="3">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent" />
+                 <LinearLayout
+                     android:layout_width="0dp"
+                     android:layout_height="match_parent"
+                     android:layout_weight="1"
+                     android:background="@android:color/transparent" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/white"
-                    android:orientation="vertical">
+                 <LinearLayout
+                     android:layout_width="0dp"
+                     android:layout_height="match_parent"
+                     android:layout_weight="1"
+                     android:background="@color/white"
+                     android:orientation="vertical">
 
-                    <ImageButton
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/ic_baseline_keyboard_arrow_up_24" />
-                </LinearLayout>
+                     <ImageButton
+                         android:layout_width="match_parent"
+                         android:layout_height="match_parent"
+                         android:background="@android:color/transparent"
+                         android:src="@drawable/ic_baseline_keyboard_arrow_up_24" />
+                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent" />
-            </LinearLayout>
+                 <LinearLayout
+                     android:layout_width="0dp"
+                     android:layout_height="match_parent"
+                     android:layout_weight="1"
+                     android:background="@android:color/transparent" />
+             </LinearLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="40dp"
-                android:background="@color/white">
+             <androidx.constraintlayout.widget.ConstraintLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:layout_marginTop="40dp"
+                 android:background="@color/white">
 
-                <ImageButton
-                    android:id="@+id/ib_favorite"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:backgroundTint="@android:color/transparent"
-                    android:src="@drawable/ic_baseline_star_border_24"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                 <ImageButton
+                     android:id="@+id/ib_favorite"
+                     android:layout_width="32dp"
+                     android:layout_height="32dp"
+                     android:layout_marginStart="16dp"
+                     android:layout_marginTop="16dp"
+                     android:backgroundTint="@android:color/transparent"
+                     android:src="@drawable/ic_baseline_star_border_24"
+                     app:layout_constraintStart_toStartOf="parent"
+                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="test"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    app:layout_constraintStart_toEndOf="@id/ib_favorite"
-                    app:layout_constraintTop_toTopOf="@id/ib_favorite" />
+                 <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginStart="8dp"
+                     android:text="test"
+                     android:textColor="@color/black"
+                     android:textSize="20sp"
+                     app:layout_constraintStart_toEndOf="@id/ib_favorite"
+                     app:layout_constraintTop_toTopOf="@id/ib_favorite" />
 
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="test"
-                    android:textSize="15sp"
-                    app:layout_constraintStart_toStartOf="@id/ib_favorite"
-                    app:layout_constraintTop_toBottomOf="@id/ib_favorite" />
+                 <TextView
+                     android:id="@+id/textView"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="test"
+                     android:textSize="15sp"
+                     app:layout_constraintStart_toStartOf="@id/ib_favorite"
+                     app:layout_constraintTop_toBottomOf="@id/ib_favorite" />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="안내 시작"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                 <Button
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginEnd="16dp"
+                     android:layout_marginBottom="8dp"
+                     android:text="안내 시작"
+                     android:textColor="@color/black"
+                     android:textSize="18sp"
+                     app:layout_constraintBottom_toBottomOf="parent"
+                     app:layout_constraintEnd_toEndOf="parent" />
 
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:src="@drawable/ic_baseline_electrical_services_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@id/ib_favorite" />
+                 <ImageView
+                     android:id="@+id/imageView2"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginBottom="16dp"
+                     android:src="@drawable/ic_baseline_electrical_services_24"
+                     app:layout_constraintBottom_toBottomOf="parent"
+                     app:layout_constraintStart_toStartOf="@id/ib_favorite" />
 
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="충전가능"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-                    app:layout_constraintStart_toEndOf="@+id/imageView2"
-                    app:layout_constraintTop_toTopOf="@+id/imageView2" />
+                 <TextView
+                     android:id="@+id/textView2"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginStart="12dp"
+                     android:text="충전가능"
+                     android:textColor="@color/black"
+                     android:textSize="20sp"
+                     app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+                     app:layout_constraintStart_toEndOf="@+id/imageView2"
+                     app:layout_constraintTop_toTopOf="@+id/imageView2" />
 
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="급속"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView2"
-                    app:layout_constraintStart_toEndOf="@+id/textView2" />
+                 <TextView
+                     android:id="@+id/textView3"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginStart="8dp"
+                     android:text="급속"
+                     app:layout_constraintBottom_toBottomOf="@+id/textView2"
+                     app:layout_constraintStart_toEndOf="@+id/textView2" />
 
-                <TextView
-                    android:id="@+id/tv_fast"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:text="0"
-                    android:textColor="#0000FF"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView3"
-                    app:layout_constraintStart_toEndOf="@+id/textView3" />
+                 <TextView
+                     android:id="@+id/tv_fast"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginStart="3dp"
+                     android:text="0"
+                     android:textColor="#0000FF"
+                     app:layout_constraintBottom_toBottomOf="@+id/textView3"
+                     app:layout_constraintStart_toEndOf="@+id/textView3" />
 
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="완속"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView2"
-                    app:layout_constraintStart_toEndOf="@+id/tv_fast" />
+                 <TextView
+                     android:id="@+id/textView4"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginStart="8dp"
+                     android:text="완속"
+                     app:layout_constraintBottom_toBottomOf="@+id/textView2"
+                     app:layout_constraintStart_toEndOf="@+id/tv_fast" />
 
-                <TextView
-                    android:id="@+id/tv_slow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:text="0"
-                    android:textColor="#0000FF"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView2"
-                    app:layout_constraintStart_toEndOf="@+id/textView4" />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                 <TextView
+                     android:id="@+id/tv_slow"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginStart="2dp"
+                     android:text="0"
+                     android:textColor="#0000FF"
+                     app:layout_constraintBottom_toBottomOf="@+id/textView2"
+                     app:layout_constraintStart_toEndOf="@+id/textView4" />
 
 
-        </RelativeLayout>
+             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+         </RelativeLayout>-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
