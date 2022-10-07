@@ -16,14 +16,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel(), MainInputs, MainOutputs {
-
     val inputs: MainInputs = this
     val outputs: MainOutputs = this
     private val coroutineExceptionHandler = handleException()
-
     private val _searchFilterState: MutableStateFlow<MainSearchFilterState> =
         MutableStateFlow(MainSearchFilterState.Initial)
-
     override val searchFilterState: StateFlow<MainSearchFilterState>
         get() = _searchFilterState
 
@@ -53,7 +50,7 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
             _searchFilterState.update {
                 if (it is MainSearchFilterState.Main) {
                     it.copy(
-                        searchFilters = it.searchFilters.copy (
+                        searchFilters = it.searchFilters.copy(
                             combo = !it.searchFilters.combo
                         )
                     )
@@ -65,76 +62,96 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
     }
 
     override fun onDemoClick() {
-//        if (_searchFilterState.value is MainSearchFilterState.Main) {
-//                _searchFilterState.emit(
-//                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-//                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-//                            combo = !this.combo
-//                        }
-//                    )
-//                )
-//        }
+        if (_searchFilterState.value is MainSearchFilterState.Main) {
+            _searchFilterState.update {
+                if (it is MainSearchFilterState.Main) {
+                    it.copy(
+                        searchFilters = it.searchFilters.copy(
+                            demo = !it.searchFilters.demo
+                        )
+                    )
+                } else {
+                    it
+                }
+            }
+        }
     }
 
     override fun onACClick() {
-//        if (_searchFilterState.value is MainSearchFilterState.Main) {
-//                _searchFilterState.emit(
-//                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-//                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-//                            ac = !this.ac
-//                        }
-//                    )
-//                )
-//        }
+        if (_searchFilterState.value is MainSearchFilterState.Main) {
+            _searchFilterState.update {
+                if (it is MainSearchFilterState.Main) {
+                    it.copy(
+                        searchFilters = it.searchFilters.copy(
+                            ac = !it.searchFilters.ac
+                        )
+                    )
+                } else {
+                    it
+                }
+            }
+        }
     }
 
     override fun onSlowClick() {
-//            viewModelScope.launch(coroutineExceptionHandler) {
-//                _searchFilterState.emit(
-//                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-//                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-//                            slow = !this.slow
-//                        }
-//                    )
-//                )
-//        }
+        if (_searchFilterState.value is MainSearchFilterState.Main) {
+            _searchFilterState.update {
+                if (it is MainSearchFilterState.Main) {
+                    it.copy(
+                        searchFilters = it.searchFilters.copy(
+                            slow = !it.searchFilters.slow
+                        )
+                    )
+                } else {
+                    it
+                }
+            }
+        }
     }
 
     override fun onSpeedClick() {
-//        if (_searchFilterState.value is MainSearchFilterState.Main) {
-//                _searchFilterState.emit(
-//                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-//                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-//                            speedEntity.speed = !this.speedEntity.speed
-//                        }
-//                    )
-//                )
-//        }
+        if (_searchFilterState.value is MainSearchFilterState.Main) {
+            _searchFilterState.update {
+                if (it is MainSearchFilterState.Main) {
+                    it.copy(
+                        searchFilters = it.searchFilters.copy(
+                            speedEntity = it.searchFilters.speedEntity.copy(
+                                speed = !it.searchFilters.speedEntity.speed
+                            )
+                        )
+                    )
+                } else {
+                    it
+                }
+            }
+        }
     }
 
     override fun onSpeedChange(thisSpeedEntity: MainSearchFilterSpeedEntity) {
-//        if (_searchFilterState.value is MainSearchFilterState.Main) {
-//                _searchFilterState.emit(
-//                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-//                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-//                            speedEntity.startRange = thisSpeedEntity.startRange
-//                            speedEntity.endRange = thisSpeedEntity.endRange
-//                        }
-//                    )
-//                )
-//        }
+        if (_searchFilterState.value is MainSearchFilterState.Main) {
+            _searchFilterState.update {
+                (_searchFilterState.value as MainSearchFilterState.Main).copy(
+                    searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
+                        speedEntity.startRange = thisSpeedEntity.startRange
+                        speedEntity.endRange = thisSpeedEntity.endRange
+                    }
+                )
+            }
+        }
     }
 
-    val onValueChanged = fun(a: Int, b: Int) {
-//        if (_searchFilterState.value is MainSearchFilterState.Main) {
-//            _searchFilterState.emit(
-//                (_searchFilterState.value as MainSearchFilterState.Main).copy(
-//                    searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-//                        speedEntity.startRange = a
-//                        speedEntity.endRange = b
-//                    }
-//                )
-//            )
-//        }
+        val onValueChanged = fun(a: Int, b: Int) {
+            if (_searchFilterState.value is MainSearchFilterState.Main) {
+                _searchFilterState.update {
+                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
+                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
+                            speedEntity.startRange = a
+                            speedEntity.endRange = b
+                        }
+                    )
+                }
+            }
+        }
+
+
     }
-}

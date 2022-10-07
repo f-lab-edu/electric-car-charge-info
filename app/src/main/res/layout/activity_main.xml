@@ -6,18 +6,23 @@
     <data>
 
         <import type="kotlin.jvm.functions.Function1" />
+
         <import type="com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity" />
+
         <import type="kotlin.Unit" />
 
         <variable
             name="searchFilterEntity"
             type="com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity" />
+
         <variable
             name="inputs"
             type="com.example.ecarchargeinfo.main.presentation.input.MainInputs" />
+
         <variable
             name="setRange"
             type="Function1&lt;MainSearchFilterSpeedEntity, Unit>" />
+
         <variable
             name="vm"
             type="com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel" />
@@ -67,36 +72,38 @@
 
                     <Button
                         android:id="@+id/btn_combo"
+                        background="@{searchFilterEntity.combo}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_true"
                         android:lineSpacingExtra="2dp"
+                        android:onClick="@{() -> inputs.onComboClick()}"
                         android:text="@string/combo"
                         android:textColor="@color/white"
                         android:textSize="@dimen/main_btn_text"
-                        background = "@{searchFilterEntity.combo}"
-                        android:onClick="@{() -> inputs.onComboClick()}"
                         app:layout_constraintEnd_toStartOf="@id/btn_demo"
                         app:layout_constraintStart_toStartOf="parent" />
 
                     <Button
                         android:id="@+id/btn_demo"
+                        background="@{searchFilterEntity.demo}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_true"
+                        android:onClick="@{() -> inputs.onDemoClick()}"
                         android:text="@string/demo"
                         android:textColor="@color/white"
                         android:textSize="@dimen/main_btn_text"
                         app:layout_constraintEnd_toStartOf="@id/btn_ac"
-                        app:layout_constraintStart_toEndOf="@id/btn_combo"
-
-                        />
+                        app:layout_constraintStart_toEndOf="@id/btn_combo" />
 
                     <Button
                         android:id="@+id/btn_ac"
+                        background="@{searchFilterEntity.ac}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_true"
+                        android:onClick="@{() -> inputs.onACClick()}"
                         android:text="@string/ac"
                         android:textColor="@color/white"
                         android:textSize="@dimen/main_btn_text"
@@ -107,7 +114,9 @@
 
                     <Button
                         android:id="@+id/btn_slow"
+                        background = "@{searchFilterEntity.slow}"
                         android:layout_width="70dp"
+                        android:onClick="@{() -> inputs.onSlowClick()}"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_false"
                         android:text="@string/slow"
@@ -120,6 +129,8 @@
                         android:id="@+id/btn_speed"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
+                        background = "@{searchFilterEntity.speedEntity.speed}"
+                        android:onClick="@{() -> inputs.onSpeedClick()}"
                         android:background="@drawable/custom_button_false"
                         android:text="@string/charge_speed"
                         android:textColor="@color/white"
@@ -131,6 +142,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/lay_speed"
+                    visible="@{searchFilterEntity.speedEntity.speed}"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:layout_marginTop="8dp"
