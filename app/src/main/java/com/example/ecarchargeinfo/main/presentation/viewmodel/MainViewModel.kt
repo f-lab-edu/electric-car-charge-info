@@ -9,6 +9,7 @@ import com.example.ecarchargeinfo.main.domain.model.SearchFilter
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
 import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
+import com.google.android.material.slider.RangeSlider
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -130,6 +131,24 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
     override fun onSpeedChange(thisSpeedEntity: MainSearchFilterSpeedEntity) {
         if (_searchFilterState.value is MainSearchFilterState.Main) {
             _searchFilterState.update {
+                if (it is MainSearchFilterState.Main) {
+                    it.copy(
+                        searchFilters = it.searchFilters.copy(
+                            speedEntity = it.searchFilters.speedEntity.copy(
+                                startRange =  thisSpeedEntity.startRange,
+                                endRange = thisSpeedEntity.endRange
+                            )
+                        )
+                    )
+                } else {
+                    it
+                }
+            }
+        }
+    }
+
+    /* if (_searchFilterState.value is MainSearchFilterState.Main) {
+            _searchFilterState.update {
                 (_searchFilterState.value as MainSearchFilterState.Main).copy(
                     searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
                         speedEntity.startRange = thisSpeedEntity.startRange
@@ -137,18 +156,24 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
                     }
                 )
             }
-        }
-    }
+        }*/
+
 
         val onValueChanged = fun(a: Int, b: Int) {
             if (_searchFilterState.value is MainSearchFilterState.Main) {
                 _searchFilterState.update {
-                    (_searchFilterState.value as MainSearchFilterState.Main).copy(
-                        searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-                            speedEntity.startRange = a
-                            speedEntity.endRange = b
-                        }
-                    )
+                    if (it is MainSearchFilterState.Main) {
+                        it.copy(
+                            searchFilters = it.searchFilters.copy(
+                                speedEntity = it.searchFilters.speedEntity.copy(
+                                    startRange =  a,
+                                    endRange = b
+                                )
+                            )
+                        )
+                    } else {
+                        it
+                    }
                 }
             }
         }

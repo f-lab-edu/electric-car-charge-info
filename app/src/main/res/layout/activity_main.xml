@@ -151,6 +151,7 @@
                     <com.google.android.material.slider.RangeSlider
                         android:id="@+id/slider_charge_speed"
                         style="@style/RangeSliderStyle"
+                        android:onClick="@{inputs::onSpeedChange}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"

@@ -3,11 +3,7 @@ package com.example.ecarchargeinfo.main.presentation.binding
 import android.view.View
 import com.example.ecarchargeinfo.R
 import androidx.databinding.BindingAdapter
-import androidx.databinding.InverseBindingAdapter
-import androidx.databinding.InverseBindingListener
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
-import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
-
 import com.google.android.material.slider.RangeSlider
 
 object BindingAdapter {

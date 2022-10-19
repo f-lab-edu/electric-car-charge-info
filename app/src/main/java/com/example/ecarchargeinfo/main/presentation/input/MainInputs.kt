@@ -1,6 +1,7 @@
 package com.example.ecarchargeinfo.main.presentation.input
 
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
+import com.google.android.material.slider.RangeSlider
 
 interface MainInputs {
     fun onComboClick()
