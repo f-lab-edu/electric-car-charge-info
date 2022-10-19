@@ -9,10 +9,16 @@
         <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/drawable/ic_baseline_my_location_24.xml" value="0.245" />
         <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/drawable/ic_launcher_background.xml" value="0.245" />
         <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/drawable/layout_background.xml" value="0.245" />
+<<<<<<< Updated upstream
         <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/layout/fragment_map.xml" value="0.4766666666666667" />
+=======
+        <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/layout/fragment_map.xml" value="0.45330739299610895" />
+>>>>>>> Stashed changes
         <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.245" />
         <entry key="..\:/Users/01058120012/Desktop/AndroidPJT/electric-car-charge-info/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.15" />
       </map>
     </option>
   </component>

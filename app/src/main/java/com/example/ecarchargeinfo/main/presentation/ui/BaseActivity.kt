@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.main.presentation.helper.PermissionHelper
 
 open class BaseActivity: AppCompatActivity() {
@@ -29,10 +30,10 @@ open class BaseActivity: AppCompatActivity() {
                     ) ||
                     ActivityCompat.shouldShowRequestPermissionRationale(this, PermissionHelper.REQUEST_PERMISSION[1])
                 ) {
-                    Toast.makeText(this, "권한이 거부되었습니다. 다시실행해주세요", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.denied_permission, Toast.LENGTH_SHORT).show()
                     finish()
                 } else {
-                    Toast.makeText(this, "권한이 거부되었습니다. 설정에서 허용해주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "권한이 거부되었습니다. 다시실행해주세요", Toast.LENGTH_SHORT).show()
                 }
             }
         }
