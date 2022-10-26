@@ -8,9 +8,11 @@ import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
+import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
 import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.example.ecarchargeinfo.retrofit.IRetrofit
+import com.example.ecarchargeinfo.retrofit.model.ChargerInfo
 import com.example.ecarchargeinfo.retrofit.model.MapResponse
 import com.google.android.material.slider.RangeSlider
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -31,10 +33,19 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
         MutableStateFlow(MainSearchFilterState.Initial)
     override val searchFilterState: StateFlow<MainSearchFilterState>
         get() = _searchFilterState
-    val apiData = ArrayList<MapResponse>()
+    private val _chargerInfoState: MutableStateFlow<MainChargerInfoState> =
+        MutableStateFlow(MainChargerInfoState.Initial)
+    override val chargerInfoState: StateFlow<MainChargerInfoState>
+        get() = _chargerInfoState
+
 
     private fun handleException() = CoroutineExceptionHandler { _, throwable ->
         Log.e("ECarChargeInfo", throwable.message ?: "")
+    }
+
+
+    init {
+        initSearchFilter()
     }
 
     fun getApiAll(cond: String) {
@@ -43,9 +54,14 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
             Callback<MapResponse> {
             override fun onResponse(call: Call<MapResponse>, response: Response<MapResponse>) {
                 if (response.isSuccessful) {
-                    println(response.body()?.data?.size?.toInt())
+                    response.body()?.let {
+                        _chargerInfoState.value = MainChargerInfoState.Main(
+                            it.data
+                        )
+                    }
                 }
             }
+
             override fun onFailure(call: Call<MapResponse>, t: Throwable) {
                 TODO("Not yet implemented")
             }
@@ -158,7 +174,7 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
                     it.copy(
                         searchFilters = it.searchFilters.copy(
                             speedEntity = it.searchFilters.speedEntity.copy(
-                                startRange =  thisSpeedEntity.startRange,
+                                startRange = thisSpeedEntity.startRange,
                                 endRange = thisSpeedEntity.endRange
                             )
                         )
@@ -170,36 +186,5 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
         }
     }
 
-    /* if (_searchFilterState.value is MainSearchFilterState.Main) {
-            _searchFilterState.update {
-                (_searchFilterState.value as MainSearchFilterState.Main).copy(
-                    searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-                        speedEntity.startRange = thisSpeedEntity.startRange
-                        speedEntity.endRange = thisSpeedEntity.endRange
-                    }
-                )
-            }
-        }*/
 
-
-        val onValueChanged = fun(a: Int, b: Int) {
-            if (_searchFilterState.value is MainSearchFilterState.Main) {
-                _searchFilterState.update {
-                    if (it is MainSearchFilterState.Main) {
-                        it.copy(
-                            searchFilters = it.searchFilters.copy(
-                                speedEntity = it.searchFilters.speedEntity.copy(
-                                    startRange =  a,
-                                    endRange = b
-                                )
-                            )
-                        )
-                    } else {
-                        it
-                    }
-                }
-            }
-        }
-
-
-    }
+}

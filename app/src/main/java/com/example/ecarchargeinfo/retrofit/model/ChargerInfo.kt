@@ -1,6 +1,6 @@
 package com.example.ecarchargeinfo.retrofit.model
 
-data class Data(
+data class ChargerInfo(
     val addr: String,
     val chargeTp: String,
     val cpId: Int,

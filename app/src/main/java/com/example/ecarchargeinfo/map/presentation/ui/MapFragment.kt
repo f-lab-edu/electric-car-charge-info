@@ -8,13 +8,13 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.*
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.config.ApplicationClass
 import com.example.ecarchargeinfo.config.ApplicationClass.Companion.API_KEY
 import com.example.ecarchargeinfo.config.ApplicationClass.Companion.sRetrofit
 import com.example.ecarchargeinfo.databinding.FragmentMapBinding
+import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
 import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
 import com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
@@ -27,6 +27,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -111,7 +113,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     }
 
     @SuppressLint("MissingPermission")
-    override fun onMapReady(p0: GoogleMap) {
+    override fun onMapReady(googleMap: GoogleMap) {
+        observeUIState(googleMap)
         val locationManager =
             activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         var currentLatLng =
@@ -121,21 +124,36 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         val geocoder = Geocoder(context as MainActivity)
         val address =
             geocoder.getFromLocation(currentLatLng!!.latitude, currentLatLng!!.longitude, 1)
-        val needAddress = (address!!.get(0).adminArea.toString()+" "+address!!.get(0).subLocality.toString())
-
+        val needAddress =
+            (address!!.get(0).adminArea.toString() + " " + address!!.get(0).subLocality.toString())
         viewModel.getApiAll(needAddress)
-
-        p0.addMarker(MarkerOptions().position(location).title("현 위치"))
-        p0.moveCamera(CameraUpdateFactory.newLatLngZoom(location, MapConstants.DEFAULT_ZOOM))
-        p0.setOnMarkerClickListener(this)
-        viewModel.initSearchFilter()
+        googleMap.addMarker(MarkerOptions().position(location).title("현 위치"))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, MapConstants.DEFAULT_ZOOM))
+        googleMap.setOnMarkerClickListener(this)
     }
 
     override fun onMarkerClick(p0: Marker): Boolean {
         // TODO
-//        mainActivity!!.viewModel.changeViewInfoState()
-
         return true
+    }
+
+    private fun observeUIState(googleMap: GoogleMap) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.outputs.chargerInfoState.collect() {
+                    if (it is MainChargerInfoState.Main) {
+                        it.chargerInfo.forEach { data ->
+                            val location = LatLng(data.lat.toDouble(), data.longi.toDouble())
+                            googleMap.addMarker(
+                                MarkerOptions()
+                                    .position(location)
+                                    .title(data.csNm)
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
