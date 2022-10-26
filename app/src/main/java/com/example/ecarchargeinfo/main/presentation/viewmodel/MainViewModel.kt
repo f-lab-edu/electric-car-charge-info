@@ -3,18 +3,27 @@ package com.example.ecarchargeinfo.main.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ecarchargeinfo.config.ApplicationClass
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
+import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
 import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
+import com.example.ecarchargeinfo.retrofit.IRetrofit
+import com.example.ecarchargeinfo.retrofit.model.ChargerInfo
+import com.example.ecarchargeinfo.retrofit.model.MapResponse
 import com.google.android.material.slider.RangeSlider
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainViewModel : ViewModel(), MainInputs, MainOutputs {
     val inputs: MainInputs = this
@@ -24,10 +33,41 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
         MutableStateFlow(MainSearchFilterState.Initial)
     override val searchFilterState: StateFlow<MainSearchFilterState>
         get() = _searchFilterState
+    private val _chargerInfoState: MutableStateFlow<MainChargerInfoState> =
+        MutableStateFlow(MainChargerInfoState.Initial)
+    override val chargerInfoState: StateFlow<MainChargerInfoState>
+        get() = _chargerInfoState
+
 
     private fun handleException() = CoroutineExceptionHandler { _, throwable ->
         Log.e("ECarChargeInfo", throwable.message ?: "")
     }
+
+
+    init {
+        initSearchFilter()
+    }
+
+    fun getApiAll(cond: String) {
+        val service = ApplicationClass.sRetrofit.create(IRetrofit::class.java)
+        service.getInfo(1, 100, cond, ApplicationClass.API_KEY).enqueue(object :
+            Callback<MapResponse> {
+            override fun onResponse(call: Call<MapResponse>, response: Response<MapResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _chargerInfoState.value = MainChargerInfoState.Main(
+                            it.data
+                        )
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<MapResponse>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
 
     fun initSearchFilter() {
         _searchFilterState.value = MainSearchFilterState.Main(
@@ -46,7 +86,6 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
     }
 
     override fun onComboClick() {
-        println("onComboClick() start")
         if (_searchFilterState.value is MainSearchFilterState.Main) {
             _searchFilterState.update {
                 if (it is MainSearchFilterState.Main) {
@@ -135,7 +174,7 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
                     it.copy(
                         searchFilters = it.searchFilters.copy(
                             speedEntity = it.searchFilters.speedEntity.copy(
-                                startRange =  thisSpeedEntity.startRange,
+                                startRange = thisSpeedEntity.startRange,
                                 endRange = thisSpeedEntity.endRange
                             )
                         )
@@ -147,36 +186,5 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
         }
     }
 
-    /* if (_searchFilterState.value is MainSearchFilterState.Main) {
-            _searchFilterState.update {
-                (_searchFilterState.value as MainSearchFilterState.Main).copy(
-                    searchFilters = (searchFilterState.value as MainSearchFilterState.Main).searchFilters.apply {
-                        speedEntity.startRange = thisSpeedEntity.startRange
-                        speedEntity.endRange = thisSpeedEntity.endRange
-                    }
-                )
-            }
-        }*/
 
-
-        val onValueChanged = fun(a: Int, b: Int) {
-            if (_searchFilterState.value is MainSearchFilterState.Main) {
-                _searchFilterState.update {
-                    if (it is MainSearchFilterState.Main) {
-                        it.copy(
-                            searchFilters = it.searchFilters.copy(
-                                speedEntity = it.searchFilters.speedEntity.copy(
-                                    startRange =  a,
-                                    endRange = b
-                                )
-                            )
-                        )
-                    } else {
-                        it
-                    }
-                }
-            }
-        }
-
-
-    }
+}
