@@ -151,7 +151,7 @@
                     <com.google.android.material.slider.RangeSlider
                         android:id="@+id/slider_charge_speed"
                         style="@style/RangeSliderStyle"
-                        android:onClick="@{inputs::onSpeedChange}"
+                        range="@{inputs}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -171,6 +171,7 @@
                         android:gravity="center"
                         android:textColor="@color/black"
                         android:textSize="14sp"
+                        android:text=""
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/tv_slider_end"
                         app:layout_constraintStart_toStartOf="parent"

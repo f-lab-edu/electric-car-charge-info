@@ -4,6 +4,7 @@ import android.view.View
 import com.example.ecarchargeinfo.R
 import androidx.databinding.BindingAdapter
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
+import com.example.ecarchargeinfo.main.presentation.input.MainInputs
 import com.google.android.material.slider.RangeSlider
 
 object BindingAdapter {
@@ -33,12 +34,12 @@ object BindingAdapter {
 
     @JvmStatic
     @BindingAdapter("range")
-    fun RangeSlider.OnChangeListener(onSpeedChange: (MainSearchFilterSpeedEntity) -> Unit) {
+    fun RangeSlider.OnChangeListener(inputs: MainInputs) {
         addOnChangeListener { _, _, _ ->
             val firstValue = this.values[0].toInt()
             val lastValue = this.values[1].toInt()
 
-            onSpeedChange(
+            inputs.onSpeedChange(
                 MainSearchFilterSpeedEntity(
                     speed = true,
                     startRange = firstValue,
