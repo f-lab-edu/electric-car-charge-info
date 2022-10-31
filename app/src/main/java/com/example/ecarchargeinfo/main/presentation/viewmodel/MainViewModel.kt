@@ -1,5 +1,10 @@
 package com.example.ecarchargeinfo.main.presentation.viewmodel
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
+import android.location.Location
+import android.location.LocationManager
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +19,7 @@ import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.example.ecarchargeinfo.retrofit.IRetrofit
 import com.example.ecarchargeinfo.retrofit.model.ChargerInfo
 import com.example.ecarchargeinfo.retrofit.model.MapResponse
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.slider.RangeSlider
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -184,6 +190,21 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
                 }
             }
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun getLatLng(context: Context): LatLng? {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val currentLatLng =  locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        var location: LatLng? = null
+        currentLatLng?.let {
+            location = LatLng(currentLatLng.latitude, currentLatLng.longitude)
+        }
+        location?.let {
+            return location
+        }
+        return null
     }
 
 
