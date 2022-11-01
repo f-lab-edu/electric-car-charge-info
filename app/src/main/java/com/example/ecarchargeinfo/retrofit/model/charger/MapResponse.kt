@@ -1,4 +1,4 @@
-package com.example.ecarchargeinfo.retrofit.model
+package com.example.ecarchargeinfo.retrofit.model.charger
 
 data class MapResponse(
     val currentCount: Int,

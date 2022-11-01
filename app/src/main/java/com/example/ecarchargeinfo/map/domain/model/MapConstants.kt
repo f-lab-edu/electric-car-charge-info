@@ -2,4 +2,6 @@ package com.example.ecarchargeinfo.map.domain.model
 
 object MapConstants {
     const val DEFAULT_ZOOM = 15f
+    const val DEFAULT_LAT = 37.5666805
+    const val DEFAULT_LONG = 126.9784147
 }

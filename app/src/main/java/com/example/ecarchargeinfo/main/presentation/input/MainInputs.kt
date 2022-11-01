@@ -12,5 +12,4 @@ interface MainInputs {
     fun onSlowClick()
     fun onSpeedClick()
     fun onSpeedChange(thisSpeedEntity: MainSearchFilterSpeedEntity)
-    fun getLatLng(context: Context): LatLng?
 }

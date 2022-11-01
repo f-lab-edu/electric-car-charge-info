@@ -1,4 +1,4 @@
-package com.example.ecarchargeinfo.retrofit.model
+package com.example.ecarchargeinfo.retrofit.model.charger
 
 data class ChargerInfo(
     val addr: String,

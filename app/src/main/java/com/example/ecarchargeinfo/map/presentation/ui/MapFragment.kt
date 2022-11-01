@@ -3,8 +3,6 @@ package com.example.ecarchargeinfo.map.presentation.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.location.Geocoder
-import android.location.LocationManager
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
@@ -26,7 +24,6 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
 import java.util.*
-import java.util.stream.Collectors.toList
 
 
 class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
@@ -35,6 +32,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     private lateinit var mMap: GoogleMap
     private var mainActivity: MainActivity? = null
     lateinit var viewModel: MainViewModel
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -113,44 +112,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         observeUIState(mMap)
-        val locationManager =
-            activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        var currentLatLng =
-            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-        val location = LatLng(currentLatLng!!.latitude, currentLatLng!!.longitude)
-
-        val location2 = viewModel.inputs.getLatLng(context as MainActivity)
-
-        val geocoder = Geocoder(context as MainActivity, Locale.KOREA)
-        val address =
-            geocoder.getFromLocation(currentLatLng!!.latitude, currentLatLng!!.longitude, 3)
-
-        address.let {
-            val needAddress =
-                (address!!.get(0).adminArea.toString() + " " + address!!.get(0).subLocality.toString())
-            viewModel.getApiAll(needAddress)
-        }
-
+        val location: LatLng = viewModel.getLatLng(context as MainActivity)
+        NewAreaMarker(location)
         var marker = MarkerOptions().position(location).title("현 위치")
-        mMap.addMarker(marker)!!.showInfoWindow()
-        //googleMap.addMarker(MarkerOptions().position(location).title("현 위치"))
+        mMap.addMarker(marker)?.showInfoWindow()
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, MapConstants.DEFAULT_ZOOM))
         mMap.setOnMarkerClickListener(this)
-
-
         mMap.setOnCameraIdleListener {
             val centerLocation = googleMap.projection.visibleRegion.latLngBounds.center
-            println("@@" + centerLocation)
-            println("@@" + centerLocation.latitude + " " + centerLocation.longitude)
-            val addressTest =
-                geocoder.getFromLocation(centerLocation.latitude, centerLocation.longitude, 1)
-            println("@@"+addressTest)
-            val needAddressTest =
-                (addressTest!!.get(0).adminArea.toString() + " " + addressTest!!.get(0).subLocality.toString())
-            println("@@" + needAddressTest)
-            viewModel.getApiAll(needAddressTest)
-            observeUIState(mMap)
+            NewAreaMarker(centerLocation)
         }
 
     }
@@ -171,15 +141,32 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                     if (it is MainChargerInfoState.Main) {
                         it.chargerInfo.forEach { data ->
                             val location = LatLng(data.lat.toDouble(), data.longi.toDouble())
-                            var test = MarkerOptions()
+                            var marker = MarkerOptions()
                                 .position(location)
-                                .title(data.addr)
-                            googleMap.addMarker(test)
+                                .title(data.csNm)
+                                .snippet(data.addr)
+                            googleMap.addMarker(marker)
                         }
                     }
                 }
             }
         }
+    }
+
+    fun NewAreaMarker(location: LatLng)  {
+        Thread {
+            try {
+            val krAddress = viewModel.test(
+                resources.getString(R.string.naver_client_id),
+                resources.getString(R.string.naver_client_key),
+                (location.longitude.toString() + "," + location.latitude.toString())
+            )
+            println("@@@@@@@ $krAddress")
+            viewModel.getApiAll(krAddress)}
+            catch (e: Exception)    {
+
+            }
+        }.start()
     }
 
 

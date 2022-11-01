@@ -1,14 +1,12 @@
 package com.example.ecarchargeinfo.main.presentation.viewmodel
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.location.Location
 import android.location.LocationManager
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.ecarchargeinfo.config.ApplicationClass
+import com.example.ecarchargeinfo.config.ApplicationClass.Companion.sRetrofit
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
@@ -16,17 +14,16 @@ import com.example.ecarchargeinfo.main.presentation.input.MainInputs
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
 import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.DEFAULT_LAT
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.DEFAULT_LONG
 import com.example.ecarchargeinfo.retrofit.IRetrofit
-import com.example.ecarchargeinfo.retrofit.model.ChargerInfo
-import com.example.ecarchargeinfo.retrofit.model.MapResponse
+import com.example.ecarchargeinfo.retrofit.model.charger.MapResponse
+import com.example.ecarchargeinfo.retrofit.model.geocoder.GeocoderInfo
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.slider.RangeSlider
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,6 +32,7 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
     val inputs: MainInputs = this
     val outputs: MainOutputs = this
     private val coroutineExceptionHandler = handleException()
+
     private val _searchFilterState: MutableStateFlow<MainSearchFilterState> =
         MutableStateFlow(MainSearchFilterState.Initial)
     override val searchFilterState: StateFlow<MainSearchFilterState>
@@ -73,7 +71,35 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
             }
         })
     }
+    fun test(clientId: String, clientKey: String, coords: String): String {
+        val service = sRetrofit.create(IRetrofit::class.java)
+        val call: Call<GeocoderInfo> = service.getGeocoder(clientId,clientKey,coords,"json","addr")
+        val result = call.execute().body()?.let {
+            (it.results[0].region.area1.name+" "+it.results[0].region.area2.name)
+        }
+        return result.toString()
+    }
 
+    fun getGeocoder(clientId: String, clientKey: String, coords: String) {
+        val service = ApplicationClass.sRetrofit.create(IRetrofit::class.java)
+        service.getGeocoder(clientId, clientKey, coords, "json", "addr")
+            .enqueue(object : Callback<GeocoderInfo> {
+                override fun onResponse(
+                    call: Call<GeocoderInfo>,
+                    response: Response<GeocoderInfo>
+                ) {
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            val test = it.results[0].region.area1.name + " " +
+                                    it.results[0].region.area2.name
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<GeocoderInfo>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+            })
+    }
 
     fun initSearchFilter() {
         _searchFilterState.value = MainSearchFilterState.Main(
@@ -193,19 +219,16 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
     }
 
     @SuppressLint("MissingPermission")
-    override fun getLatLng(context: Context): LatLng? {
+    fun getLatLng(context: Context): LatLng {
+        var location = LatLng(DEFAULT_LAT, DEFAULT_LONG)
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val currentLatLng =  locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        val currentLatLng = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-        var location: LatLng? = null
         currentLatLng?.let {
             location = LatLng(currentLatLng.latitude, currentLatLng.longitude)
-        }
-        location?.let {
-            return location
-        }
-        return null
-    }
 
+        }
+        return location
+    }
 
 }
