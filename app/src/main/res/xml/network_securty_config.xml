@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<networ-security-config>
+    <base-config cleartextTrafficpermitted="true"   >
+        <trust-anchors>
+            <certificates src = "system"/>
+        </trust-anchors>
+    </base-config>
+</networ-security-config>

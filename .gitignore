@@ -183,3 +183,6 @@ fabric.properties
 ### AndroidStudio Patch ###
 
 !/gradle/wrapper/gradle-wrapper.jar
+
+
+/app/src/main/res/values/api_info.xml

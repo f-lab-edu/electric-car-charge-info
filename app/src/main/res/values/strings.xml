@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">ECarChargeInfo</string>
-    <string name="google_map_key">AIzaSyBzoTmwd9Oqn47qw8TBO3wNWy46z3Vuv9o</string>
 
     <string name="search">충전소 검색</string>
     <string name="combo">DC콤보</string>
