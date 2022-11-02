@@ -1,6 +1,7 @@
 package com.example.ecarchargeinfo.config
 
 import android.app.Application
+import com.example.ecarchargeinfo.R
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -10,16 +11,15 @@ import java.util.concurrent.TimeUnit
 class ApplicationClass : Application() {
 
     val API_URL = "https://api.odcloud.kr/"
-
-    companion object    {
+        companion object    {
         lateinit var sRetrofit: Retrofit
-        val API_KEY = "dFeTM5MxFJjwcuD0FwtWaImB0AHTUZ1L+gSVz+4VSseJJTuVz+FUFRW7RPqGL5mHtE2pzmGh8BF55FbWvXydaw=="
+        lateinit var API_KEY: String
     }
 
     override fun onCreate() {
         super.onCreate()
         initRetrofit()
-
+        API_KEY = resources.getString(R.string.ev_charger_key)
     }
 
     private fun initRetrofit()  {

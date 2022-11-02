@@ -2,24 +2,19 @@ package com.example.ecarchargeinfo.map.presentation.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Geocoder
-import android.location.LocationManager
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import com.example.ecarchargeinfo.R
-import com.example.ecarchargeinfo.config.ApplicationClass
-import com.example.ecarchargeinfo.config.ApplicationClass.Companion.API_KEY
-import com.example.ecarchargeinfo.config.ApplicationClass.Companion.sRetrofit
 import com.example.ecarchargeinfo.databinding.FragmentMapBinding
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
+import com.example.ecarchargeinfo.main.presentation.ui.InfoActivity
 import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
 import com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
-import com.example.ecarchargeinfo.retrofit.IRetrofit
-import com.example.ecarchargeinfo.retrofit.model.MapResponse
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -27,18 +22,18 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import java.util.*
 
 
 class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private lateinit var gMap: MapView
     private lateinit var binding: FragmentMapBinding
+    private lateinit var mMap: GoogleMap
     private var mainActivity: MainActivity? = null
     lateinit var viewModel: MainViewModel
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -50,6 +45,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         gMap.onCreate(savedInstanceState)
         gMap.onResume()
         gMap.getMapAsync(this)
+
 
         return binding.root
     }
@@ -114,26 +110,27 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
-        observeUIState(googleMap)
-        val locationManager =
-            activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        var currentLatLng =
-            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-        val location = LatLng(currentLatLng!!.latitude, currentLatLng!!.longitude)
-        val geocoder = Geocoder(context as MainActivity)
-        val address =
-            geocoder.getFromLocation(currentLatLng!!.latitude, currentLatLng!!.longitude, 1)
-        val needAddress =
-            (address!!.get(0).adminArea.toString() + " " + address!!.get(0).subLocality.toString())
-        viewModel.getApiAll(needAddress)
-        googleMap.addMarker(MarkerOptions().position(location).title("현 위치"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, MapConstants.DEFAULT_ZOOM))
-        googleMap.setOnMarkerClickListener(this)
+        mMap = googleMap
+        observeUIState(mMap)
+        val location: LatLng = viewModel.getLatLng(context as MainActivity)
+        NewAreaMarker(location)
+        var marker = MarkerOptions().position(location).title("현 위치")
+        mMap.addMarker(marker)?.showInfoWindow()
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, MapConstants.DEFAULT_ZOOM))
+        mMap.setOnMarkerClickListener(this)
+        mMap.setOnCameraIdleListener {
+            val centerLocation = googleMap.projection.visibleRegion.latLngBounds.center
+            NewAreaMarker(centerLocation)
+        }
+
     }
 
-    override fun onMarkerClick(p0: Marker): Boolean {
-        // TODO
+    override fun onMarkerClick(marker: Marker): Boolean {
+        val intent = Intent(activity, InfoActivity::class.java)
+        intent.apply {
+            this.putExtra("address", marker.title)
+        }
+        startActivity(intent)
         return true
     }
 
@@ -144,16 +141,32 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                     if (it is MainChargerInfoState.Main) {
                         it.chargerInfo.forEach { data ->
                             val location = LatLng(data.lat.toDouble(), data.longi.toDouble())
-                            googleMap.addMarker(
-                                MarkerOptions()
-                                    .position(location)
-                                    .title(data.csNm)
-                            )
+                            var marker = MarkerOptions()
+                                .position(location)
+                                .title(data.csNm)
+                                .snippet(data.addr)
+                            googleMap.addMarker(marker)
                         }
                     }
                 }
             }
         }
+    }
+
+    fun NewAreaMarker(location: LatLng)  {
+        Thread {
+            try {
+            val krAddress = viewModel.test(
+                resources.getString(R.string.naver_client_id),
+                resources.getString(R.string.naver_client_key),
+                (location.longitude.toString() + "," + location.latitude.toString())
+            )
+            println("@@@@@@@ $krAddress")
+            viewModel.getApiAll(krAddress)}
+            catch (e: Exception)    {
+
+            }
+        }.start()
     }
 
 

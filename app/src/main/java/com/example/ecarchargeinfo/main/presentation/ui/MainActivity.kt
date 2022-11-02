@@ -28,10 +28,10 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-
         observeUIState()
         binding.inputs = viewModel.inputs
         binding.lifecycleOwner = this
+
         PermissionHelper.checkPermission(this@MainActivity)
 
         supportFragmentManager.beginTransaction().replace(R.id.main_map, mapFragment, "MAP")

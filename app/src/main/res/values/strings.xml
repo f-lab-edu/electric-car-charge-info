@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">ECarChargeInfo</string>
-    <string name="google_map_key">AIzaSyD7-BtLpCHb8dvqUVEqb07oTcS6gbcnWmA</string>
 
-    <string name="search">"     충전소 검색"</string>
+    <string name="search">충전소 검색</string>
     <string name="combo">DC콤보</string>
     <string name="demo">DC차데모</string>
     <string name="ac">AC3상</string>
@@ -11,5 +10,19 @@
 
     <string name="denied_permission">권한이 거부되었습니다. 다시실행해주세요"</string>
 
+
+    <string name="info_title">명칭</string>
+    <string name="info_address">주소</string>
+    <string name="info_available">충전가능</string>
+    <string name="info_fast">급속</string>
+    <string name="info_slwo">완속</string>
+    <string name="info_free">무료</string>
+    <string name="info_24h">24시</string>
+    <string name="info_cost">유료</string>
+    <string name="info_navigation">안내시작</string>
+    <string name="info_charger">충전기 정보</string>
+    <string name="info_can_charge">충전가능</string>
+    <string name="info_cant_charge">충전불가능</string>
+    <string name="info_last_charge_time">0시간 0분 전 시작</string>
 
 </resources>
