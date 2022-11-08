@@ -61,7 +61,7 @@
         </activity>
 
         <activity
-            android:name=".main.presentation.ui.InfoActivity"
+            android:name=".info.presentation.ui.InfoActivity"
             android:exported="false">
         </activity>
     </application>
