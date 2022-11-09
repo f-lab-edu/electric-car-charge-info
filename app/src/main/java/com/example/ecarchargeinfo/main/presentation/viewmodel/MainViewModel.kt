@@ -12,6 +12,7 @@ import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
+import com.example.ecarchargeinfo.main.presentation.output.MainLocationState
 import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.DEFAULT_LAT
@@ -41,6 +42,8 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
         MutableStateFlow(MainChargerInfoState.Initial)
     override val chargerInfoState: StateFlow<MainChargerInfoState>
         get() = _chargerInfoState
+    override val locationState: StateFlow<MainLocationState>
+        get() = TODO("Not yet implemented")
 
 
     private fun handleException() = CoroutineExceptionHandler { _, throwable ->

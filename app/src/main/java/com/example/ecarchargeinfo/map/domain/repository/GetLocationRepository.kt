@@ -4,5 +4,5 @@ import android.content.Context
 import com.google.android.gms.maps.model.LatLng
 
 interface GetLocationRepository {
-    fun getLocation(context: Context) : LatLng
+    fun getLocation(): LatLng
 }

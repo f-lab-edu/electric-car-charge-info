@@ -5,11 +5,14 @@ import android.content.Context
 import android.location.LocationManager
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
 import com.google.android.gms.maps.model.LatLng
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class GetLocationRepositoryImpl @Inject constructor() : GetLocationRepository {
+class GetLocationRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context
+) : GetLocationRepository {
     @SuppressLint("MissingPermission")
-    override fun getLocation(context: Context): LatLng {
+    override fun getLocation(): LatLng {
         var location = LatLng(MapConstants.DEFAULT_LAT, MapConstants.DEFAULT_LONG)
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val currentLatLng = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)

@@ -25,4 +25,5 @@ interface IRetrofit {
         @Query("orders") orders: String,
     ): retrofit2.Call<GeocoderInfo>
 
+
 }

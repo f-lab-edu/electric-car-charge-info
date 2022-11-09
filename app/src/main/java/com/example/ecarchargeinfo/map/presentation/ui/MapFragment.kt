@@ -80,8 +80,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         mMap = googleMap
         observeUIState(mMap)
         //val location: LatLng = viewModel.getLatLng(context as MainActivity)
+
+
         val test1 = (context as ContextWrapper).baseContext
-        val location: LatLng = viewmodel2.getLocation(test1)
+
+        val location: LatLng = viewmodel2.getLocation(requireContext())
+
+
         NewAreaMarker(location)
         var marker = MarkerOptions().position(location).title("현 위치")
         mMap.addMarker(marker)?.showInfoWindow()
@@ -132,7 +137,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                     resources.getString(R.string.naver_client_key),
                     (location.longitude.toString() + "," + location.latitude.toString())
                 )
-                println("@@@@@@@ $krAddress")
                 viewModel.getApiAll(krAddress)
             } catch (e: Exception) {
 
