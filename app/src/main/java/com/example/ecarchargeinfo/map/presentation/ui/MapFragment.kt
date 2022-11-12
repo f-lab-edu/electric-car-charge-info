@@ -14,6 +14,7 @@ import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.FragmentMapBinding
 import com.example.ecarchargeinfo.info.presentation.ui.InfoActivity
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
+import com.example.ecarchargeinfo.main.presentation.output.MainLocationState
 import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
 import com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -47,6 +49,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
         viewModel = ViewModelProvider(activity as ViewModelStoreOwner)[MainViewModel::class.java]
+  //      viewmodel2 = ViewModelProvider(activity as ViewModelStoreOwner)[MapViewModel::class.java]
         gMap = binding.mapview
         gMap.onCreate(savedInstanceState)
         gMap.onResume()
@@ -79,15 +82,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         observeUIState(mMap)
-        //val location: LatLng = viewModel.getLatLng(context as MainActivity)
+        observeLocation(mMap)
+//        val location: LatLng = viewModel.getLatLng(context as MainActivity)
 
-
-        val test1 = (context as ContextWrapper).baseContext
-
-        val location: LatLng = viewmodel2.getLocation(requireContext())
-
-
-        NewAreaMarker(location)
+       /* NewAreaMarker(location)
         var marker = MarkerOptions().position(location).title("현 위치")
         mMap.addMarker(marker)?.showInfoWindow()
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, MapConstants.DEFAULT_ZOOM))
@@ -95,9 +93,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         mMap.setOnCameraIdleListener {
             val centerLocation = googleMap.projection.visibleRegion.latLngBounds.center
             NewAreaMarker(centerLocation)
-        }
-        mMap.isMyLocationEnabled()
-
+        }*/
+        /*mMap.isMyLocationEnabled
+        mMap.uiSettings.isMyLocationButtonEnabled*/
 
     }
 
@@ -123,6 +121,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                                 .snippet(data.addr)
                             googleMap.addMarker(marker)
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeLocation(googleMap: GoogleMap)   {
+        lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.RESUMED)  {
+                viewmodel2.outputs.locationState.collect()  {
+                    if (it is MainLocationState.Main)   {
+                        var marker = MarkerOptions().position(it.locationInfo.coordinate).title("현 위치")
+                        googleMap.addMarker(marker)?.showInfoWindow()
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it.locationInfo.coordinate, MapConstants.DEFAULT_ZOOM))
+
                     }
                 }
             }

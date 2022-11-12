@@ -1,12 +1,12 @@
 package com.example.ecarchargeinfo.map.domain.usecase
 
-import com.example.ecarchargeinfo.map.domain.repository.GetGeocoderRepositoryImpl
+import com.example.ecarchargeinfo.map.domain.repository.GeocoderRepositoryImpl
 import javax.inject.Inject
 
 class GetGeocoderUseCase @Inject constructor(
-    private val getGeocoderRepositoryImpl: GetGeocoderRepositoryImpl
-) : IGetGeocoderUseCase {
+    private val geocoderRepositoryImpl: GeocoderRepositoryImpl
+) : IGeocoderUseCase {
     override fun invoke(coords: String): String =
-        getGeocoderRepositoryImpl.getGeocoder(coords)
+        geocoderRepositoryImpl.getGeocoder(coords)
 
 }

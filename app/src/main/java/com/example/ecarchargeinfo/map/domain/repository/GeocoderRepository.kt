@@ -1,5 +1,5 @@
 package com.example.ecarchargeinfo.map.domain.repository
 
-interface GetGeocoderRepository {
+interface GeocoderRepository {
     fun getGeocoder(coords: String): String
 }

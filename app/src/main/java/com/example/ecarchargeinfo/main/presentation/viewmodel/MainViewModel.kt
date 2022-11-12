@@ -42,8 +42,10 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
         MutableStateFlow(MainChargerInfoState.Initial)
     override val chargerInfoState: StateFlow<MainChargerInfoState>
         get() = _chargerInfoState
+    private val _locationState : MutableStateFlow<MainLocationState> =
+        MutableStateFlow(MainLocationState.Initial)
     override val locationState: StateFlow<MainLocationState>
-        get() = TODO("Not yet implemented")
+        get() = _locationState
 
 
     private fun handleException() = CoroutineExceptionHandler { _, throwable ->

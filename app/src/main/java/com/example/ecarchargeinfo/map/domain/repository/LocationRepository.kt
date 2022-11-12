@@ -1,8 +1,7 @@
 package com.example.ecarchargeinfo.map.domain.repository
 
-import android.content.Context
 import com.google.android.gms.maps.model.LatLng
 
-interface GetLocationRepository {
+interface LocationRepository {
     fun getLocation(): LatLng
 }

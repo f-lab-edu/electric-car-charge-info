@@ -29,6 +29,8 @@ class MapViewModel @Inject constructor(
     //private val changeLocationUseCase: ChangeLocationUseCase
 ) :
     ViewModel(), MainInputs, MainOutputs {
+    val inputs: MainInputs = this
+    val outputs: MainOutputs = this
     private val _searchFilterState: MutableStateFlow<MainSearchFilterState> =
         MutableStateFlow(MainSearchFilterState.Initial)
     override val searchFilterState: StateFlow<MainSearchFilterState>
@@ -49,6 +51,7 @@ class MapViewModel @Inject constructor(
     init {
         initSearchFilter()
         initLocation()
+        getLocation()
     }
 
     fun initSearchFilter() {
@@ -67,7 +70,10 @@ class MapViewModel @Inject constructor(
         )
     }
 
-    fun initLocation()  {
+    fun test()  {
+    }
+
+    fun initLocation() {
         _locationState.value = MainLocationState.Main(
             locationInfo = LocationCoord(
                 coordinate = LatLng(LocationConstants.DEAFAULT_LAT, LocationConstants.DEAFAULT_LON)
@@ -76,12 +82,20 @@ class MapViewModel @Inject constructor(
     }
 
 
-    fun getLocation(context: Context): LatLng {
-        getLocationUseCase()
+    fun getLocation() {
+        if (_locationState.value is MainLocationState.Main) {
+            _locationState.update {
+                if (it is MainLocationState.Main) {
+                    it.copy(locationInfo = LocationCoord(getLocationUseCase()))
+                } else {
+                    it
+                }
+            }
+        }
     }
 
 
-    fun getGeocoder(coords: String) : String = getGeocoderUseCase(coords)
+    fun getGeocoder(coords: String): String = getGeocoderUseCase(coords)
 
     /*fun changeLocation(context: Context) {
         if (_locationState.value is MainLocationState.Main) {

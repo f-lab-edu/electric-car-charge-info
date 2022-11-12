@@ -1,5 +1,5 @@
 package com.example.ecarchargeinfo.map.domain.usecase
 
-interface IGetGeocoderUseCase {
+interface IGeocoderUseCase {
     operator fun invoke(coords: String): String
 }
