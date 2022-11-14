@@ -1,15 +1,21 @@
 package com.example.ecarchargeinfo.map.presentation.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.FragmentMapBinding
 import com.example.ecarchargeinfo.info.presentation.ui.InfoActivity
@@ -27,9 +33,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 
@@ -39,8 +43,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     private lateinit var binding: FragmentMapBinding
     private lateinit var mMap: GoogleMap
     private var mainActivity: MainActivity? = null
+    @Inject
+    lateinit var mapViewModel: MapViewModel
     lateinit var viewModel: MainViewModel
-    @Inject lateinit var viewmodel2 : MapViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +54,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
         viewModel = ViewModelProvider(activity as ViewModelStoreOwner)[MainViewModel::class.java]
-  //      viewmodel2 = ViewModelProvider(activity as ViewModelStoreOwner)[MapViewModel::class.java]
+        //      viewmodel2 = ViewModelProvider(activity as ViewModelStoreOwner)[MapViewModel::class.java]
         gMap = binding.mapview
         gMap.onCreate(savedInstanceState)
         gMap.onResume()
@@ -77,23 +82,23 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     }
 
 
-
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         observeUIState(mMap)
         observeLocation(mMap)
+        mapViewModel.getGeocoder("126.9784147, 37.5666805")
 //        val location: LatLng = viewModel.getLatLng(context as MainActivity)
 
-       /* NewAreaMarker(location)
-        var marker = MarkerOptions().position(location).title("현 위치")
-        mMap.addMarker(marker)?.showInfoWindow()
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, MapConstants.DEFAULT_ZOOM))
-        mMap.setOnMarkerClickListener(this)
-        mMap.setOnCameraIdleListener {
-            val centerLocation = googleMap.projection.visibleRegion.latLngBounds.center
-            NewAreaMarker(centerLocation)
-        }*/
+        /* NewAreaMarker(location)
+         var marker = MarkerOptions().position(location).title("현 위치")
+         mMap.addMarker(marker)?.showInfoWindow()
+         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, MapConstants.DEFAULT_ZOOM))
+         mMap.setOnMarkerClickListener(this)
+         mMap.setOnCameraIdleListener {
+             val centerLocation = googleMap.projection.visibleRegion.latLngBounds.center
+             NewAreaMarker(centerLocation)
+         }*/
         /*mMap.isMyLocationEnabled
         mMap.uiSettings.isMyLocationButtonEnabled*/
 
@@ -127,14 +132,20 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         }
     }
 
-    private fun observeLocation(googleMap: GoogleMap)   {
-        lifecycleScope.launch{
-            repeatOnLifecycle(Lifecycle.State.RESUMED)  {
-                viewmodel2.outputs.locationState.collect()  {
-                    if (it is MainLocationState.Main)   {
-                        var marker = MarkerOptions().position(it.locationInfo.coordinate).title("현 위치")
+    private fun observeLocation(googleMap: GoogleMap) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                mapViewModel.outputs.locationState.collect() {
+                    if (it is MainLocationState.Main) {
+                        var marker =
+                            MarkerOptions().position(it.locationInfo.coordinate).title("현 위치")
                         googleMap.addMarker(marker)?.showInfoWindow()
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it.locationInfo.coordinate, MapConstants.DEFAULT_ZOOM))
+                        googleMap.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                it.locationInfo.coordinate,
+                                MapConstants.DEFAULT_ZOOM
+                            )
+                        )
 
                     }
                 }
@@ -156,6 +167,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
             }
         }.start()
     }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
     }

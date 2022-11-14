@@ -1,14 +1,20 @@
 package com.example.ecarchargeinfo.map.domain.di
 
-import android.content.Context
-import com.example.ecarchargeinfo.map.domain.repository.*
-import com.example.ecarchargeinfo.map.domain.usecase.*
-import com.google.android.gms.maps.GoogleMap
+import com.example.ecarchargeinfo.map.domain.repository.ChangeLocationRepository
+import com.example.ecarchargeinfo.map.domain.repository.ChangeRepositoryImpl
+import com.example.ecarchargeinfo.map.domain.repository.GeocoderRepository
+import com.example.ecarchargeinfo.map.domain.repository.GeocoderRepositoryImpl
+import com.example.ecarchargeinfo.map.domain.repository.LocationRepository
+import com.example.ecarchargeinfo.map.domain.repository.LocationRepositoryImpl
+import com.example.ecarchargeinfo.map.domain.usecase.ChangeLocationUseCase
+import com.example.ecarchargeinfo.map.domain.usecase.GetGeocoderUseCase
+import com.example.ecarchargeinfo.map.domain.usecase.GetLocationUseCase
+import com.example.ecarchargeinfo.map.domain.usecase.IChangeLocationUseCase
+import com.example.ecarchargeinfo.map.domain.usecase.IGeocoderUseCase
+import com.example.ecarchargeinfo.map.domain.usecase.IGetLocationUseCase
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -26,11 +32,11 @@ abstract class MapModule {
 
     @Singleton
     @Binds
-    abstract fun bindLocationRepository(repository: LocationRepositoryImpl) : LocationRepository
+    abstract fun bindLocationRepository(repository: LocationRepositoryImpl): LocationRepository
 
     @Singleton
     @Binds
-    abstract fun bindGeocoderUseCase(useCase: GetGeocoderUseCase) : IGeocoderUseCase
+    abstract fun bindGeocoderUseCase(useCase: GetGeocoderUseCase): IGeocoderUseCase
 
     @Singleton
     @Binds

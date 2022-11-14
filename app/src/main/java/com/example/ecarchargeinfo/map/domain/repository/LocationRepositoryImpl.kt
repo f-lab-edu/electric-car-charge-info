@@ -4,10 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.LocationManager
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

@@ -1,6 +1,5 @@
 package com.example.ecarchargeinfo.map.presentation.viewmodel
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
@@ -20,7 +19,6 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import java.security.PrivateKey
 import javax.inject.Inject
 
 class MapViewModel @Inject constructor(
@@ -70,7 +68,7 @@ class MapViewModel @Inject constructor(
         )
     }
 
-    fun test()  {
+    fun test() {
     }
 
     fun initLocation() {

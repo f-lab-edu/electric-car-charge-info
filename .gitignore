@@ -186,3 +186,4 @@ fabric.properties
 
 
 /app/src/main/res/values/api_info.xml
+/app/src/main/java/com/example/ecarchargeinfo/map/domain/model/NaverConstants.kt

@@ -1,8 +1,8 @@
 package com.example.ecarchargeinfo.main.presentation.binding
 
 import android.view.View
-import com.example.ecarchargeinfo.R
 import androidx.databinding.BindingAdapter
+import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
 import com.google.android.material.slider.RangeSlider
@@ -48,7 +48,6 @@ object BindingAdapter {
             )
         }
     }
-
 
 
 }

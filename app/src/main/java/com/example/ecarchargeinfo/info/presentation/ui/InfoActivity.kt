@@ -2,13 +2,10 @@ package com.example.ecarchargeinfo.info.presentation.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.ActivityInfoBinding
 import com.example.ecarchargeinfo.info.presentation.viewmodel.InfoViewModel
-import com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

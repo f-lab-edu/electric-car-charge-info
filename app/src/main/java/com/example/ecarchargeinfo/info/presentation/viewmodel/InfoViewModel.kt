@@ -14,16 +14,16 @@ class InfoViewModel @Inject constructor(private val infoUseCase: InfoUseCase) : 
 class InfoUseCase @Inject constructor(
     private val repository: InfoRepositoryImpl
 ) {
-    operator fun invoke()   {
+    operator fun invoke() {
         repository.test()
     }
 }
 
-interface InfoRepository{
+interface InfoRepository {
     fun test()
 }
 
-class  InfoRepositoryImpl @Inject constructor() : InfoRepository  {
+class InfoRepositoryImpl @Inject constructor() : InfoRepository {
     override fun test() {
         println("asd")
         println("asd")
