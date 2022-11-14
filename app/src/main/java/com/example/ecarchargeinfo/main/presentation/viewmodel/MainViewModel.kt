@@ -12,6 +12,7 @@ import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
+import com.example.ecarchargeinfo.main.presentation.output.MainLocationState
 import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.DEFAULT_LAT
@@ -41,6 +42,10 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
         MutableStateFlow(MainChargerInfoState.Initial)
     override val chargerInfoState: StateFlow<MainChargerInfoState>
         get() = _chargerInfoState
+    private val _locationState: MutableStateFlow<MainLocationState> =
+        MutableStateFlow(MainLocationState.Initial)
+    override val locationState: StateFlow<MainLocationState>
+        get() = _locationState
 
 
     private fun handleException() = CoroutineExceptionHandler { _, throwable ->
@@ -71,11 +76,13 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
             }
         })
     }
+
     fun test(clientId: String, clientKey: String, coords: String): String {
         val service = sRetrofit.create(IRetrofit::class.java)
-        val call: Call<GeocoderInfo> = service.getGeocoder(clientId,clientKey,coords,"json","addr")
+        val call: Call<GeocoderInfo> =
+            service.getGeocoder(clientId, clientKey, coords, "json", "addr")
         val result = call.execute().body()?.let {
-            (it.results[0].region.area1.name+" "+it.results[0].region.area2.name)
+            (it.results[0].region.area1.name + " " + it.results[0].region.area2.name)
         }
         return result.toString()
     }
@@ -95,6 +102,7 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
                         }
                     }
                 }
+
                 override fun onFailure(call: Call<GeocoderInfo>, t: Throwable) {
                     TODO("Not yet implemented")
                 }
