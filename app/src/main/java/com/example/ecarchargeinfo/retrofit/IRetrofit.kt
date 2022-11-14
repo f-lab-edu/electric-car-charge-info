@@ -15,6 +15,7 @@ interface IRetrofit {
         @Query("serviceKey") serviceKey: String
     ): retrofit2.Call<MapResponse>
 
+
     @GET("https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc")
     fun getGeocoder(
         @Header("X-NCP-APIGW-API-KEY-ID") clientId: String,
@@ -23,4 +24,5 @@ interface IRetrofit {
         @Query("output") output: String,
         @Query("orders") orders: String,
     ): retrofit2.Call<GeocoderInfo>
+
 }

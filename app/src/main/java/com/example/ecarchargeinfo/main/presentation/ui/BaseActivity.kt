@@ -1,4 +1,4 @@
-package com.example.ecarchargeinfo.config
+package com.example.ecarchargeinfo.main.presentation.ui
 
 import android.content.pm.PackageManager
 import android.widget.Toast
@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.main.presentation.helper.PermissionHelper
-import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
 
 open class BaseActivity: AppCompatActivity() {
     override fun onRequestPermissionsResult(
