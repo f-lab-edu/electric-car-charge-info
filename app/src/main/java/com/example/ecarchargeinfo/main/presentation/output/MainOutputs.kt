@@ -9,6 +9,7 @@ interface MainOutputs {
     val searchFilterState: StateFlow<MainSearchFilterState>
     val chargerInfoState: StateFlow<MainChargerInfoState>
     val locationState: StateFlow<MainLocationState>
+    val koreanAddressState: StateFlow<MainKoreanAddressState>
 }
 
 sealed class MainSearchFilterState {
@@ -21,7 +22,13 @@ sealed class MainChargerInfoState {
     data class Main(val chargerInfo: List<ChargerInfo>) : MainChargerInfoState()
 }
 
-sealed class MainLocationState  {
-    object Initial: MainLocationState()
+sealed class MainLocationState {
+    object Initial : MainLocationState()
     data class Main(val locationInfo: LocationCoord) : MainLocationState()
+}
+
+
+sealed class MainKoreanAddressState {
+    object Initial : MainKoreanAddressState()
+    data class Main(val koreanAddressInfo: String) : MainKoreanAddressState()
 }

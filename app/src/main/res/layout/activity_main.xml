@@ -43,7 +43,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
+        <!--<LinearLayout
             android:id="@+id/lay_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -215,7 +215,7 @@
             android:layout_height="45dp"
             android:layout_marginTop="8dp"
             app:layout_constraintRight_toRightOf="@id/btn_1"
-            app:layout_constraintTop_toBottomOf="@id/btn_1" />
+            app:layout_constraintTop_toBottomOf="@id/btn_1" />-->
 
         <!-- <RelativeLayout
              android:id="@+id/lay_charger_info"

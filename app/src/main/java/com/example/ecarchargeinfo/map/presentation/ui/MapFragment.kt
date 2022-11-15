@@ -12,15 +12,15 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.FragmentMapBinding
 import com.example.ecarchargeinfo.info.presentation.ui.InfoActivity
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
+import com.example.ecarchargeinfo.main.presentation.output.MainKoreanAddressState
 import com.example.ecarchargeinfo.main.presentation.output.MainLocationState
+import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
 import com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
@@ -43,6 +43,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     private lateinit var binding: FragmentMapBinding
     private lateinit var mMap: GoogleMap
     private var mainActivity: MainActivity? = null
+
     @Inject
     lateinit var mapViewModel: MapViewModel
     lateinit var viewModel: MainViewModel
@@ -53,17 +54,25 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
-        viewModel = ViewModelProvider(activity as ViewModelStoreOwner)[MainViewModel::class.java]
-        //      viewmodel2 = ViewModelProvider(activity as ViewModelStoreOwner)[MapViewModel::class.java]
+        binding.inputs = mapViewModel.inputs
+        binding.lifecycleOwner = this
+        observeUIState()
         gMap = binding.mapview
         gMap.onCreate(savedInstanceState)
         gMap.onResume()
         gMap.getMapAsync(this)
         return binding.root
     }
-
-    fun initMap() {
-        gMap.getMapAsync(this)
+    private fun observeUIState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                mapViewModel.outputs.searchFilterState.collect {
+                    if (it is MainSearchFilterState.Main) {
+                        binding.searchFilterEntity = it.searchFilters
+                    }
+                }
+            }
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -85,20 +94,33 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.isMyLocationEnabled = true
         observeUIState(mMap)
         observeLocation(mMap)
-        mapViewModel.getGeocoder("126.9784147, 37.5666805")
-//        val location: LatLng = viewModel.getLatLng(context as MainActivity)
+        observeKoreanAddress(mMap)
+        val coordinateForGeocoder = mapViewModel.getCoordinateForGeocoder()
+        mapViewModel.getGeocoder(coordinateForGeocoder)
+
+        //        val location: LatLng = viewModel.getLatLng(context as MainActivity)
 
         /* NewAreaMarker(location)
          var marker = MarkerOptions().position(location).title("현 위치")
          mMap.addMarker(marker)?.showInfoWindow()
          mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, MapConstants.DEFAULT_ZOOM))
-         mMap.setOnMarkerClickListener(this)
-         mMap.setOnCameraIdleListener {
-             val centerLocation = googleMap.projection.visibleRegion.latLngBounds.center
-             NewAreaMarker(centerLocation)
-         }*/
+         */
+
+        mMap.setOnMarkerClickListener(this)
+
+
+
+        mMap.setOnCameraIdleListener {
+            val centerLocation = googleMap.projection.visibleRegion.latLngBounds.center
+            if (mapViewModel.locationState.value is MainLocationState.Main) {
+                if ((mapViewModel.locationState.value as MainLocationState.Main).locationInfo.coordinate != centerLocation) {
+                    println("@@@@@@@" + (mapViewModel.locationState.value as MainLocationState.Main).locationInfo.coordinate.toString())
+                }
+            }
+        }
         /*mMap.isMyLocationEnabled
         mMap.uiSettings.isMyLocationButtonEnabled*/
 
@@ -113,10 +135,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         return true
     }
 
+    private fun observeKoreanAddress(googleMap: GoogleMap) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                mapViewModel.outputs.koreanAddressState.collect() {
+                    if (it is MainKoreanAddressState.Main) {
+                        println(it.koreanAddressInfo + "observe gedocoder")
+                    }
+                }
+            }
+        }
+    }
+
     private fun observeUIState(googleMap: GoogleMap) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.outputs.chargerInfoState.collect() {
+                mapViewModel.outputs.chargerInfoState.collect() {
                     if (it is MainChargerInfoState.Main) {
                         it.chargerInfo.forEach { data ->
                             val location = LatLng(data.lat.toDouble(), data.longi.toDouble())
@@ -137,23 +171,24 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 mapViewModel.outputs.locationState.collect() {
                     if (it is MainLocationState.Main) {
+                        var location = it.locationInfo.coordinate
                         var marker =
-                            MarkerOptions().position(it.locationInfo.coordinate).title("현 위치")
+                            MarkerOptions().position(location)
+                                .title(resources.getString(R.string.now_location))
                         googleMap.addMarker(marker)?.showInfoWindow()
                         googleMap.moveCamera(
                             CameraUpdateFactory.newLatLngZoom(
-                                it.locationInfo.coordinate,
+                                location,
                                 MapConstants.DEFAULT_ZOOM
                             )
                         )
-
                     }
                 }
             }
         }
     }
 
-    fun NewAreaMarker(location: LatLng) {
+    /*fun NewAreaMarker(location: LatLng) {
         Thread {
             try {
                 val krAddress = viewModel.test(
@@ -166,7 +201,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
 
             }
         }.start()
-    }
+    }*/
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -206,5 +241,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         super.onLowMemory()
         gMap.onLowMemory()
     }
+
 
 }

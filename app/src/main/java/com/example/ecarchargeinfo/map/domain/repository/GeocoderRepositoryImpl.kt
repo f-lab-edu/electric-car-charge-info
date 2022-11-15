@@ -12,7 +12,9 @@ import javax.inject.Inject
 class GeocoderRepositoryImpl @Inject constructor(
     private val retrofit: IRetrofit
 ) : GeocoderRepository {
+
     override fun getGeocoder(coords: String): String {
+
         var result = ""
         retrofit.getGeocoder(NAVER_ID, NAVER_KEY, coords, "json", "addr")
             .enqueue(object : Callback<GeocoderInfo> {
@@ -23,8 +25,7 @@ class GeocoderRepositoryImpl @Inject constructor(
                     if (response.isSuccessful) {
                         response.body()?.let {
                             result =
-                                it.results[0].region.area1.name + " " + it.results[0].region.area2.name
-                            println("성공 : get geo  $result")
+                                (it.results[0].region.area1.name + " " + it.results[0].region.area2.name)
                         }
                     }
                 }
@@ -32,7 +33,6 @@ class GeocoderRepositoryImpl @Inject constructor(
                 override fun onFailure(call: Call<GeocoderInfo>, t: Throwable) {
 
                 }
-
             })
         return result
     }

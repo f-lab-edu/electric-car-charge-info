@@ -12,6 +12,8 @@ import com.example.ecarchargeinfo.map.domain.usecase.GetLocationUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.IChangeLocationUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.IGeocoderUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.IGetLocationUseCase
+import com.example.ecarchargeinfo.map.presentation.ui.GeocoderCallBack
+import com.example.ecarchargeinfo.map.presentation.viewmodel.MapViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -45,5 +47,6 @@ abstract class MapModule {
     @Singleton
     @Binds
     abstract fun bindChangeLocationUseCase(useCase: ChangeLocationUseCase): IChangeLocationUseCase
+
 
 }

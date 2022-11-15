@@ -29,19 +29,19 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        observeUIState()
-        binding.inputs = viewModel.inputs
+        //observeUIState()
+        //binding.inputs = viewModel.inputs
         binding.lifecycleOwner = this
         PermissionHelper.checkPermission(this@MainActivity)
         supportFragmentManager.beginTransaction().replace(R.id.main_map, mapFragment, "MAP")
             .commit()
-        binding.btn1.setOnClickListener {
+        /*binding.btn1.setOnClickListener {
             mapFragment.initMap()
-        }
+        }*/
 
     }
 
-    private fun observeUIState() {
+    /*private fun observeUIState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.outputs.searchFilterState.collect {
@@ -51,5 +51,5 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
-    }
+    }*/
 }

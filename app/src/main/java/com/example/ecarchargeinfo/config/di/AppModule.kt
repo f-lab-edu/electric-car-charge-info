@@ -56,5 +56,4 @@ class AppModule {
     fun provideApiService(retrofit: Retrofit): IRetrofit {
         return retrofit.create(IRetrofit::class.java)
     }
-
 }
