@@ -1,10 +1,9 @@
 package com.example.ecarchargeinfo.config.di
 
 import android.content.Context
-import com.example.ecarchargeinfo.R
-import com.example.ecarchargeinfo.config.model.ApplicationConstants.BASE_URL
 import com.example.ecarchargeinfo.retrofit.ChargerInfoApi
 import com.example.ecarchargeinfo.retrofit.GeoCoderApi
+import com.example.ecarchargeinfo.retrofit.NetworkConstants
 import com.google.android.gms.maps.GoogleMap
 import dagger.Module
 import dagger.Provides
@@ -41,24 +40,27 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofitBuilder(okHttpClient: OkHttpClient): Retrofit.Builder {
         return Retrofit.Builder()
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
+    }
+
+    @Singleton
+    @Provides
+    fun provideGeoCoderApi(retrofitBuilder: Retrofit.Builder): GeoCoderApi {
+        return retrofitBuilder
+            .baseUrl(NetworkConstants.NAVER_GEOCODING_URL)
             .build()
-    }
-
-    
-
-    @Singleton
-    @Provides
-    fun provideGeoCoderApi(retrofit: Retrofit): GeoCoderApi {
-        return retrofit.create(GeoCoderApi::class.java)
+            .create(GeoCoderApi::class.java)
     }
 
     @Singleton
     @Provides
-    fun provideChargerInfoApi(retrofit: Retrofit): ChargerInfoApi {
-        return retrofit.create(ChargerInfoApi::class.java)
+    fun provideChargerInfoApi(retrofitBuilder: Retrofit.Builder): ChargerInfoApi {
+        return retrofitBuilder
+            .baseUrl(NetworkConstants.CHARGER_INFO_URL)
+            .build()
+            .create(ChargerInfoApi::class.java)
     }
 }
