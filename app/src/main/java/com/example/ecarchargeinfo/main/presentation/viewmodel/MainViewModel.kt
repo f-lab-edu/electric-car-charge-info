@@ -1,34 +1,6 @@
 package com.example.ecarchargeinfo.main.presentation.viewmodel
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.location.LocationManager
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.ecarchargeinfo.config.ApplicationClass
-import com.example.ecarchargeinfo.config.ApplicationClass.Companion.sRetrofit
-import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
-import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
-import com.example.ecarchargeinfo.main.domain.model.SearchFilter
-import com.example.ecarchargeinfo.main.presentation.input.MainInputs
-import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
-import com.example.ecarchargeinfo.main.presentation.output.MainKoreanAddressState
-import com.example.ecarchargeinfo.main.presentation.output.MainLocationState
-import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
-import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
-import com.example.ecarchargeinfo.map.domain.model.MapConstants.DEFAULT_LAT
-import com.example.ecarchargeinfo.map.domain.model.MapConstants.DEFAULT_LONG
-import com.example.ecarchargeinfo.retrofit.IRetrofit
-import com.example.ecarchargeinfo.retrofit.model.charger.MapResponse
-import com.example.ecarchargeinfo.retrofit.model.geocoder.GeocoderInfo
-import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainViewModel : ViewModel(){
    /* val inputs: MainInputs = this

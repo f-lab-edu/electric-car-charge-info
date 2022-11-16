@@ -6,7 +6,6 @@ import javax.inject.Inject
 class GetGeocoderUseCase @Inject constructor(
     private val geocoderRepository: GeocoderRepository
 ) : IGeocoderUseCase {
-    override fun invoke(coords: String): String =
+    override suspend fun invoke(coords: String): String =
         geocoderRepository.getGeocoder(coords)
-
 }

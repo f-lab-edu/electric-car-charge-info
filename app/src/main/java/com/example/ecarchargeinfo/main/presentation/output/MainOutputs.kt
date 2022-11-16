@@ -3,6 +3,7 @@ package com.example.ecarchargeinfo.main.presentation.output
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
 import com.example.ecarchargeinfo.map.domain.model.LocationCoord
 import com.example.ecarchargeinfo.retrofit.model.charger.ChargerInfo
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface MainOutputs {
@@ -10,6 +11,7 @@ interface MainOutputs {
     val chargerInfoState: StateFlow<MainChargerInfoState>
     val locationState: StateFlow<MainLocationState>
     val koreanAddressState: StateFlow<MainKoreanAddressState>
+    val geocoderEvent: SharedFlow<String>
 }
 
 sealed class MainSearchFilterState {

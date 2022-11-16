@@ -46,6 +46,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
 
     @Inject
     lateinit var mapViewModel: MapViewModel
+
     lateinit var viewModel: MainViewModel
 
     override fun onCreateView(
@@ -98,8 +99,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         observeUIState(mMap)
         observeLocation(mMap)
         observeKoreanAddress(mMap)
-        val coordinateForGeocoder = mapViewModel.getCoordinateForGeocoder()
-        mapViewModel.getGeocoder(coordinateForGeocoder)
+        mapViewModel.updateGeocoding()
 
         //        val location: LatLng = viewModel.getLatLng(context as MainActivity)
 

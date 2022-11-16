@@ -3,7 +3,8 @@ package com.example.ecarchargeinfo.config.di
 import android.content.Context
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.config.model.ApplicationConstants.BASE_URL
-import com.example.ecarchargeinfo.retrofit.IRetrofit
+import com.example.ecarchargeinfo.retrofit.ChargerInfoApi
+import com.example.ecarchargeinfo.retrofit.GeoCoderApi
 import com.google.android.gms.maps.GoogleMap
 import dagger.Module
 import dagger.Provides
@@ -29,9 +30,6 @@ class AppModule {
     @Provides
     fun provideGoogleMap(@ApplicationContext googleMap: GoogleMap) = googleMap
 
-    @Provides
-    fun provideBaseUrl() = R.string.BASE_URL.toString()
-
     @Singleton
     @Provides
     fun provideOkHttpClient() =
@@ -46,14 +44,19 @@ class AppModule {
     fun provideRetrofit(okHttpClient: OkHttpClient, baseUrl: String): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
     @Singleton
     @Provides
-    fun provideApiService(retrofit: Retrofit): IRetrofit {
-        return retrofit.create(IRetrofit::class.java)
+    fun provideGeoCoderApi(retrofit: Retrofit): GeoCoderApi {
+        return retrofit.create(GeoCoderApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideChargerInfoApi(retrofit: Retrofit): ChargerInfoApi {
+        return retrofit.create(ChargerInfoApi::class.java)
     }
 }
