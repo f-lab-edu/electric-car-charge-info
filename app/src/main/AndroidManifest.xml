@@ -21,7 +21,6 @@
 
 
     <application
-        android:requestLegacyExternalStorage="true"
         android:name=".config.ApplicationClass"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"

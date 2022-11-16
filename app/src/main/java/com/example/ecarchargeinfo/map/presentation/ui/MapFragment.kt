@@ -121,8 +121,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                 }
             }
         }
-        /*mMap.isMyLocationEnabled
-        mMap.uiSettings.isMyLocationButtonEnabled*/
+        mMap.uiSettings.isMyLocationButtonEnabled
 
     }
 

@@ -18,9 +18,9 @@ import com.example.ecarchargeinfo.map.domain.usecase.GetGeocoderUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.GetLocationUseCase
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 
@@ -29,7 +29,7 @@ class MapViewModel @Inject constructor(
     private val getGeocoderUseCase: GetGeocoderUseCase
     //private val changeLocationUseCase: ChangeLocationUseCase
 ) :
-    ViewModel(), MainInputs, MainOutputs  {
+    ViewModel(), MainInputs, MainOutputs {
     val inputs: MainInputs = this
     val outputs: MainOutputs = this
 
