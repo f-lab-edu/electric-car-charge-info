@@ -1,6 +1,6 @@
-package com.example.ecarchargeinfo.map.domain.usecase
+package com.example.ecarchargeinfo.map.domain.usecase.geocoder
 
-import com.example.ecarchargeinfo.map.domain.repository.GeocoderRepository
+import com.example.ecarchargeinfo.map.domain.repository.geocoder.GeocoderRepository
 import javax.inject.Inject
 
 class GetGeocoderUseCase @Inject constructor(

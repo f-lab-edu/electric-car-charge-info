@@ -18,11 +18,9 @@ import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.FragmentMapBinding
 import com.example.ecarchargeinfo.info.presentation.ui.InfoActivity
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
-import com.example.ecarchargeinfo.main.presentation.output.MainKoreanAddressState
 import com.example.ecarchargeinfo.main.presentation.output.MainLocationState
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
-import com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
 import com.example.ecarchargeinfo.map.presentation.viewmodel.MapViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -47,8 +45,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     @Inject
     lateinit var mapViewModel: MapViewModel
 
-    lateinit var viewModel: MainViewModel
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -64,6 +60,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         gMap.getMapAsync(this)
         return binding.root
     }
+
     private fun observeUIState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -98,20 +95,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         mMap.isMyLocationEnabled = true
         observeUIState(mMap)
         observeLocation(mMap)
-        observeKoreanAddress(mMap)
+        observeGeocoder()
         mapViewModel.updateGeocoding()
 
-        //        val location: LatLng = viewModel.getLatLng(context as MainActivity)
-
-        /* NewAreaMarker(location)
-         var marker = MarkerOptions().position(location).title("현 위치")
-         mMap.addMarker(marker)?.showInfoWindow()
-         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, MapConstants.DEFAULT_ZOOM))
-         */
-
         mMap.setOnMarkerClickListener(this)
-
-
+        mMap.uiSettings.isMyLocationButtonEnabled
 
         mMap.setOnCameraIdleListener {
             val centerLocation = googleMap.projection.visibleRegion.latLngBounds.center
@@ -121,7 +109,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                 }
             }
         }
-        mMap.uiSettings.isMyLocationButtonEnabled
 
     }
 
@@ -134,17 +121,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         return true
     }
 
-    private fun observeKoreanAddress(googleMap: GoogleMap) {
+    private fun observeGeocoder()   {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                mapViewModel.outputs.koreanAddressState.collect() {
-                    if (it is MainKoreanAddressState.Main) {
-                        println(it.koreanAddressInfo + "observe gedocoder")
-                    }
+            repeatOnLifecycle(Lifecycle.State.RESUMED)  {
+                mapViewModel.outputs.geocoderEvent.collect()    {
+                    mapViewModel.updateChargerInfo(it)
                 }
             }
         }
     }
+
 
     private fun observeUIState(googleMap: GoogleMap) {
         lifecycleScope.launch {

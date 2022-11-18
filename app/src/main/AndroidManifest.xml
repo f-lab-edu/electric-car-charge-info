@@ -19,7 +19,6 @@
         android:protectionLevel="signature" />
 
 
-
     <application
         android:name=".config.ApplicationClass"
         android:allowBackup="true"
@@ -27,11 +26,11 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.Light.NoActionBar"
         android:usesCleartextTraffic="true"
-        android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
 
         <!--
@@ -48,7 +47,11 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="@string/naver_client_id"/>
+            android:value="@string/naver_client_id" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <activity
             android:name=".main.presentation.ui.MainActivity"
@@ -62,8 +65,7 @@
 
         <activity
             android:name=".info.presentation.ui.InfoActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false"></activity>
     </application>
 
 </manifest>

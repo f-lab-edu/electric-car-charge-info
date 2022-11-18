@@ -1,4 +1,4 @@
-package com.example.ecarchargeinfo.map.domain.repository
+package com.example.ecarchargeinfo.map.domain.repository.geocoder
 
 import com.example.ecarchargeinfo.map.domain.model.NaverConstants.NAVER_ID
 import com.example.ecarchargeinfo.map.domain.model.NaverConstants.NAVER_KEY

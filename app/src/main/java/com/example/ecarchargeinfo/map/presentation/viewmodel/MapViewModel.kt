@@ -8,14 +8,14 @@ import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
-import com.example.ecarchargeinfo.main.presentation.output.MainKoreanAddressState
 import com.example.ecarchargeinfo.main.presentation.output.MainLocationState
 import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.example.ecarchargeinfo.map.domain.model.LocationConstants
 import com.example.ecarchargeinfo.map.domain.model.LocationCoord
-import com.example.ecarchargeinfo.map.domain.usecase.GetGeocoderUseCase
-import com.example.ecarchargeinfo.map.domain.usecase.GetLocationUseCase
+import com.example.ecarchargeinfo.map.domain.usecase.chargerinfo.IChargerInfoUseCase
+import com.example.ecarchargeinfo.map.domain.usecase.geocoder.IGeocoderUseCase
+import com.example.ecarchargeinfo.map.domain.usecase.location.ILocationUseCase
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.channels.BufferOverflow
@@ -29,9 +29,9 @@ import javax.inject.Inject
 
 
 class MapViewModel @Inject constructor(
-    private val getLocationUseCase: GetLocationUseCase,
-    private val getGeocoderUseCase: GetGeocoderUseCase
-    //private val changeLocationUseCase: ChangeLocationUseCase
+    private val getLocationUseCase: ILocationUseCase,
+    private val getGeocoderUseCase: IGeocoderUseCase,
+    private val getChargerInfoUseCase: IChargerInfoUseCase
 ) :
     ViewModel(), MainInputs, MainOutputs {
     val inputs: MainInputs = this
@@ -49,15 +49,15 @@ class MapViewModel @Inject constructor(
         MutableStateFlow(MainLocationState.Initial)
     override val locationState: StateFlow<MainLocationState>
         get() = _locationState
-    private val _koreanAddressState: MutableStateFlow<MainKoreanAddressState> =
-        MutableStateFlow(MainKoreanAddressState.Initial)
-    override val koreanAddressState: StateFlow<MainKoreanAddressState>
-        get() = _koreanAddressState
-
     private val _geocoderEvent: MutableSharedFlow<String> =
-        MutableSharedFlow(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+        MutableSharedFlow(
+            replay = 0,
+            extraBufferCapacity = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST
+        )
     override val geocoderEvent: SharedFlow<String>
         get() = _geocoderEvent
+
 
     private fun handleException() = CoroutineExceptionHandler { _, throwable ->
         Log.e("ECarChargeInfo", throwable.message ?: "")
@@ -67,27 +67,11 @@ class MapViewModel @Inject constructor(
         initSearchFilter()
         initLocation()
         getLocation()
-        initKoreanAddress()
-        initGeocoder()
+
     }
 
-    private fun initGeocoder() {
-        viewModelScope.launch {
-            geocoderEvent.collect { address ->
-                if (_koreanAddressState.value is MainKoreanAddressState.Main) {
-                    _koreanAddressState.update {
-                        if (it is MainKoreanAddressState.Main) {
-                            it.copy(koreanAddressInfo = address)
-                        } else {
-                            it
-                        }
-                    }
-                }
-            }
-        }
-    }
 
-    fun getLocation() {
+    private fun getLocation() {
         if (_locationState.value is MainLocationState.Main) {
             _locationState.update {
                 if (it is MainLocationState.Main) {
@@ -101,15 +85,24 @@ class MapViewModel @Inject constructor(
 
     private fun getCoordinate(): String =
         if (locationState.value is MainLocationState.Main) {
-                ((locationState.value as MainLocationState.Main).locationInfo.coordinate.longitude.toString()) +
-                        "," + ((locationState.value as MainLocationState.Main).locationInfo.coordinate.latitude.toString())
+            ((locationState.value as MainLocationState.Main).locationInfo.coordinate.longitude.toString()) +
+                    "," + ((locationState.value as MainLocationState.Main).locationInfo.coordinate.latitude.toString())
         } else {
             ""
         }
 
     fun updateGeocoding() {
         viewModelScope.launch {
-            getGeocoderUseCase(getCoordinate())
+            _geocoderEvent.emit(getGeocoderUseCase(getCoordinate()))
+        }
+    }
+
+    fun updateChargerInfo(address: String) {
+        println(geocoderEvent)
+        viewModelScope.launch {
+            _chargerInfoState.value = MainChargerInfoState.Main(
+                getChargerInfoUseCase(address)
+            )
         }
     }
 
@@ -233,20 +226,11 @@ class MapViewModel @Inject constructor(
     private fun initLocation() {
         _locationState.value = MainLocationState.Main(
             locationInfo = LocationCoord(
-                coordinate = LatLng(LocationConstants.DEAFAULT_LAT, LocationConstants.DEAFAULT_LON)
+                coordinate = LatLng(
+                    LocationConstants.DEAFAULT_LAT,
+                    LocationConstants.DEAFAULT_LON
+                )
             )
         )
     }
-
-
-    private fun initKoreanAddress() {
-        _koreanAddressState.value = MainKoreanAddressState.Main(
-            koreanAddressInfo = LocationConstants.SEOUL
-        )
-    }
-
-    fun text(result: String) {
-        println(result)
-    }
-
 }

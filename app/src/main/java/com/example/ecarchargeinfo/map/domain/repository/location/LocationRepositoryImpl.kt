@@ -1,4 +1,4 @@
-package com.example.ecarchargeinfo.map.domain.repository
+package com.example.ecarchargeinfo.map.domain.repository.location
 
 import android.annotation.SuppressLint
 import android.content.Context

@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 interface ChargerInfoApi {
     @GET("/api/EvInfoServiceV2/v1/getEvSearchList")
-    suspend fun getInfo(
+    suspend fun getChargerInfo(
         @Query("page") page: Int,
         @Query("perPage") perPage: Int,
         @Query("cond[addr::LIKE]") cond: String,

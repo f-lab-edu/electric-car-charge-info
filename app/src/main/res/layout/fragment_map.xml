@@ -27,6 +27,7 @@
             name="vm"
             type="com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel" />
     </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -58,12 +59,12 @@
 
                     <Button
                         android:id="@+id/btn_combo"
+                        background="@{searchFilterEntity.combo}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
-                        android:onClick="@{() -> inputs.onComboClick()}"
-                        background= "@{searchFilterEntity.combo}"
                         android:background="@drawable/custom_button_true"
                         android:lineSpacingExtra="2dp"
+                        android:onClick="@{() -> inputs.onComboClick()}"
                         android:text="@string/combo"
                         android:textColor="@color/white"
                         android:textSize="12sp"
@@ -72,12 +73,12 @@
 
                     <Button
                         android:id="@+id/btn_demo"
-                        android:onClick="@{() -> inputs.onDemoClick()}"
-                        background= "@{searchFilterEntity.demo}"
+                        background="@{searchFilterEntity.demo}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_true"
                         android:lineSpacingExtra="2dp"
+                        android:onClick="@{() -> inputs.onDemoClick()}"
                         android:text="@string/demo"
                         android:textColor="@color/white"
                         android:textSize="12sp"
@@ -86,12 +87,12 @@
 
                     <Button
                         android:id="@+id/btn_ac"
-                        android:onClick="@{() -> inputs.onACClick()}"
-                        background= "@{searchFilterEntity.ac}"
+                        background="@{searchFilterEntity.ac}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_true"
                         android:lineSpacingExtra="2dp"
+                        android:onClick="@{() -> inputs.onACClick()}"
                         android:text="@string/ac"
                         android:textColor="@color/white"
                         android:textSize="12sp"
@@ -100,12 +101,12 @@
 
                     <Button
                         android:id="@+id/btn_slow"
-                        android:onClick="@{() -> inputs.onSlowClick()}"
-                        background= "@{searchFilterEntity.slow}"
+                        background="@{searchFilterEntity.slow}"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_false"
                         android:lineSpacingExtra="2dp"
+                        android:onClick="@{() -> inputs.onSlowClick()}"
                         android:text="@string/slow"
                         android:textColor="@color/white"
                         android:textSize="12sp"
@@ -124,8 +125,7 @@
                         android:textColor="@color/white"
                         android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/btn_slow"
-                        />
+                        app:layout_constraintStart_toEndOf="@id/btn_slow" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
