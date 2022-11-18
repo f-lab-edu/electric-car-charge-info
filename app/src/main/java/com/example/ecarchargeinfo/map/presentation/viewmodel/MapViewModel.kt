@@ -16,7 +16,10 @@ import com.example.ecarchargeinfo.map.domain.model.LocationCoord
 import com.example.ecarchargeinfo.map.domain.usecase.chargerinfo.IChargerInfoUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.geocoder.IGeocoderUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.location.ILocationUseCase
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -58,6 +61,7 @@ class MapViewModel @Inject constructor(
     override val geocoderEvent: SharedFlow<String>
         get() = _geocoderEvent
 
+    private val marker: ArrayList<Marker> = ArrayList<Marker>()
 
     private fun handleException() = CoroutineExceptionHandler { _, throwable ->
         Log.e("ECarChargeInfo", throwable.message ?: "")
@@ -66,12 +70,9 @@ class MapViewModel @Inject constructor(
     init {
         initSearchFilter()
         initLocation()
-        getLocation()
-
     }
 
-
-    private fun getLocation() {
+    fun getLocation() {
         if (_locationState.value is MainLocationState.Main) {
             _locationState.update {
                 if (it is MainLocationState.Main) {
@@ -91,9 +92,11 @@ class MapViewModel @Inject constructor(
             ""
         }
 
-    fun updateGeocoding() {
-        viewModelScope.launch {
-            _geocoderEvent.emit(getGeocoderUseCase(getCoordinate()))
+    fun updateGeocoding(address: String) {
+        if (address != "") {
+            viewModelScope.launch {
+                _geocoderEvent.emit(getGeocoderUseCase(address))
+            }
         }
     }
 

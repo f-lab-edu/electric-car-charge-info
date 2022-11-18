@@ -3,12 +3,16 @@ package com.example.ecarchargeinfo.map.presentation.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.scale
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -27,9 +31,11 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.naver.maps.map.internal.util.a.b
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -96,18 +102,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         observeUIState(mMap)
         observeLocation(mMap)
         observeGeocoder()
-        mapViewModel.updateGeocoding()
-
+        mapViewModel.getLocation()
+        mapViewModel.updateGeocoding("")
         mMap.setOnMarkerClickListener(this)
         mMap.uiSettings.isMyLocationButtonEnabled
 
         mMap.setOnCameraIdleListener {
             val centerLocation = googleMap.projection.visibleRegion.latLngBounds.center
-            if (mapViewModel.locationState.value is MainLocationState.Main) {
-                if ((mapViewModel.locationState.value as MainLocationState.Main).locationInfo.coordinate != centerLocation) {
-                    println("@@@@@@@" + (mapViewModel.locationState.value as MainLocationState.Main).locationInfo.coordinate.toString())
-                }
-            }
+            mapViewModel.updateGeocoding(
+                centerLocation.longitude.toString() + ", " + centerLocation.latitude.toString()
+            )
         }
 
     }
@@ -121,10 +125,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         return true
     }
 
-    private fun observeGeocoder()   {
+    private fun observeGeocoder() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED)  {
-                mapViewModel.outputs.geocoderEvent.collect()    {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                mapViewModel.outputs.geocoderEvent.collect() {
                     mapViewModel.updateChargerInfo(it)
                 }
             }
@@ -137,19 +141,39 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 mapViewModel.outputs.chargerInfoState.collect() {
                     if (it is MainChargerInfoState.Main) {
+                        removeMarker()
                         it.chargerInfo.forEach { data ->
                             val location = LatLng(data.lat.toDouble(), data.longi.toDouble())
-                            var marker = MarkerOptions()
+                            /*var marker = MarkerOptions()
                                 .position(location)
                                 .title(data.csNm)
                                 .snippet(data.addr)
-                            googleMap.addMarker(marker)
+                            googleMap.addMarker(marker)*/
+                            val t = resources.getDrawable(R.drawable.volt)
+                            val b = t.toBitmap().scale(150, 150, false)
+                            val marker = MarkerOptions()
+                                .position(location)
+                                .title(data.csNm)
+                                .icon(BitmapDescriptorFactory.fromBitmap(b))
+                            markerArray.add(mMap.addMarker(marker)!!)
                         }
+
                     }
                 }
             }
         }
     }
+
+    private fun removeMarker() {
+        markerArray.let {
+            it.forEach { marker ->
+                marker.remove()
+            }
+        }
+    }
+
+
+    private val markerArray = ArrayList<Marker>()
 
     private fun observeLocation(googleMap: GoogleMap) {
         lifecycleScope.launch {
