@@ -1,6 +1,7 @@
 package com.example.ecarchargeinfo.config.di
 
 import android.content.Context
+import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
 import com.example.ecarchargeinfo.retrofit.ChargerInfoApi
 import com.example.ecarchargeinfo.retrofit.GeoCoderApi
 import com.example.ecarchargeinfo.retrofit.NetworkConstants
@@ -28,6 +29,10 @@ class AppModule {
     @Singleton
     @Provides
     fun provideGoogleMap(@ApplicationContext googleMap: GoogleMap) = googleMap
+
+    @Singleton
+    @Provides
+    fun provideMapFragment(@ApplicationContext mapFragment: MapFragment) = mapFragment
 
     @Singleton
     @Provides

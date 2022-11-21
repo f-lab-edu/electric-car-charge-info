@@ -1,7 +1,7 @@
 package com.example.ecarchargeinfo.info.presentation.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.ActivityInfoBinding

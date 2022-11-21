@@ -46,5 +46,4 @@ abstract class MapModule {
     @Binds
     abstract fun bindChangeLocationUseCase(useCase: GetChargerInfoUseCase): IChargerInfoUseCase
 
-
 }
