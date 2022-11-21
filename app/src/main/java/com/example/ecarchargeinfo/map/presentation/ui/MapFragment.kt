@@ -105,7 +105,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        test()
+        initCluster()
         observeUIState(mMap)
         observeLocation(mMap)
         observeGeocoder()
@@ -115,7 +115,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         mapViewModel.getLocation()
     }
 
-    fun test() {
+    fun initCluster() {
         clusterManager = MyClusterManager(requireContext(), mMap, this)
         ClusterRenderer(requireContext(), mMap, clusterManager)
         mMap.setOnMarkerClickListener(clusterManager)
