@@ -18,6 +18,7 @@ class MyItem(
     private val _icon: BitmapDescriptor,
     private val _addr: String,
     private val _chargeTp: String,
+    private val _cpTp: String
 
 ) : ClusterItem {
 
@@ -38,6 +39,7 @@ class MyItem(
     fun getIcon(): BitmapDescriptor = _icon
     fun getAddr(): String = _addr
     fun getChargeTp(): String = _chargeTp
+    fun getCptp(): String = _cpTp
 }
 
 
@@ -54,6 +56,7 @@ class ClusterRenderer(
         markerOptions.snippet(item.snippet)
         markerOptions.title(item.title)
         markerOptions.visible(true)
+
         super.onBeforeClusterItemRendered(item, markerOptions)
     }
 }

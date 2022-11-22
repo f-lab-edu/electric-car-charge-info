@@ -35,17 +35,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         tools:context=".MapFragment">
 
         <LinearLayout
             android:id="@+id/lay_appbar"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <EditText
                 android:layout_width="match_parent"
@@ -152,49 +151,55 @@
             app:layout_constraintTop_toBottomOf="@id/lay_appbar" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
             visible="@{chargeDetailEntity.visible}"
+            android:layout_width="match_parent"
             android:layout_height="100dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:background="@color/white"
-            >
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
             <ImageView
                 android:id="@+id/iv_detail_image"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="12dp"
-                android:layout_marginStart="16dp"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                android:src="@drawable/volt"/>
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/volt"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_detail_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="12"
+                android:layout_marginStart="8dp"
+                android:text="@{chargeDetailEntity.markerInfo.cpNm}"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@+id/iv_detail_image"
                 app:layout_constraintTop_toTopOf="@+id/iv_detail_image"
-                android:layout_marginStart="8dp"/>
+                tools:text="11111111111111111111111" />
 
             <TextView
+                android:id="@+id/tv_detail_addr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="123123"
-                android:textSize="14sp"
                 android:layout_marginTop="4dp"
+                android:text="@{chargeDetailEntity.markerInfo.addr}"
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="@+id/tv_detail_title"
-                app:layout_constraintTop_toBottomOf="@+id/tv_detail_title" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_detail_title"
+                tools:text="11111111111111111111111" />
 
+            <Button
+                android:id="@+id/btn_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

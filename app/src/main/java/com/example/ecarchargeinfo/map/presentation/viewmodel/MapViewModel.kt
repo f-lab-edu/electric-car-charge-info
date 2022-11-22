@@ -1,8 +1,11 @@
 package com.example.ecarchargeinfo.map.presentation.viewmodel
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ecarchargeinfo.info.presentation.ui.InfoActivity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
@@ -11,11 +14,13 @@ import com.example.ecarchargeinfo.main.presentation.output.MainChargerDetailStat
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
 import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
+import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
 import com.example.ecarchargeinfo.map.domain.entity.ChargerDetailEntity
 import com.example.ecarchargeinfo.map.domain.entity.MarkerInfo
 import com.example.ecarchargeinfo.map.domain.usecase.chargerinfo.IChargerInfoUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.geocoder.IGeocoderUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.location.ILocationUseCase
+import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.channels.BufferOverflow
@@ -61,6 +66,10 @@ class MapViewModel @Inject constructor(
 
     private fun handleException() = CoroutineExceptionHandler { _, throwable ->
         Log.e("ECarChargeInfo", throwable.message ?: "")
+    }
+
+    fun clearKoreaAddress() {
+        koreaAddressArray.clear()
     }
 
     init {
@@ -260,5 +269,4 @@ class MapViewModel @Inject constructor(
             )
         )
     }
-
 }

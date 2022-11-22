@@ -2,6 +2,7 @@ package com.example.ecarchargeinfo.map.presentation.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
@@ -18,14 +19,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.FragmentMapBinding
+import com.example.ecarchargeinfo.info.presentation.ui.InfoActivity
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerDetailState
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
+import com.example.ecarchargeinfo.map.domain.entity.MarkerInfo
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.IMAGE_HEIGHT
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.IMAGE_WIDTH
-import com.example.ecarchargeinfo.map.domain.entity.MarkerInfo
 import com.example.ecarchargeinfo.map.domain.util.ClusterRenderer
 import com.example.ecarchargeinfo.map.domain.util.MyClusterManager
 import com.example.ecarchargeinfo.map.domain.util.MyItem
@@ -64,8 +66,17 @@ class MapFragment : Fragment(), OnMapReadyCallback,
         binding.lifecycleOwner = this
         gMap = binding.mapview
         gMap.onCreate(savedInstanceState)
-        gMap.onResume()
         gMap.getMapAsync(this)
+        binding.btnDetail?.setOnClickListener {
+            clusterManager.removeItems(allMarker)
+            clusterManager.removeItems(demoMarker)
+            clusterManager.removeItems(comboMarker)
+            clusterManager.removeItems(acMarker)
+            clusterManager.cluster()
+            val intent = Intent(activity, InfoActivity::class.java)
+            intent.putExtra("address", binding.tvDetailAddr?.text.toString())
+            startActivity(intent)
+        }
         return binding.root
     }
 
@@ -88,31 +99,41 @@ class MapFragment : Fragment(), OnMapReadyCallback,
                     if (it is MainSearchFilterState.Main) {
                         binding.searchFilterEntity = it.searchFilters
                         it.searchFilters.let {
-
                             if (it.combo) {
                                 clusterManager.addItems(comboMarker)
-                                clusterManager.cluster()
+
                             } else {
+                                allMarkerTest.forEach {
+                                    if (it.getCptp() == "7")    {
+                                        comboMarker.add(it)
+                                    }
+                                }
                                 clusterManager.removeItems(comboMarker)
-                                clusterManager.cluster()
                             }
 
                             if (it.demo) {
                                 clusterManager.addItems(demoMarker)
-                                clusterManager.cluster()
                             } else {
+                                allMarkerTest.forEach {
+                                    if (it.getCptp() == "5")    {
+                                        comboMarker.add(it)
+                                    }
+                                }
                                 clusterManager.removeItems(demoMarker)
-                                clusterManager.cluster()
                             }
 
                             if (it.ac) {
                                 clusterManager.addItems(acMarker)
-                                clusterManager.cluster()
                             } else {
+                                allMarkerTest.forEach {
+                                    if (it.getCptp() == "6")    {
+                                        comboMarker.add(it)
+                                    }
+                                }
                                 clusterManager.removeItems(acMarker)
-                                clusterManager.cluster()
                             }
                         }
+                        clusterManager.cluster()
                     }
                 }
             }
@@ -149,10 +170,9 @@ class MapFragment : Fragment(), OnMapReadyCallback,
             )
         )
         mMap.isMyLocationEnabled = true
-
+        initCluster()
         observeChargerDetailState()
         observeChargerInfoState()
-        initCluster()
         observeGeocoder()
         observeUIState()
         mMap.setOnMyLocationButtonClickListener(this)
@@ -185,7 +205,8 @@ class MapFragment : Fragment(), OnMapReadyCallback,
                     MapConstants.DEFAULT_ZOOM
                 )
             )
-            mapViewModel.onMarkerClick(visible = true,
+            mapViewModel.onMarkerClick(
+                visible = true,
                 MarkerInfo(
                     it.title,
                     it.getAddr(),
@@ -196,7 +217,6 @@ class MapFragment : Fragment(), OnMapReadyCallback,
             return@setOnClusterItemClickListener false
         }
         mMap.setInfoWindowAdapter(clusterManager.markerManager)
-        //mMap.setOnInfoWindowClickListener(this)
     }
 
     private fun observeGeocoder() {
@@ -214,7 +234,7 @@ class MapFragment : Fragment(), OnMapReadyCallback,
     private val comboMarker = ArrayList<MyItem>()
     private val demoMarker = ArrayList<MyItem>()
     private val acMarker = ArrayList<MyItem>()
-
+    private val allMarkerTest = mutableSetOf<MyItem>()
 
     private fun observeChargerInfoState() {
         lifecycleScope.launch {
@@ -224,7 +244,41 @@ class MapFragment : Fragment(), OnMapReadyCallback,
                         it.chargerInfo.let {
                             it.forEachIndexed { index, data ->
                                 if (index > 0) {
-                                    if (it.get(index - 1).csNm == data.csNm)
+                                    if (it[index - 1].csNm == data.csNm)
+                                        return@forEachIndexed
+                                }
+
+                                val location = LatLng(data.lat.toDouble(), data.longi.toDouble())
+                                val markerImage =
+                                    ResourcesCompat.getDrawable(
+                                        resources,
+                                        when (data.chargeTp) {
+                                            "1" -> R.drawable.volt_slow
+                                            else -> R.drawable.volt
+                                        },
+                                        null
+                                    ) as BitmapDrawable
+                                val resizeImage =
+                                    Bitmap.createScaledBitmap(
+                                        markerImage.bitmap,
+                                        IMAGE_WIDTH,
+                                        IMAGE_HEIGHT,
+                                        false
+                                    )
+                                val item = MyItem(
+                                    location,
+                                    data.csNm,
+                                    data.cpStat,
+                                    BitmapDescriptorFactory.fromBitmap((resizeImage)),
+                                    data.addr,
+                                    data.chargeTp,
+                                    data.cpTp
+                                )
+                                allMarkerTest.add(item)
+
+
+                                /*allMarkerTest.forEach {
+                                    if (it.title == data.csNm)
                                         return@forEachIndexed
                                 }
                                 val location = LatLng(data.lat.toDouble(), data.longi.toDouble())
@@ -252,6 +306,7 @@ class MapFragment : Fragment(), OnMapReadyCallback,
                                     data.addr,
                                     data.chargeTp
                                 )
+
                                 when (data.cpTp) {
                                     "7" -> {
                                         if (!comboMarker.contains(item)) {
@@ -276,21 +331,15 @@ class MapFragment : Fragment(), OnMapReadyCallback,
                                             allMarker.add(item)
                                         }
                                     }
-                                }
+                                }*/
                             }
+                            allMarkerTest.forEach {
+                                println("@@@@" + it.title)
+                                println("@@" + it.getAddr())
+                            }
+                            clusterManager.addItems(allMarkerTest)
+                            clusterManager.cluster()
                         }
-                        clusterManager.apply {
-                            clearItems()
-                            allMarker.distinct()
-                            comboMarker.distinct()
-                            demoMarker.distinct()
-                            acMarker.distinct()
-                            addItems(comboMarker)
-                            addItems(demoMarker)
-                            addItems(acMarker)
-                            addItems(allMarker)
-                        }
-                        clusterManager.cluster()
                     }
                 }
             }
@@ -322,6 +371,13 @@ class MapFragment : Fragment(), OnMapReadyCallback,
     }
 
     override fun onPause() {
+        clusterManager.clearItems()
+        allMarker.clear()
+        comboMarker.clear()
+        demoMarker.clear()
+        acMarker.clear()
+        allMarkerTest.clear()
+        mapViewModel.clearKoreaAddress()
         super.onPause()
         gMap.onPause()
     }
