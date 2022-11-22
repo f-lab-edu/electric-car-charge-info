@@ -9,6 +9,7 @@ import com.example.ecarchargeinfo.main.presentation.helper.PermissionHelper
 import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
 
 open class BaseActivity: AppCompatActivity() {
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

@@ -25,4 +25,6 @@
     <string name="info_cant_charge">충전불가능</string>
     <string name="info_last_charge_time">0시간 0분 전 시작</string>
 
+    <string name="now_location">현 위치</string>
+
 </resources>

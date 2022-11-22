@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import javax.inject.Inject
 
 class InfoViewModel @Inject constructor(private val infoUseCase: InfoUseCase) : ViewModel() {
-    fun test() {
-        infoUseCase()
-    }
+
 
 }
 

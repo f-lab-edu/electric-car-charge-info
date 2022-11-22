@@ -1,40 +1,13 @@
 package com.example.ecarchargeinfo.main.presentation.viewmodel
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.location.LocationManager
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.ecarchargeinfo.config.ApplicationClass
-import com.example.ecarchargeinfo.config.ApplicationClass.Companion.sRetrofit
-import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
-import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
-import com.example.ecarchargeinfo.main.domain.model.SearchFilter
-import com.example.ecarchargeinfo.main.presentation.input.MainInputs
-import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
-import com.example.ecarchargeinfo.main.presentation.output.MainLocationState
-import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
-import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
-import com.example.ecarchargeinfo.map.domain.model.MapConstants.DEFAULT_LAT
-import com.example.ecarchargeinfo.map.domain.model.MapConstants.DEFAULT_LONG
-import com.example.ecarchargeinfo.retrofit.IRetrofit
-import com.example.ecarchargeinfo.retrofit.model.charger.MapResponse
-import com.example.ecarchargeinfo.retrofit.model.geocoder.GeocoderInfo
-import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-class MainViewModel : ViewModel(), MainInputs, MainOutputs {
-    val inputs: MainInputs = this
-    val outputs: MainOutputs = this
-    private val coroutineExceptionHandler = handleException()
+class MainViewModel : ViewModel(){
+   /* val inputs: MainInputs = this
+    val outputs: MainOutputs = this*/
+    //private val coroutineExceptionHandler = handleException()
 
-    private val _searchFilterState: MutableStateFlow<MainSearchFilterState> =
+    /*private val _searchFilterState: MutableStateFlow<MainSearchFilterState> =
         MutableStateFlow(MainSearchFilterState.Initial)
     override val searchFilterState: StateFlow<MainSearchFilterState>
         get() = _searchFilterState
@@ -46,9 +19,11 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
         MutableStateFlow(MainLocationState.Initial)
     override val locationState: StateFlow<MainLocationState>
         get() = _locationState
+    override val koreanAddressState: StateFlow<MainKoreanAddressState>
+        get() = TODO("Not yet implemented")
+*/
 
-
-    private fun handleException() = CoroutineExceptionHandler { _, throwable ->
+    /*private fun handleException() = CoroutineExceptionHandler { _, throwable ->
         Log.e("ECarChargeInfo", throwable.message ?: "")
     }
 
@@ -237,6 +212,6 @@ class MainViewModel : ViewModel(), MainInputs, MainOutputs {
 
         }
         return location
-    }
+    }*/
 
 }

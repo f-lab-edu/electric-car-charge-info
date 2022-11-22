@@ -1,4 +1,4 @@
-package com.example.ecarchargeinfo.map.domain.model
+package com.example.ecarchargeinfo.map.domain.model.location
 
 import com.google.android.gms.maps.model.LatLng
 

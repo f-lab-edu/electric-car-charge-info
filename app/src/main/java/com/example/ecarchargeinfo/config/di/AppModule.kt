@@ -1,9 +1,10 @@
 package com.example.ecarchargeinfo.config.di
 
 import android.content.Context
-import com.example.ecarchargeinfo.R
-import com.example.ecarchargeinfo.config.model.ApplicationConstants.BASE_URL
-import com.example.ecarchargeinfo.retrofit.IRetrofit
+import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
+import com.example.ecarchargeinfo.retrofit.ChargerInfoApi
+import com.example.ecarchargeinfo.retrofit.GeoCoderApi
+import com.example.ecarchargeinfo.retrofit.NetworkConstants
 import com.google.android.gms.maps.GoogleMap
 import dagger.Module
 import dagger.Provides
@@ -29,8 +30,9 @@ class AppModule {
     @Provides
     fun provideGoogleMap(@ApplicationContext googleMap: GoogleMap) = googleMap
 
+    @Singleton
     @Provides
-    fun provideBaseUrl() = R.string.BASE_URL.toString()
+    fun provideMapFragment(@ApplicationContext mapFragment: MapFragment) = mapFragment
 
     @Singleton
     @Provides
@@ -43,18 +45,27 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient, baseUrl: String): Retrofit {
+    fun provideRetrofitBuilder(okHttpClient: OkHttpClient): Retrofit.Builder {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .build()
     }
 
     @Singleton
     @Provides
-    fun provideApiService(retrofit: Retrofit): IRetrofit {
-        return retrofit.create(IRetrofit::class.java)
+    fun provideGeoCoderApi(retrofitBuilder: Retrofit.Builder): GeoCoderApi {
+        return retrofitBuilder
+            .baseUrl(NetworkConstants.NAVER_GEOCODING_URL)
+            .build()
+            .create(GeoCoderApi::class.java)
     }
 
+    @Singleton
+    @Provides
+    fun provideChargerInfoApi(retrofitBuilder: Retrofit.Builder): ChargerInfoApi {
+        return retrofitBuilder
+            .baseUrl(NetworkConstants.CHARGER_INFO_URL)
+            .build()
+            .create(ChargerInfoApi::class.java)
+    }
 }
