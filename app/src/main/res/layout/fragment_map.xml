@@ -16,6 +16,10 @@
             type="com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity" />
 
         <variable
+            name="chargeDetailEntity"
+            type="com.example.ecarchargeinfo.map.domain.entity.ChargerDetailEntity" />
+
+        <variable
             name="inputs"
             type="com.example.ecarchargeinfo.main.presentation.input.MainInputs" />
 
@@ -147,16 +151,50 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/lay_appbar" />
 
-        <Button
-            android:id="@+id/btn_research"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="이 위치에서 검색하기"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            visible="@{chargeDetailEntity.visible}"
+            android:layout_height="100dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lay_appbar"
-            android:layout_marginTop="8dp"
-            />
+            android:background="@color/white"
+            >
+            <ImageView
+                android:id="@+id/iv_detail_image"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="16dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/volt"/>
+
+            <TextView
+                android:id="@+id/tv_detail_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@+id/iv_detail_image"
+                app:layout_constraintTop_toTopOf="@+id/iv_detail_image"
+                android:layout_marginStart="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="123123"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintStart_toStartOf="@+id/tv_detail_title"
+                app:layout_constraintTop_toBottomOf="@+id/tv_detail_title" />
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

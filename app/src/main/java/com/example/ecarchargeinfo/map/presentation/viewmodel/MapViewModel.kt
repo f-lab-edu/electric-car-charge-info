@@ -7,17 +7,16 @@ import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
+import com.example.ecarchargeinfo.main.presentation.output.MainChargerDetailState
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
-import com.example.ecarchargeinfo.main.presentation.output.MainLocationState
 import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
-import com.example.ecarchargeinfo.map.domain.model.LocationConstants
-import com.example.ecarchargeinfo.map.domain.model.LocationCoord
+import com.example.ecarchargeinfo.map.domain.entity.ChargerDetailEntity
+import com.example.ecarchargeinfo.map.domain.entity.MarkerInfo
 import com.example.ecarchargeinfo.map.domain.usecase.chargerinfo.IChargerInfoUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.geocoder.IGeocoderUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.location.ILocationUseCase
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,7 +31,7 @@ import javax.inject.Inject
 class MapViewModel @Inject constructor(
     private val getLocationUseCase: ILocationUseCase,
     private val getGeocoderUseCase: IGeocoderUseCase,
-    private val getChargerInfoUseCase: IChargerInfoUseCase
+    private val getChargerInfoUseCase: IChargerInfoUseCase,
 ) :
     ViewModel(), MainInputs, MainOutputs {
     val inputs: MainInputs = this
@@ -46,10 +45,10 @@ class MapViewModel @Inject constructor(
         MutableStateFlow(MainChargerInfoState.Initial)
     override val chargerInfoState: StateFlow<MainChargerInfoState>
         get() = _chargerInfoState
-    private val _locationState: MutableStateFlow<MainLocationState> =
-        MutableStateFlow(MainLocationState.Initial)
-    override val locationState: StateFlow<MainLocationState>
-        get() = _locationState
+    private val _chargerDetailState: MutableStateFlow<MainChargerDetailState> =
+        MutableStateFlow(MainChargerDetailState.Initial)
+    override val chargerDetailState: StateFlow<MainChargerDetailState>
+        get() = _chargerDetailState
     private val _geocoderEvent: MutableSharedFlow<String> =
         MutableSharedFlow(
             replay = 0,
@@ -58,6 +57,7 @@ class MapViewModel @Inject constructor(
         )
     override val geocoderEvent: SharedFlow<String>
         get() = _geocoderEvent
+    private val koreaAddressArray = ArrayList<String>()
 
     private fun handleException() = CoroutineExceptionHandler { _, throwable ->
         Log.e("ECarChargeInfo", throwable.message ?: "")
@@ -65,14 +65,48 @@ class MapViewModel @Inject constructor(
 
     init {
         initSearchFilter()
-        initLocation()
+        initChagerDetail()
     }
 
-    fun getLocation() {
-        if (_locationState.value is MainLocationState.Main) {
-            _locationState.update {
-                if (it is MainLocationState.Main) {
-                    it.copy(locationInfo = LocationCoord(getLocationUseCase()))
+    fun updateNowLocation(): LatLng = getLocationUseCase()
+
+    fun updateGeocoding(address: String) {
+        if (address != "") {
+            viewModelScope.launch {
+                val result = getGeocoderUseCase(address)
+                if (koreaAddressArray.contains(result)) {
+                    return@launch
+                } else {
+                    koreaAddressArray.add(result)
+                    _geocoderEvent.emit(result)
+                }
+            }
+        }
+    }
+
+    fun updateChargerInfo(address: String) {
+        viewModelScope.launch {
+            _chargerInfoState.value = MainChargerInfoState.Main(
+                getChargerInfoUseCase(address)
+            )
+        }
+    }
+
+    override fun onMarkerClick(visible: Boolean,markerInfo: MarkerInfo) {
+        if (_chargerDetailState.value is MainChargerDetailState.Main) {
+            _chargerDetailState.update {
+                if (it is MainChargerDetailState.Main) {
+                    it.copy(
+                        it.chargerDetail.copy(
+                            visible = visible,
+                            markerInfo = MarkerInfo(
+                                cpNm = markerInfo.cpNm,
+                                addr = markerInfo.addr,
+                                chargeTp = markerInfo.chargeTp,
+                                cpStat = markerInfo.cpStat
+                            )
+                        )
+                    )
                 } else {
                     it
                 }
@@ -80,28 +114,19 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    private fun getCoordinate(): String =
-        if (locationState.value is MainLocationState.Main) {
-            ((locationState.value as MainLocationState.Main).locationInfo.coordinate.longitude.toString()) +
-                    "," + ((locationState.value as MainLocationState.Main).locationInfo.coordinate.latitude.toString())
-        } else {
-            ""
-        }
-
-    fun updateGeocoding(address: String) {
-        if (address != "") {
-            viewModelScope.launch {
-                _geocoderEvent.emit(getGeocoderUseCase(address))
+    override fun onMarkerClick(visible: Boolean) {
+        if (_chargerDetailState.value is MainChargerDetailState.Main) {
+            _chargerDetailState.update {
+                if (it is MainChargerDetailState.Main) {
+                    it.copy(
+                        it.chargerDetail.copy(
+                            visible = visible
+                        )
+                    )
+                } else {
+                    it
+                }
             }
-        }
-    }
-
-    fun updateChargerInfo(address: String) {
-        println(geocoderEvent)
-        viewModelScope.launch {
-            _chargerInfoState.value = MainChargerInfoState.Main(
-                getChargerInfoUseCase(address)
-            )
         }
     }
 
@@ -206,8 +231,6 @@ class MapViewModel @Inject constructor(
         }
     }
 
-
-
     private fun initSearchFilter() {
         _searchFilterState.value = MainSearchFilterState.Main(
             searchFilters = MainSearchFilterEntity(
@@ -224,14 +247,18 @@ class MapViewModel @Inject constructor(
         )
     }
 
-    private fun initLocation() {
-        _locationState.value = MainLocationState.Main(
-            locationInfo = LocationCoord(
-                coordinate = LatLng(
-                    LocationConstants.DEAFAULT_LAT,
-                    LocationConstants.DEAFAULT_LON
+    private fun initChagerDetail() {
+        _chargerDetailState.value = MainChargerDetailState.Main(
+            chargerDetail = ChargerDetailEntity(
+                visible = false,
+                markerInfo = MarkerInfo(
+                    cpNm = "",
+                    addr = "",
+                    chargeTp = "",
+                    cpStat = ""
                 )
             )
         )
     }
+
 }

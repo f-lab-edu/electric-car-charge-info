@@ -1,4 +1,4 @@
-package com.example.ecarchargeinfo.map.domain.model
+package com.example.ecarchargeinfo.map.domain.model.location
 
 object LocationConstants {
     const val DEAFAULT_LAT = 37.566805

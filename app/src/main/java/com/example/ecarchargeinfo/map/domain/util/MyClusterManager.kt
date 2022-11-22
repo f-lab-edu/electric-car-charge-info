@@ -22,6 +22,4 @@ class MyClusterManager<T> @Inject constructor(
             location.longitude.toString() + "," + location.latitude.toString()
         )
     }
-
-
 }

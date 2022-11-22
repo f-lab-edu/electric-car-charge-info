@@ -2,7 +2,6 @@ package com.example.ecarchargeinfo.map.presentation.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
@@ -12,8 +11,6 @@ import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.scale
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -21,14 +18,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.FragmentMapBinding
-import com.example.ecarchargeinfo.info.presentation.ui.InfoActivity
+import com.example.ecarchargeinfo.main.presentation.output.MainChargerDetailState
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
-import com.example.ecarchargeinfo.main.presentation.output.MainLocationState
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.IMAGE_HEIGHT
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.IMAGE_WIDTH
+import com.example.ecarchargeinfo.map.domain.entity.MarkerInfo
 import com.example.ecarchargeinfo.map.domain.util.ClusterRenderer
 import com.example.ecarchargeinfo.map.domain.util.MyClusterManager
 import com.example.ecarchargeinfo.map.domain.util.MyItem
@@ -39,7 +36,6 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -47,13 +43,13 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+class MapFragment : Fragment(), OnMapReadyCallback,
+    GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener {
     private lateinit var gMap: MapView
     private lateinit var binding: FragmentMapBinding
     private lateinit var mMap: GoogleMap
     private var mainActivity: MainActivity? = null
     private lateinit var clusterManager: MyClusterManager<MyItem>
-    private val markerArray = ArrayList<Marker>()
 
     @Inject
     lateinit var mapViewModel: MapViewModel
@@ -66,12 +62,23 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
         binding.inputs = mapViewModel.inputs
         binding.lifecycleOwner = this
-        observeUIState()
         gMap = binding.mapview
         gMap.onCreate(savedInstanceState)
         gMap.onResume()
         gMap.getMapAsync(this)
         return binding.root
+    }
+
+    private fun observeChargerDetailState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                mapViewModel.outputs.chargerDetailState.collect {
+                    if (it is MainChargerDetailState.Main) {
+                        binding.chargeDetailEntity = it.chargerDetail
+                    }
+                }
+            }
+        }
     }
 
     private fun observeUIState() {
@@ -80,6 +87,32 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                 mapViewModel.outputs.searchFilterState.collect {
                     if (it is MainSearchFilterState.Main) {
                         binding.searchFilterEntity = it.searchFilters
+                        it.searchFilters.let {
+
+                            if (it.combo) {
+                                clusterManager.addItems(comboMarker)
+                                clusterManager.cluster()
+                            } else {
+                                clusterManager.removeItems(comboMarker)
+                                clusterManager.cluster()
+                            }
+
+                            if (it.demo) {
+                                clusterManager.addItems(demoMarker)
+                                clusterManager.cluster()
+                            } else {
+                                clusterManager.removeItems(demoMarker)
+                                clusterManager.cluster()
+                            }
+
+                            if (it.ac) {
+                                clusterManager.addItems(acMarker)
+                                clusterManager.cluster()
+                            } else {
+                                clusterManager.removeItems(acMarker)
+                                clusterManager.cluster()
+                            }
+                        }
                     }
                 }
             }
@@ -105,31 +138,65 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        initCluster()
-        observeUIState(mMap)
-        observeLocation(mMap)
-        observeGeocoder()
-
+        val nowLocation = mapViewModel.updateNowLocation()
+        val nowLocationMarker = MarkerOptions().position(nowLocation)
+            .title(resources.getString(R.string.now_location))
+        mMap.addMarker(nowLocationMarker)?.showInfoWindow()
+        mMap.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                nowLocation,
+                MapConstants.DEFAULT_ZOOM
+            )
+        )
         mMap.isMyLocationEnabled = true
-        mMap.uiSettings.isMyLocationButtonEnabled
-        mapViewModel.getLocation()
+
+        observeChargerDetailState()
+        observeChargerInfoState()
+        initCluster()
+        observeGeocoder()
+        observeUIState()
+        mMap.setOnMyLocationButtonClickListener(this)
+        mMap.uiSettings.isMapToolbarEnabled = false
+        mMap.setOnMapClickListener(this)
     }
 
     fun initCluster() {
         clusterManager = MyClusterManager(requireContext(), mMap, this)
-        ClusterRenderer(requireContext(), mMap, clusterManager)
+        clusterManager.renderer = ClusterRenderer(requireContext(), mMap, clusterManager)
         mMap.setOnMarkerClickListener(clusterManager)
         mMap.setOnCameraIdleListener(clusterManager)
 
-    }
-
-    override fun onMarkerClick(marker: Marker): Boolean {
-        val intent = Intent(activity, InfoActivity::class.java)
-        intent.apply {
-            this.putExtra("address", marker.title)
+        clusterManager.setOnClusterClickListener {
+            val clusterLocation = LatLng(it.position.latitude, it.position.longitude)
+            mMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    clusterLocation,
+                    MapConstants.CLUSTER_ZOOM
+                )
+            )
+            return@setOnClusterClickListener false
         }
-        startActivity(intent)
-        return true
+
+        clusterManager.setOnClusterItemClickListener {
+            val itemLocation = LatLng(it.position.latitude, it.position.longitude)
+            mMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    itemLocation,
+                    MapConstants.DEFAULT_ZOOM
+                )
+            )
+            mapViewModel.onMarkerClick(visible = true,
+                MarkerInfo(
+                    it.title,
+                    it.getAddr(),
+                    it.getChargeTp(),
+                    it.snippet
+                )
+            )
+            return@setOnClusterItemClickListener false
+        }
+        mMap.setInfoWindowAdapter(clusterManager.markerManager)
+        //mMap.setOnInfoWindowClickListener(this)
     }
 
     private fun observeGeocoder() {
@@ -143,24 +210,24 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         }
     }
 
-    private fun observeUIState(googleMap: GoogleMap) {
+    private val allMarker = ArrayList<MyItem>()
+    private val comboMarker = ArrayList<MyItem>()
+    private val demoMarker = ArrayList<MyItem>()
+    private val acMarker = ArrayList<MyItem>()
+
+
+    private fun observeChargerInfoState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 mapViewModel.outputs.chargerInfoState.collect() {
                     if (it is MainChargerInfoState.Main) {
                         it.chargerInfo.let {
-                            it.forEach { data ->
+                            it.forEachIndexed { index, data ->
+                                if (index > 0) {
+                                    if (it.get(index - 1).csNm == data.csNm)
+                                        return@forEachIndexed
+                                }
                                 val location = LatLng(data.lat.toDouble(), data.longi.toDouble())
-                                /*val markerImage = resources.getDrawable(R.drawable.volt)
-                                val reSizeImage =
-                                    markerImage.toBitmap().scale(IMAGE_WIDTH, IMAGE_HEIGHT, false)
-                                val marker = MarkerOptions()
-                                    .position(location)
-                                    .title(data.csNm)
-                                    .icon(BitmapDescriptorFactory.fromBitmap(reSizeImage))
-                                mMap.addMarker(marker)?.let {
-                                    markerArray.add(it)
-                                }*/
                                 val markerImage =
                                     ResourcesCompat.getDrawable(
                                         resources,
@@ -177,39 +244,53 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                                         IMAGE_HEIGHT,
                                         false
                                     )
-                                clusterManager.addItem(
-                                    MyItem(
-                                        location,
-                                        data.csNm,
-                                        BitmapDescriptorFactory.fromBitmap(resizeImage)
-                                    )
+                                val item = MyItem(
+                                    location,
+                                    data.csNm,
+                                    data.cpStat,
+                                    BitmapDescriptorFactory.fromBitmap((resizeImage)),
+                                    data.addr,
+                                    data.chargeTp
                                 )
-                                clusterManager.cluster()
+                                when (data.cpTp) {
+                                    "7" -> {
+                                        if (!comboMarker.contains(item)) {
+                                            comboMarker.add(item)
+                                        }
+                                    }
+
+                                    "5" -> {
+                                        if (!demoMarker.contains(item)) {
+                                            demoMarker.add(item)
+                                        }
+                                    }
+
+                                    "6" -> {
+                                        if (!acMarker.contains(item)) {
+                                            acMarker.add(item)
+                                        }
+                                    }
+
+                                    else -> {
+                                        if (!allMarker.contains(item)) {
+                                            allMarker.add(item)
+                                        }
+                                    }
+                                }
                             }
                         }
-
-                    }
-                }
-            }
-        }
-    }
-
-    private fun observeLocation(googleMap: GoogleMap) {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                mapViewModel.outputs.locationState.collect() {
-                    if (it is MainLocationState.Main) {
-                        var location = it.locationInfo.coordinate
-                        var marker =
-                            MarkerOptions().position(location)
-                                .title(resources.getString(R.string.now_location))
-                        googleMap.addMarker(marker)?.showInfoWindow()
-                        googleMap.moveCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                location,
-                                MapConstants.DEFAULT_ZOOM
-                            )
-                        )
+                        clusterManager.apply {
+                            clearItems()
+                            allMarker.distinct()
+                            comboMarker.distinct()
+                            demoMarker.distinct()
+                            acMarker.distinct()
+                            addItems(comboMarker)
+                            addItems(demoMarker)
+                            addItems(acMarker)
+                            addItems(allMarker)
+                        }
+                        clusterManager.cluster()
                     }
                 }
             }
@@ -254,4 +335,25 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         super.onLowMemory()
         gMap.onLowMemory()
     }
+
+    override fun onMyLocationButtonClick(): Boolean {
+        mMap.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                mapViewModel.updateNowLocation(),
+                MapConstants.DEFAULT_ZOOM
+            )
+        )
+        return true
+    }
+
+    override fun onMapClick(p0: LatLng) {
+        mapViewModel.onMarkerClick(visible = false)
+    }
+
+    /*   override fun onInfoWindowClick(marker: Marker) {
+
+           val intent = Intent(activity, InfoActivity::class.java)
+           intent.putExtra("address", marker.title)
+           startActivity(intent)
+       }*/
 }
