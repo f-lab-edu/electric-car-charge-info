@@ -5,7 +5,7 @@ object MapConstants {
     const val DEFAULT_LAT = 37.5666805
     const val DEFAULT_LONG = 126.9784147
     const val CLUSTER_ZOOM = 12f
-
+    const val MARKER_ZOOM = 17f
     const val IMAGE_WIDTH = 120
     const val IMAGE_HEIGHT = 120
 }

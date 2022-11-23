@@ -80,17 +80,7 @@ class MapFragment : Fragment(), OnMapReadyCallback,
         return binding.root
     }
 
-    private fun observeChargerDetailState() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                mapViewModel.outputs.chargerDetailState.collect {
-                    if (it is MainChargerDetailState.Main) {
-                        binding.chargeDetailEntity = it.chargerDetail
-                    }
-                }
-            }
-        }
-    }
+
 
     private fun observeUIState() {
         lifecycleScope.launch {
@@ -104,9 +94,9 @@ class MapFragment : Fragment(), OnMapReadyCallback,
 
                             } else {
                                 allMarkerTest.forEach {
-                                    if (it.getCptp() == "7")    {
+                                    if (it.getCptp() == "7") {
                                         comboMarker.add(it)
-                                    }
+                                                               }
                                 }
                                 clusterManager.removeItems(comboMarker)
                             }
@@ -115,7 +105,7 @@ class MapFragment : Fragment(), OnMapReadyCallback,
                                 clusterManager.addItems(demoMarker)
                             } else {
                                 allMarkerTest.forEach {
-                                    if (it.getCptp() == "5")    {
+                                    if (it.getCptp() == "5") {
                                         comboMarker.add(it)
                                     }
                                 }
@@ -126,11 +116,22 @@ class MapFragment : Fragment(), OnMapReadyCallback,
                                 clusterManager.addItems(acMarker)
                             } else {
                                 allMarkerTest.forEach {
-                                    if (it.getCptp() == "6")    {
+                                    if (it.getCptp() == "6") {
                                         comboMarker.add(it)
                                     }
                                 }
                                 clusterManager.removeItems(acMarker)
+                            }
+
+                            if (it.slow) {
+                                clusterManager.addItems(slowMarker)
+                            } else {
+                                allMarkerTest.forEach {
+                                    if (it.getChargeTp() == "1") {
+                                        slowMarker.add(it)
+                                    }
+                                }
+                                clusterManager.removeItems(slowMarker)
                             }
                         }
                         clusterManager.cluster()
@@ -202,7 +203,7 @@ class MapFragment : Fragment(), OnMapReadyCallback,
             mMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     itemLocation,
-                    MapConstants.DEFAULT_ZOOM
+                    MapConstants.MARKER_ZOOM
                 )
             )
             mapViewModel.onMarkerClick(
@@ -217,6 +218,18 @@ class MapFragment : Fragment(), OnMapReadyCallback,
             return@setOnClusterItemClickListener false
         }
         mMap.setInfoWindowAdapter(clusterManager.markerManager)
+    }
+
+    private fun observeChargerDetailState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                mapViewModel.outputs.chargerDetailState.collect {
+                    if (it is MainChargerDetailState.Main) {
+                        binding.chargeDetailEntity = it.chargerDetail
+                    }
+                }
+            }
+        }
     }
 
     private fun observeGeocoder() {
@@ -235,6 +248,7 @@ class MapFragment : Fragment(), OnMapReadyCallback,
     private val demoMarker = ArrayList<MyItem>()
     private val acMarker = ArrayList<MyItem>()
     private val allMarkerTest = mutableSetOf<MyItem>()
+    private val slowMarker = ArrayList<MyItem>()
 
     private fun observeChargerInfoState() {
         lifecycleScope.launch {
