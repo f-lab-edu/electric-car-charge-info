@@ -1,11 +1,8 @@
 package com.example.ecarchargeinfo.map.presentation.viewmodel
 
-import android.content.Context
-import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ecarchargeinfo.info.presentation.ui.InfoActivity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
@@ -14,16 +11,14 @@ import com.example.ecarchargeinfo.main.presentation.output.MainChargerDetailStat
 import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
 import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
-import com.example.ecarchargeinfo.main.presentation.ui.MainActivity
 import com.example.ecarchargeinfo.map.domain.entity.ChargerDetailEntity
 import com.example.ecarchargeinfo.map.domain.entity.MarkerInfo
+import com.example.ecarchargeinfo.map.domain.model.MapConstants
 import com.example.ecarchargeinfo.map.domain.usecase.chargerinfo.IChargerInfoUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.geocoder.IGeocoderUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.location.ILocationUseCase
-import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -56,9 +51,9 @@ class MapViewModel @Inject constructor(
         get() = _chargerDetailState
     private val _geocoderEvent: MutableSharedFlow<String> =
         MutableSharedFlow(
-            replay = 0,
-            extraBufferCapacity = 1,
-            onBufferOverflow = BufferOverflow.DROP_OLDEST
+            replay = MapConstants.REPLAY,
+            extraBufferCapacity = MapConstants.EXTRA_BUFFER_CAPAVITY,
+            onBufferOverflow = MapConstants.ON_BUFFER_OVERFLOW
         )
     override val geocoderEvent: SharedFlow<String>
         get() = _geocoderEvent
@@ -101,7 +96,7 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    override fun onMarkerClick(visible: Boolean,markerInfo: MarkerInfo) {
+    override fun onMarkerClick(visible: Boolean, markerInfo: MarkerInfo) {
         if (_chargerDetailState.value is MainChargerDetailState.Main) {
             _chargerDetailState.update {
                 if (it is MainChargerDetailState.Main) {
