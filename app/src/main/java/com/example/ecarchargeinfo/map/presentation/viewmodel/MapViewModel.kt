@@ -13,6 +13,7 @@ import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
 import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.example.ecarchargeinfo.map.domain.entity.ChargerDetailEntity
 import com.example.ecarchargeinfo.map.domain.entity.MarkerInfo
+import com.example.ecarchargeinfo.map.domain.model.ChargerDetailConstants
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
 import com.example.ecarchargeinfo.map.domain.usecase.chargerinfo.IChargerInfoUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.geocoder.IGeocoderUseCase
@@ -254,12 +255,12 @@ class MapViewModel @Inject constructor(
     private fun initChagerDetail() {
         _chargerDetailState.value = MainChargerDetailState.Main(
             chargerDetail = ChargerDetailEntity(
-                visible = false,
+                visible = ChargerDetailConstants.DEFAULT_VISIBLE,
                 markerInfo = MarkerInfo(
-                    cpNm = "",
-                    addr = "",
-                    chargeTp = "",
-                    cpStat = ""
+                    cpNm = ChargerDetailConstants.MarkerInfoConstants.DEFAULT_CPNM,
+                    addr = ChargerDetailConstants.MarkerInfoConstants.DEFAULT_ADDR,
+                    chargeTp = ChargerDetailConstants.MarkerInfoConstants.DEFAULT_CHARGETP,
+                    cpStat = ChargerDetailConstants.MarkerInfoConstants.DEFAULT_CPSTAT
                 )
             )
         )
