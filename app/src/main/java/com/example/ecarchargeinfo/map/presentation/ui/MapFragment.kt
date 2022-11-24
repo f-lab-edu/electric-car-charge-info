@@ -50,7 +50,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MapFragment : Fragment(), OnMapReadyCallback,
-    GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener {
+                    GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener {
     private lateinit var gMap: MapView
     private lateinit var binding: FragmentMapBinding
     private lateinit var mMap: GoogleMap
@@ -71,12 +71,8 @@ class MapFragment : Fragment(), OnMapReadyCallback,
         gMap = binding.mapview
         gMap.onCreate(savedInstanceState)
         gMap.getMapAsync(this)
+
         binding.btnDetail?.setOnClickListener {
-            clusterManager.removeItems(allMarker)
-            clusterManager.removeItems(demoMarker)
-            clusterManager.removeItems(comboMarker)
-            clusterManager.removeItems(acMarker)
-            clusterManager.cluster()
             val intent = Intent(activity, InfoActivity::class.java)
             intent.putExtra("address", binding.tvDetailAddr?.text.toString())
             startActivity(intent)
@@ -93,39 +89,32 @@ class MapFragment : Fragment(), OnMapReadyCallback,
                         binding.searchFilterEntity = it.searchFilters
                         it.searchFilters.let {
                             if (it.combo) {
-                                clusterManager.addItems(comboMarker)
-
+                                clusterManager.addItems(
+                                    mapViewModel.getMarkerByFiltered(CHARGER_TYPE_COMBO)
+                                )
                             } else {
-                                allMarker.forEach {
-                                    if (it.getCptp() == CHARGER_TYPE_COMBO) {
-                                        comboMarker.add(it)
-                                    }
-                                }
-                                clusterManager.removeItems(comboMarker)
+                                clusterManager.removeItems(
+                                    mapViewModel.getMarkerByFiltered(CHARGER_TYPE_COMBO)
+                                )
                             }
-
                             if (it.demo) {
-                                clusterManager.addItems(demoMarker)
+                                clusterManager.addItems(
+                                    mapViewModel.getMarkerByFiltered(CHARGER_TYPE_DEMO)
+                                )
                             } else {
-                                allMarker.forEach {
-                                    if (it.getCptp() == CHARGER_TYPE_DEMO) {
-                                        comboMarker.add(it)
-                                    }
-                                }
-                                clusterManager.removeItems(demoMarker)
+                                clusterManager.removeItems(
+                                    mapViewModel.getMarkerByFiltered(CHARGER_TYPE_DEMO)
+                                )
                             }
-
                             if (it.ac) {
-                                clusterManager.addItems(acMarker)
+                                clusterManager.addItems(
+                                    mapViewModel.getMarkerByFiltered(CHARGER_TYPE_AC)
+                                )
                             } else {
-                                allMarker.forEach {
-                                    if (it.getCptp() == CHARGER_TYPE_AC) {
-                                        comboMarker.add(it)
-                                    }
-                                }
-                                clusterManager.removeItems(acMarker)
+                                clusterManager.removeItems(
+                                    mapViewModel.getMarkerByFiltered(CHARGER_TYPE_AC)
+                                )
                             }
-
                             if (it.slow) {
                                 clusterManager.addItems(slowMarker)
                             } else {
@@ -163,13 +152,12 @@ class MapFragment : Fragment(), OnMapReadyCallback,
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        val nowLocation = mapViewModel.updateNowLocation()
-        val nowLocationMarker = MarkerOptions().position(nowLocation)
+        val nowLocationMarker = MarkerOptions().position(mapViewModel.updateNowLocation())
             .title(resources.getString(R.string.now_location))
         mMap.addMarker(nowLocationMarker)?.showInfoWindow()
         mMap.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
-                nowLocation,
+                mapViewModel.updateNowLocation(),
                 MapConstants.DEFAULT_ZOOM
             )
         )
@@ -246,11 +234,8 @@ class MapFragment : Fragment(), OnMapReadyCallback,
         }
     }
 
-    private val comboMarker = ArrayList<MyItem>()
-    private val demoMarker = ArrayList<MyItem>()
-    private val acMarker = ArrayList<MyItem>()
     private val slowMarker = ArrayList<MyItem>()
-    private val allMarker = mutableSetOf<MyItem>()
+    private val allMarker = ArrayList<MyItem>()
 
     private fun observeChargerInfoState() {
         lifecycleScope.launch {
@@ -258,41 +243,8 @@ class MapFragment : Fragment(), OnMapReadyCallback,
                 mapViewModel.outputs.chargerInfoState.collect() {
                     if (it is MainChargerInfoState.Main) {
                         it.chargerInfo.let {
-                            it.forEachIndexed { index, data ->
-                                if (index > 0) {
-                                    if (it[index - 1].csNm == data.csNm)
-                                        return@forEachIndexed
-                                }
-
-                                val location = LatLng(data.lat.toDouble(), data.longi.toDouble())
-                                val markerImage =
-                                    ResourcesCompat.getDrawable(
-                                        resources,
-                                        when (data.chargeTp) {
-                                            CHARGER_TYPE_SLOW -> R.drawable.volt_slow
-                                            else -> R.drawable.volt
-                                        },
-                                        null
-                                    ) as BitmapDrawable
-                                val resizeImage =
-                                    Bitmap.createScaledBitmap(
-                                        markerImage.bitmap,
-                                        IMAGE_WIDTH,
-                                        IMAGE_HEIGHT,
-                                        false
-                                    )
-                                val item = MyItem(
-                                    location,
-                                    data.csNm,
-                                    data.cpStat,
-                                    BitmapDescriptorFactory.fromBitmap((resizeImage)),
-                                    data.addr,
-                                    data.chargeTp,
-                                    data.cpTp
-                                )
-                                allMarker.add(item)
-                            }
-                            clusterManager.addItems(allMarker)
+                            mapViewModel.setMarkerArray(it)
+                            clusterManager.addItems(mapViewModel.getMarkerArray())
                             clusterManager.cluster()
                         }
                     }
@@ -327,10 +279,6 @@ class MapFragment : Fragment(), OnMapReadyCallback,
 
     override fun onPause() {
         clusterManager.clearItems()
-        allMarker.clear()
-        comboMarker.clear()
-        demoMarker.clear()
-        acMarker.clear()
         allMarker.clear()
         mapViewModel.clearKoreaAddress()
         super.onPause()
