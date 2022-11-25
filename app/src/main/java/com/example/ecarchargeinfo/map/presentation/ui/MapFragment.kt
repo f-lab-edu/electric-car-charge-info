@@ -3,15 +3,12 @@ package com.example.ecarchargeinfo.map.presentation.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -30,8 +27,6 @@ import com.example.ecarchargeinfo.map.domain.model.MapConstants.CHARGER_TYPE_AC
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.CHARGER_TYPE_COMBO
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.CHARGER_TYPE_DEMO
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.CHARGER_TYPE_SLOW
-import com.example.ecarchargeinfo.map.domain.model.MapConstants.IMAGE_HEIGHT
-import com.example.ecarchargeinfo.map.domain.model.MapConstants.IMAGE_WIDTH
 import com.example.ecarchargeinfo.map.domain.util.ClusterRenderer
 import com.example.ecarchargeinfo.map.domain.util.MyClusterManager
 import com.example.ecarchargeinfo.map.domain.util.MyItem
@@ -40,7 +35,6 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,6 +59,7 @@ class MapFragment : Fragment(), OnMapReadyCallback,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
         binding.inputs = mapViewModel.inputs
         binding.lifecycleOwner = this

@@ -45,7 +45,7 @@ object ChargerDetailConstants {
     object MarkerInfoConstants {
         const val DEFAULT_CPNM = "cpNm"
         const val DEFAULT_ADDR = "addr"
-        const val DEFAULT_CHARGETP = "chargeTp"
-        const val DEFAULT_CPSTAT = "cpStat"
+        const val DEFAULT_CHARGETP = "2"
+        const val DEFAULT_CPSTAT = "1"
     }
 }

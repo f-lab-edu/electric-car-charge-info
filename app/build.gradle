@@ -77,7 +77,6 @@ dependencies {
     implementation 'androidx.activity:activity-ktx:1.6.1'
     implementation 'androidx.fragment:fragment-ktx:1.5.4'
 
-    implementation("androidx.core:core-splashscreen:1.0.0")
 
     //cluster
     implementation("com.google.maps.android:android-maps-utils:0.6.2")

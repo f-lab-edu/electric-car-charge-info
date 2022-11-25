@@ -1,10 +1,14 @@
 package com.example.ecarchargeinfo.main.presentation.binding
 
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_1_VALUE
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_2_VALUE
 import com.google.android.material.slider.RangeSlider
 
 object BindingAdapter {
@@ -49,5 +53,32 @@ object BindingAdapter {
         }
     }
 
+    @JvmStatic
+    @BindingAdapter("slowFastImageResource")
+    fun setChargerTypeImage(view: ImageView, chargeTp: String?) {
+        chargeTp.let {
+            view.setImageResource(
+                if (it == "2") {
+                    R.drawable.volt
+                } else {
+                    R.drawable.volt_slow
+                }
+            )
+        }
+    }
+
+    @JvmStatic
+    @BindingAdapter("chargerStat", "canColor", "cantColor")
+    fun setChargerStat(view: TextView, cpStat: String?, canColor: Int, cantColor: Int) {
+        cpStat.let {
+            view.setTextColor(
+                if (cpStat == CHARGER_STAT_1_VALUE) {
+                    canColor.also { view.text = CHARGER_STAT_1_VALUE }
+                } else {
+                    cantColor.also { view.text = CHARGER_STAT_2_VALUE }
+                }
+            )
+        }
+    }
 
 }

@@ -21,7 +21,6 @@ class InfoViewModel @Inject constructor(
     override val chargerInfoState: StateFlow<InfoChargerInfoState>
         get() = _chargerInfostate
 
-
     fun updateChargerInfo(address: String) {
         viewModelScope.launch {
             _chargerInfostate.value = InfoChargerInfoState.Main(
