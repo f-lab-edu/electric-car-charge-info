@@ -27,4 +27,12 @@
 
     <string name="now_location">현 위치</string>
 
+
+    <string name="info_tabbar_title">충전소 정보</string>
+    <string name="info_detail_company">사업자명</string>
+    <string name="info_detail_time">운영시간</string>
+    <string name="info_detail_phone">고객센터</string>
+    <string name="info_detail_parking_info">주차정보</string>
+    <string name="info_detail_addr">상세위치</string>
+
 </resources>

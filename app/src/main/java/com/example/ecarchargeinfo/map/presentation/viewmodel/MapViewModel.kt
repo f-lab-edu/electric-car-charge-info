@@ -1,6 +1,8 @@
 package com.example.ecarchargeinfo.map.presentation.viewmodel
 
+import android.content.Context
 import android.util.Log
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
@@ -23,6 +25,7 @@ import com.example.ecarchargeinfo.map.domain.usecase.location.ILocationUseCase
 import com.example.ecarchargeinfo.map.domain.util.MyItem
 import com.example.ecarchargeinfo.retrofit.model.charger.ChargerInfo
 import com.google.android.gms.maps.model.LatLng
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +33,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.annotation.meta.When
 import javax.inject.Inject
 
 
@@ -38,7 +42,8 @@ class MapViewModel @Inject constructor(
     private val getGeocoderUseCase: IGeocoderUseCase,
     private val getChargerInfoUseCase: IChargerInfoUseCase,
     private val getFilteredMarkerUseCase: IGetFilteredMarkerUseCase,
-    private val getAllMarkerUseCase: IGetAllMarkerUseCase
+    private val getAllMarkerUseCase: IGetAllMarkerUseCase,
+    @ApplicationContext private val context: Context
 ) :
     ViewModel(), MainInputs, MainOutputs {
     val inputs: MainInputs = this
@@ -84,7 +89,6 @@ class MapViewModel @Inject constructor(
 
     fun getMarkerByFiltered(type: String): ArrayList<MyItem> =
         getFilteredMarkerUseCase(chargerMarkerArray, type)
-
 
     fun setMarkerArray(list: List<ChargerInfo>) {
         chargerMarkerArray = getAllMarkerUseCase(list)

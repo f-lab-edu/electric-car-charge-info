@@ -10,7 +10,6 @@ import com.example.ecarchargeinfo.databinding.ActivityInfoBinding
 import com.example.ecarchargeinfo.info.presentation.output.InfoChargerInfoState
 import com.example.ecarchargeinfo.info.presentation.viewmodel.InfoViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,9 +34,8 @@ class InfoActivity : AppCompatActivity() {
             repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.RESUMED) {
                 viewModel.outPuts.chargerInfoState.collect() {
                     if (it is InfoChargerInfoState.Main)    {
-                        it.chargerInfo.let {
-                            it.get(0).addr
-                        }
+                        binding.chargeInfo = it.chargerInfo.get(0)
+                        viewModel.getRecyclerArray(it.chargerInfo)
                     }
                 }
             }

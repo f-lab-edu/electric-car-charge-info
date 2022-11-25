@@ -1,63 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".info.presentation.ui.InfoActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageButton
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_baseline_star_border_24"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:id="@+id/btn_star"
-        />
+    <data>
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="18dp"
-        android:ellipsize="end"
-        android:lines="1"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_star"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_star"
-        app:layout_constraintTop_toTopOf="@+id/btn_star"
-        tools:text="@string/info_title" />
+        <variable
+            name="inputs"
+            type="com.example.ecarchargeinfo.info.presentation.input.InfoInputs" />
 
-    <TextView
-        android:id="@+id/tv_address"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:ellipsize="end"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="@+id/tv_title"
-        app:layout_constraintStart_toStartOf="@+id/btn_star"
-        app:layout_constraintTop_toBottomOf="@+id/btn_star"
-        tools:text="@string/info_address" />
+        <variable
+            name="chargeInfo"
+            type="com.example.ecarchargeinfo.retrofit.model.charger.ChargerInfo" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="@+id/tv_address"
-        app:layout_constraintTop_toBottomOf="@+id/tv_address"
-        tools:text="@string/info_available"
-        android:text="충전가능"/>
+        <variable
+            name="vm"
+            type="com.example.ecarchargeinfo.info.presentation.viewmodel.InfoViewModel" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".info.presentation.ui.InfoActivity">
+
+        <TextView
+            android:id="@+id/tv_info_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/info_tabbar_title"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_info_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_info_title" />
+
+
+        <View
+            android:id="@+id/view_tabbar"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_info_title" />
+
+        <ImageButton
+            android:id="@+id/btn_star"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_baseline_star_border_24"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_tabbar" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="18dp"
+            android:ellipsize="end"
+            android:text="@{chargeInfo.csNm}"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_star"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_star"
+            app:layout_constraintTop_toTopOf="@+id/btn_star"
+            tools:text="@string/info_title" />
+
+        <TextView
+            android:id="@+id/tv_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/can_charge"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/btn_star"
+            app:layout_constraintTop_toBottomOf="@+id/btn_star"
+            tools:text="1.8km" />
+
+        <ImageButton
+            android:id="@+id/ib_copy_address"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerCrop"
+            android:onClick="@{() -> inputs.onCopyClick()}"
+            android:src="@drawable/ic_baseline_content_copy_24"
+            app:layout_constraintBottom_toTopOf="@+id/tv_address"
+            app:layout_constraintEnd_toEndOf="@+id/tv_address" />
+
+
+        <TextView
+            android:id="@+id/tv_detail_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/info_detail_addr"
+            android:textColor="@color/can_charge"
+
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/tv_distance"
+            app:layout_constraintTop_toBottomOf="@+id/tv_distance" />
+
+
+        <TextView
+            android:id="@+id/tv_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="none"
+            android:text="@{chargeInfo.addr}"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_detail_info"
+            app:layout_constraintTop_toTopOf="@+id/tv_detail_info"
+            tools:text="@string/info_address" />
+
+        <!--<TextView
+            cpStatColor1="@{@color/can_charge}"
+            cpStatColor2="@{@color/cannot_charge}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:cpStatText="@{chargeInfo.cpStat}"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="@+id/tv_address"
+            app:layout_constraintTop_toBottomOf="@+id/tv_address"
+            tools:text="@string/info_available" />
+-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginTop="8dp"
+
+            android:background="@color/gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_detail_info" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

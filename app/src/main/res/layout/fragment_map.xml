@@ -141,6 +141,7 @@
 
         </LinearLayout>
 
+
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapview"
             android:layout_width="match_parent"
@@ -153,13 +154,15 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             visible="@{chargeDetailEntity.visible}"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="120dp"
             android:background="@color/white"
+            android:layout_gravity="bottom"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
+                slowFastImageResource= "@{chargeDetailEntity.markerInfo.chargeTp, default = @drawable/volt}"
                 android:id="@+id/iv_detail_image"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
@@ -171,26 +174,47 @@
 
             <TextView
                 android:id="@+id/tv_detail_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:lines="1"
                 android:text="@{chargeDetailEntity.markerInfo.cpNm}"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/iv_detail_image"
                 app:layout_constraintTop_toTopOf="@+id/iv_detail_image"
-                tools:text="11111111111111111111111" />
+                tools:text="명칭" />
 
             <TextView
                 android:id="@+id/tv_detail_addr"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:lines="1"
                 android:text="@{chargeDetailEntity.markerInfo.addr}"
                 android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_detail_title"
                 app:layout_constraintTop_toBottomOf="@+id/tv_detail_title"
-                tools:text="11111111111111111111111" />
+                tools:text="주소" />
+
+            <TextView
+                android:textColor="@color/can_charge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="test"
+                chargerStat= "@{chargeDetailEntity.markerInfo.cpStat}"
+                canColor="@{@color/can_charge}"
+                cantColor="@{@color/cannot_charge}"
+                app:layout_constraintStart_toStartOf="@+id/iv_detail_image"
+                app:layout_constraintTop_toBottomOf="@+id/tv_detail_addr"
+                tools:text="충전가능" />
 
             <Button
                 android:id="@+id/btn_detail"
@@ -201,5 +225,7 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
