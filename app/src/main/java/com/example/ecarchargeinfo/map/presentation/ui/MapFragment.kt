@@ -55,6 +55,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
     lateinit var mapViewModel: MapViewModel
     private val slowMarker = ArrayList<MyItem>()
     private val allMarker = ArrayList<MyItem>()
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -68,6 +69,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         binding.btnDetail?.setOnClickListener {
             val intent = Intent(activity, InfoActivity::class.java)
             intent.putExtra("address", binding.tvDetailAddr?.text.toString())
+            intent.putExtra("lat", mapViewModel.updateNowLocation().latitude.toString())
+            intent.putExtra("lon", mapViewModel.updateNowLocation().longitude.toString())
             startActivity(intent)
         }
         return binding.root
@@ -163,7 +166,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         mMap.setOnMapClickListener(this)
     }
 
-    fun initCluster() {
+    private fun initCluster() {
         clusterManager = MyClusterManager(requireContext(), mMap, this)
         clusterManager.renderer = ClusterRenderer(requireContext(), mMap, clusterManager)
         mMap.setOnMarkerClickListener(clusterManager)

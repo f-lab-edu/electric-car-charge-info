@@ -17,6 +17,9 @@
             name="vm"
             type="com.example.ecarchargeinfo.info.presentation.viewmodel.InfoViewModel" />
 
+        <variable
+            name="ac"
+            type="com.example.ecarchargeinfo.info.presentation.ui.InfoActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,7 +34,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/info_tabbar_title"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -93,6 +96,7 @@
             android:layout_marginTop="4dp"
             android:textColor="@color/can_charge"
             android:textSize="14sp"
+            android:text="@{vm.distanceEvent.toString()}"
             app:layout_constraintStart_toStartOf="@+id/btn_star"
             app:layout_constraintTop_toBottomOf="@+id/btn_star"
             tools:text="1.8km" />
@@ -101,13 +105,13 @@
             android:id="@+id/ib_copy_address"
             android:layout_width="18dp"
             android:layout_height="18dp"
+            android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
-            android:scaleType="centerCrop"
             android:onClick="@{() -> inputs.onCopyClick()}"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_baseline_content_copy_24"
-            app:layout_constraintBottom_toTopOf="@+id/tv_address"
-            app:layout_constraintEnd_toEndOf="@+id/tv_address" />
-
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_address" />
 
         <TextView
             android:id="@+id/tv_detail_info"
@@ -116,22 +120,20 @@
             android:layout_marginTop="8dp"
             android:text="@string/info_detail_addr"
             android:textColor="@color/can_charge"
-
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="@+id/tv_distance"
             app:layout_constraintTop_toBottomOf="@+id/tv_distance" />
-
 
         <TextView
             android:id="@+id/tv_address"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="none"
             android:text="@{chargeInfo.addr}"
             android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ib_copy_address"
             app:layout_constraintStart_toEndOf="@+id/tv_detail_info"
             app:layout_constraintTop_toTopOf="@+id/tv_detail_info"
             tools:text="@string/info_address" />
@@ -152,12 +154,11 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="3dp"
-            android:layout_marginTop="8dp"
-
+            android:layout_marginTop="16dp"
             android:background="@color/gray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_detail_info" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_address" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

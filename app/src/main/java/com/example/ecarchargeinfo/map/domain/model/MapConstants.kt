@@ -15,11 +15,7 @@ object MapConstants {
     const val CHARGER_TYPE_DEMO = "5"
     const val CHARGER_TYPE_AC = "6"
     const val CHARGER_TYPE_SLOW = "1"
-
-    //SharedFlow
-    const val REPLAY = 0
-    const val EXTRA_BUFFER_CAPAVITY = 1
-    val ON_BUFFER_OVERFLOW = BufferOverflow.DROP_OLDEST
+    const val CHARGER_TYPE_FAST = "2"
 
     //Charger stat
     object ChargerStat {

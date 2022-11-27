@@ -7,6 +7,7 @@ import androidx.databinding.BindingAdapter
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.CHARGER_TYPE_FAST
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_OK_VALUE
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_ON_UES_VALUE
 import com.google.android.material.slider.RangeSlider
@@ -58,7 +59,7 @@ object BindingAdapter {
     fun setChargerTypeImage(view: ImageView, chargeTp: String?) {
         chargeTp.let {
             view.setImageResource(
-                if (it == "2") {
+                if (it == CHARGER_TYPE_FAST) {
                     R.drawable.volt
                 } else {
                     R.drawable.volt_slow

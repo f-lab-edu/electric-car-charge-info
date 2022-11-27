@@ -22,13 +22,12 @@ class AllMarkerRepositoryImpl @Inject constructor(@ApplicationContext private va
                 if (list[index - 1].csNm == chargerInfo.csNm) return@forEachIndexed
             }
             val markerImage = getMarkerImage(chargerInfo.chargeTp)
-            val resizeImage = getResizedImage(markerImage)
 
             val item = MyItem(
                 LatLng(chargerInfo.lat.toDouble(), chargerInfo.longi.toDouble()),
                 chargerInfo.csNm,
                 chargerInfo.cpStat,
-                BitmapDescriptorFactory.fromBitmap(resizeImage),
+                BitmapDescriptorFactory.fromBitmap(getResizedImage(getMarkerImage(chargeTp =  chargerInfo.chargeTp))),
                 chargerInfo.addr,
                 chargerInfo.chargeTp,
                 chargerInfo.cpTp

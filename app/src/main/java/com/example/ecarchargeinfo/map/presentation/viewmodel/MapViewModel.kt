@@ -1,10 +1,9 @@
 package com.example.ecarchargeinfo.map.presentation.viewmodel
 
-import android.content.Context
 import android.util.Log
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ecarchargeinfo.config.model.ApplicationConstants
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
@@ -25,7 +24,6 @@ import com.example.ecarchargeinfo.map.domain.usecase.location.ILocationUseCase
 import com.example.ecarchargeinfo.map.domain.util.MyItem
 import com.example.ecarchargeinfo.retrofit.model.charger.ChargerInfo
 import com.google.android.gms.maps.model.LatLng
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +31,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.annotation.meta.When
 import javax.inject.Inject
 
 
@@ -43,7 +40,6 @@ class MapViewModel @Inject constructor(
     private val getChargerInfoUseCase: IChargerInfoUseCase,
     private val getFilteredMarkerUseCase: IGetFilteredMarkerUseCase,
     private val getAllMarkerUseCase: IGetAllMarkerUseCase,
-    @ApplicationContext private val context: Context
 ) :
     ViewModel(), MainInputs, MainOutputs {
     val inputs: MainInputs = this
@@ -63,9 +59,9 @@ class MapViewModel @Inject constructor(
         get() = _chargerDetailState
     private val _geocoderEvent: MutableSharedFlow<String> =
         MutableSharedFlow(
-            replay = MapConstants.REPLAY,
-            extraBufferCapacity = MapConstants.EXTRA_BUFFER_CAPAVITY,
-            onBufferOverflow = MapConstants.ON_BUFFER_OVERFLOW
+            replay = ApplicationConstants.REPLAY,
+            extraBufferCapacity = ApplicationConstants.EXTRA_BUFFER_CAPAVITY,
+            onBufferOverflow = ApplicationConstants.ON_BUFFER_OVERFLOW
         )
     override val geocoderEvent: SharedFlow<String>
         get() = _geocoderEvent
@@ -288,4 +284,5 @@ class MapViewModel @Inject constructor(
             )
         )
     }
+
 }
