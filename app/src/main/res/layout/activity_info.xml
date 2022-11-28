@@ -138,20 +138,8 @@
             app:layout_constraintTop_toTopOf="@+id/tv_detail_info"
             tools:text="@string/info_address" />
 
-        <!--<TextView
-            cpStatColor1="@{@color/can_charge}"
-            cpStatColor2="@{@color/cannot_charge}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:cpStatText="@{chargeInfo.cpStat}"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="@+id/tv_address"
-            app:layout_constraintTop_toBottomOf="@+id/tv_address"
-            tools:text="@string/info_available" />
--->
         <View
+            android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="3dp"
             android:layout_marginTop="16dp"
@@ -159,6 +147,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_address" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/info_rc"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

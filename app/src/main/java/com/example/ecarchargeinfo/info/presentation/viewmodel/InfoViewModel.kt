@@ -3,6 +3,7 @@ package com.example.ecarchargeinfo.info.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecarchargeinfo.config.model.ApplicationConstants
+import com.example.ecarchargeinfo.info.domain.model.Charger
 import com.example.ecarchargeinfo.info.domain.usecase.copyaddress.CopyAddressUseCase
 import com.example.ecarchargeinfo.info.domain.usecase.distance.DistanceUseCase
 import com.example.ecarchargeinfo.info.presentation.input.InfoInputs
@@ -27,10 +28,10 @@ class InfoViewModel @Inject constructor(
     val outPuts: InfoOutPuts = this
     val inPuts: InfoInputs = this
 
-    private val _chargerInfostate: MutableStateFlow<InfoChargerInfoState> =
+    private val _chargerInfoState: MutableStateFlow<InfoChargerInfoState> =
         MutableStateFlow(InfoChargerInfoState.Initial)
     override val chargerInfoState: StateFlow<InfoChargerInfoState>
-        get() = _chargerInfostate
+        get() = _chargerInfoState
     private val _distanceEvent: MutableSharedFlow<String> =
         MutableSharedFlow(
             replay = ApplicationConstants.REPLAY,
@@ -38,16 +39,34 @@ class InfoViewModel @Inject constructor(
             onBufferOverflow = ApplicationConstants.ON_BUFFER_OVERFLOW
 
         )
-
     override val distanceEvent: SharedFlow<String>
         get() = _distanceEvent
-
+    private val _chargersEvent: MutableSharedFlow<ArrayList<Charger>> =
+        MutableSharedFlow(
+            replay = ApplicationConstants.REPLAY,
+            extraBufferCapacity = ApplicationConstants.EXTRA_BUFFER_CAPAVITY,
+            onBufferOverflow = ApplicationConstants.ON_BUFFER_OVERFLOW
+        )
+    override val chargersEvent: SharedFlow<ArrayList<Charger>>
+        get() = _chargersEvent
 
     fun updateChargerInfo(address: String) {
         viewModelScope.launch {
-            _chargerInfostate.value = InfoChargerInfoState.Main(
-                getChargerInfoUseCase(address)
+            val chargerInfo = getChargerInfoUseCase(address)
+            _chargerInfoState.value = InfoChargerInfoState.Main(
+                chargerInfo = chargerInfo
             )
+            val tempArray = ArrayList<Charger>()
+            chargerInfo.forEach {
+                tempArray.add(
+                    Charger(
+                        chargeTp = it.chargeTp,
+                        cpStat = it.cpStat,
+                        cpTp = it.cpTp
+                    )
+                )
+            }
+            _chargersEvent.emit(tempArray)
         }
     }
 
@@ -60,8 +79,8 @@ class InfoViewModel @Inject constructor(
     }
 
     override fun onCopyClick() {
-        if (_chargerInfostate.value is InfoChargerInfoState.Main) {
-            _chargerInfostate.value.let {
+        if (_chargerInfoState.value is InfoChargerInfoState.Main) {
+            _chargerInfoState.value.let {
                 if (it is InfoChargerInfoState.Main) {
                     copyAddressUseCase(it.chargerInfo[0].addr)
                 }
@@ -70,11 +89,8 @@ class InfoViewModel @Inject constructor(
     }
 
     fun updateDistance(location: LatLng, chargerLocation: LatLng) {
-        if (location != null && chargerLocation != null) {
-            viewModelScope.launch {
-                _distanceEvent.emit(distanceUseCase(location, chargerLocation).toString() + "km")
-            }
+        viewModelScope.launch {
+            _distanceEvent.emit(distanceUseCase(location, chargerLocation).toString() + "km")
         }
     }
-
 }

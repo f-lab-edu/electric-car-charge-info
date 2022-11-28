@@ -5,14 +5,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.ActivityInfoBinding
+import com.example.ecarchargeinfo.info.domain.model.Charger
 import com.example.ecarchargeinfo.info.presentation.output.InfoChargerInfoState
 import com.example.ecarchargeinfo.info.presentation.viewmodel.InfoViewModel
+import com.example.ecarchargeinfo.info.util.ChargerAdapter
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import okhttp3.internal.notifyAll
 import javax.inject.Inject
 
 
@@ -28,19 +31,22 @@ class InfoActivity : AppCompatActivity() {
     lateinit var getLocationLat: String
     lateinit var getLocationLon: String
     lateinit var distance: String
+    lateinit var adapter: ChargerAdapter
+    lateinit var layoutManager: GridLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_info)
         binding.lifecycleOwner = this
         binding.inputs = viewModel.inPuts
-
+        layoutManager = GridLayoutManager(applicationContext, 2)
         initIntent()
         if (getLocationLat != null && getLocationLon != null)
             currentLocation = LatLng(getLocationLat.toDouble(), getLocationLon.toDouble())
         observeChargerInfoState()
         viewModel.updateChargerInfo(getAddress.toString())
         observeDistance()
+        observeChargers()
     }
 
     private fun observeChargerInfoState() {
@@ -68,10 +74,19 @@ class InfoActivity : AppCompatActivity() {
         getLocationLon = intent.getStringExtra("lon").toString()
     }
 
-    private fun observeDistance()   {
+    private fun observeDistance() {
         lifecycleScope.launchWhenStarted {
             viewModel.distanceEvent.collect {
                 binding.tvDistance.text = it
+            }
+        }
+    }
+
+    private fun observeChargers() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.chargersEvent.collect() {
+                binding.infoRc.adapter = ChargerAdapter(it)
+                binding.infoRc.layoutManager = layoutManager
             }
         }
     }

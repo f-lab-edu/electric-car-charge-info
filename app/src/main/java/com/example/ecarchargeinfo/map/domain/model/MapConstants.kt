@@ -16,6 +16,7 @@ object MapConstants {
     const val CHARGER_TYPE_AC = "6"
     const val CHARGER_TYPE_SLOW = "1"
     const val CHARGER_TYPE_FAST = "2"
+    const val CHARGER_CHARGING = "3"
 
     //Charger stat
     object ChargerStat {

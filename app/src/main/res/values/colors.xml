@@ -12,4 +12,5 @@
     <color name="button_true">#33CC33</color>
     <color name="button_false">#999999</color>
     <color name="gray">#808080</color>
+    <color name="red">#FF0000</color>
 </resources>

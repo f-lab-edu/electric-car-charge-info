@@ -37,6 +37,7 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -181,6 +182,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
             )
             return@setOnClusterClickListener false
         }
+
 
         clusterManager.setOnClusterItemClickListener {
             val itemLocation = LatLng(it.position.latitude, it.position.longitude)
