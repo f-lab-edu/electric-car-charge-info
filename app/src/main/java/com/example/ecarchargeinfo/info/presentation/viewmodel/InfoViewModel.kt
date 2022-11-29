@@ -32,21 +32,19 @@ class InfoViewModel @Inject constructor(
         MutableStateFlow(InfoChargerInfoState.Initial)
     override val chargerInfoState: StateFlow<InfoChargerInfoState>
         get() = _chargerInfoState
-    private val _distanceEvent: MutableSharedFlow<String> =
-        MutableSharedFlow(
-            replay = ApplicationConstants.REPLAY,
-            extraBufferCapacity = ApplicationConstants.EXTRA_BUFFER_CAPAVITY,
-            onBufferOverflow = ApplicationConstants.ON_BUFFER_OVERFLOW
+    private val _distanceEvent: MutableSharedFlow<String> = MutableSharedFlow(
+        replay = ApplicationConstants.REPLAY,
+        extraBufferCapacity = ApplicationConstants.EXTRA_BUFFER_CAPAVITY,
+        onBufferOverflow = ApplicationConstants.ON_BUFFER_OVERFLOW
 
-        )
+    )
     override val distanceEvent: SharedFlow<String>
         get() = _distanceEvent
-    private val _chargersEvent: MutableSharedFlow<ArrayList<Charger>> =
-        MutableSharedFlow(
-            replay = ApplicationConstants.REPLAY,
-            extraBufferCapacity = ApplicationConstants.EXTRA_BUFFER_CAPAVITY,
-            onBufferOverflow = ApplicationConstants.ON_BUFFER_OVERFLOW
-        )
+    private val _chargersEvent: MutableSharedFlow<ArrayList<Charger>> = MutableSharedFlow(
+        replay = ApplicationConstants.REPLAY,
+        extraBufferCapacity = ApplicationConstants.EXTRA_BUFFER_CAPAVITY,
+        onBufferOverflow = ApplicationConstants.ON_BUFFER_OVERFLOW
+    )
     override val chargersEvent: SharedFlow<ArrayList<Charger>>
         get() = _chargersEvent
 
@@ -60,9 +58,7 @@ class InfoViewModel @Inject constructor(
             chargerInfo.forEach {
                 tempArray.add(
                     Charger(
-                        chargeTp = it.chargeTp,
-                        cpStat = it.cpStat,
-                        cpTp = it.cpTp
+                        chargeTp = it.chargeTp, cpStat = it.cpStat, cpTp = it.cpTp
                     )
                 )
             }

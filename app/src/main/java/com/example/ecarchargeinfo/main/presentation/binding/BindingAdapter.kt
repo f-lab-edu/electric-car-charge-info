@@ -103,7 +103,6 @@ object BindingAdapter {
     @BindingAdapter("chargerStat", "canColor", "cantColor")
     fun setChargerStat(view: TextView, cpStat: String?, canColor: Int, cantColor: Int) {
         cpStat.let {
-            println("@@cpstat "+ cpStat)
             view.setTextColor(
                 when (cpStat) {
                     CHARGER_STAT_OK -> {

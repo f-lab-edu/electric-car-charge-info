@@ -24,13 +24,13 @@ class AllMarkerRepositoryImpl @Inject constructor(@ApplicationContext private va
             val markerImage = getMarkerImage(chargerInfo.chargeTp)
 
             val item = MyItem(
-                LatLng(chargerInfo.lat.toDouble(), chargerInfo.longi.toDouble()),
-                chargerInfo.csNm,
-                chargerInfo.cpStat,
-                BitmapDescriptorFactory.fromBitmap(getResizedImage(getMarkerImage(chargeTp =  chargerInfo.chargeTp))),
-                chargerInfo.addr,
-                chargerInfo.chargeTp,
-                chargerInfo.cpTp
+                _position = LatLng(chargerInfo.lat.toDouble(), chargerInfo.longi.toDouble()),
+                _title = chargerInfo.csNm,
+                _snippet = chargerInfo.cpStat,
+                _icon = BitmapDescriptorFactory.fromBitmap(getResizedImage(getMarkerImage(chargeTp =  chargerInfo.chargeTp))),
+                _addr = chargerInfo.addr,
+                _chargeTp = chargerInfo.chargeTp,
+                _cpTp = chargerInfo.cpTp
             )
             markerArray.add(item)
         }
@@ -44,7 +44,8 @@ class AllMarkerRepositoryImpl @Inject constructor(@ApplicationContext private va
         }, null
     ) as BitmapDrawable
 
-    override fun getResizedImage(markerImage: BitmapDrawable): Bitmap = markerImage.let {
+    override fun getResizedImage(markerImage: BitmapDrawable): Bitmap =
+        markerImage.let {
         Bitmap.createScaledBitmap(
             markerImage.bitmap, MapConstants.IMAGE_WIDTH, MapConstants.IMAGE_HEIGHT, false
         )

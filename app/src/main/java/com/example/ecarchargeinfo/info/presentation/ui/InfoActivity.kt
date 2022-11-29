@@ -55,7 +55,7 @@ class InfoActivity : AppCompatActivity() {
                 viewModel.outPuts.chargerInfoState.collect() {
                     if (it is InfoChargerInfoState.Main) {
                         binding.chargeInfo = it.chargerInfo.get(0)
-                        viewModel.getRecyclerArray(it.chargerInfo)
+                        viewModel.getRecyclerArray(chargeInfo = it.chargerInfo)
                         chargerLocation = LatLng(
                             it.chargerInfo[0].lat.toDouble(),
                             it.chargerInfo[0].longi.toDouble()

@@ -21,7 +21,6 @@ class ChargerAdapter(private val chargerList: ArrayList<Charger>) :
 
     override fun onBindViewHolder(holder: ChargerViewHolder, position: Int) {
         holder.bind(chargerList[position])
-        println("${chargerList.get(position)} @@@@@")
     }
 
     override fun getItemCount(): Int = chargerList.size

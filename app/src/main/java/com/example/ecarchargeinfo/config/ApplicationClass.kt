@@ -1,6 +1,8 @@
 package com.example.ecarchargeinfo.config
 
 import android.app.Application
+import android.content.Context
+import android.widget.Toast
 import com.example.ecarchargeinfo.R
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
@@ -17,6 +19,8 @@ class ApplicationClass : Application() {
         companion object    {
         lateinit var sRetrofit: Retrofit
         lateinit var API_KEY: String
+
+
     }
 
     override fun onCreate() {
@@ -37,5 +41,9 @@ class ApplicationClass : Application() {
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+
+    fun toast(str: Any)  {
+        Toast.makeText(this, "${str.toString()}", Toast.LENGTH_SHORT).show()
     }
 }
