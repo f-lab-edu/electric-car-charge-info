@@ -1,8 +1,6 @@
 package com.example.ecarchargeinfo.config
 
 import android.app.Application
-import android.content.Context
-import android.widget.Toast
 import com.example.ecarchargeinfo.R
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
@@ -16,7 +14,8 @@ import java.util.concurrent.TimeUnit
 class ApplicationClass : Application() {
 
     val API_URL = "https://api.odcloud.kr/"
-        companion object    {
+
+    companion object {
         lateinit var sRetrofit: Retrofit
         lateinit var API_KEY: String
 
@@ -29,7 +28,7 @@ class ApplicationClass : Application() {
         API_KEY = resources.getString(R.string.ev_charger_key)
     }
 
-    private fun initRetrofit()  {
+    private fun initRetrofit() {
         val client: OkHttpClient = OkHttpClient.Builder()
             .readTimeout(5000, TimeUnit.MILLISECONDS)
             .connectTimeout(5000, TimeUnit.MILLISECONDS)
@@ -43,7 +42,4 @@ class ApplicationClass : Application() {
             .build()
     }
 
-    fun toast(str: Any)  {
-        Toast.makeText(this, "${str.toString()}", Toast.LENGTH_SHORT).show()
-    }
 }

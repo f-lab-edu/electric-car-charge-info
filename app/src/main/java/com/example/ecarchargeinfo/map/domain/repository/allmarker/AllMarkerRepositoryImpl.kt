@@ -27,7 +27,11 @@ class AllMarkerRepositoryImpl @Inject constructor(@ApplicationContext private va
                 _position = LatLng(chargerInfo.lat.toDouble(), chargerInfo.longi.toDouble()),
                 _title = chargerInfo.csNm,
                 _snippet = chargerInfo.cpStat,
-                _icon = BitmapDescriptorFactory.fromBitmap(getResizedImage(getMarkerImage(chargeTp =  chargerInfo.chargeTp))),
+                _icon = BitmapDescriptorFactory.fromBitmap(
+                    getResizedImage(
+                        getMarkerImage(chargeTp = chargerInfo.chargeTp)
+                    )
+                ),
                 _addr = chargerInfo.addr,
                 _chargeTp = chargerInfo.chargeTp,
                 _cpTp = chargerInfo.cpTp
@@ -46,10 +50,13 @@ class AllMarkerRepositoryImpl @Inject constructor(@ApplicationContext private va
 
     override fun getResizedImage(markerImage: BitmapDrawable): Bitmap =
         markerImage.let {
-        Bitmap.createScaledBitmap(
-            markerImage.bitmap, MapConstants.IMAGE_WIDTH, MapConstants.IMAGE_HEIGHT, false
-        )
-    }
+            Bitmap.createScaledBitmap(
+                /* src = */ markerImage.bitmap,
+                /* dstWidth = */ MapConstants.IMAGE_WIDTH,
+                /* dstHeight = */ MapConstants.IMAGE_HEIGHT,
+                /* filter = */ false
+            )
+        }
 
 
 }

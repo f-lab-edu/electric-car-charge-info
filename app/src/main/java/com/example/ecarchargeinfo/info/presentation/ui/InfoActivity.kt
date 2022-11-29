@@ -8,14 +8,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.ActivityInfoBinding
-import com.example.ecarchargeinfo.info.domain.model.Charger
 import com.example.ecarchargeinfo.info.presentation.output.InfoChargerInfoState
 import com.example.ecarchargeinfo.info.presentation.viewmodel.InfoViewModel
 import com.example.ecarchargeinfo.info.util.ChargerAdapter
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import okhttp3.internal.notifyAll
 import javax.inject.Inject
 
 

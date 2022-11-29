@@ -132,22 +132,21 @@ object BindingAdapter {
     @JvmStatic
     @BindingAdapter("chargerType")
     fun setChargerType(view: TextView, chargeTp: String) {
-        when (chargeTp) {
-            CPTP_CODE_1 -> view.text = CPTP_CODE_1_VALUE
-            CPTP_CODE_2 -> view.text = CPTP_CODE_2_VALUE
-            CPTP_CODE_3 -> view.text = CPTP_CODE_3_VALUE
-            CPTP_CODE_4 -> view.text = CPTP_CODE_4_VALUE
-            CPTP_CODE_5 -> view.text = CPTP_CODE_5_VALUE
-            CPTP_CODE_6 -> view.text = CPTP_CODE_6_VALUE
-            CPTP_CODE_7 -> view.text = CPTP_CODE_7_VALUE
-            CPTP_CODE_8 -> view.text = CPTP_CODE_8_VALUE
-            CPTP_CODE_9 -> view.text = CPTP_CODE_9_VALUE
-            CPTP_CODE_10 -> view.text = CPTP_CODE_10_VALUE
-            else -> view.apply {
-                text = CPTP_CODE_0_VALUE
-                setTextColor(Color.alpha(R.color.red))
+        view.text = when (chargeTp) {
+            CPTP_CODE_1 -> CPTP_CODE_1_VALUE
+            CPTP_CODE_2 -> CPTP_CODE_2_VALUE
+            CPTP_CODE_3 -> CPTP_CODE_3_VALUE
+            CPTP_CODE_4 -> CPTP_CODE_4_VALUE
+            CPTP_CODE_5 -> CPTP_CODE_5_VALUE
+            CPTP_CODE_6 -> CPTP_CODE_6_VALUE
+            CPTP_CODE_7 -> CPTP_CODE_7_VALUE
+            CPTP_CODE_8 -> CPTP_CODE_8_VALUE
+            CPTP_CODE_9 -> CPTP_CODE_9_VALUE
+            CPTP_CODE_10 -> CPTP_CODE_10_VALUE
+            else -> CPTP_CODE_0_VALUE.also {
+                view.setTextColor(Color.alpha(R.color.red))
             }
         }
     }
-
 }
+
