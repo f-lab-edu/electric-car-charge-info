@@ -15,14 +15,4 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.ECarChargeInfo.Splash" parent="Theme.SplashScreen">
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="windowSplashScreenBackground">@color/purple_500</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/volt</item>
-        <item name="postSplashScreenTheme">@style/Theme.ECarChargeInfo</item>
-        <item name="android:statusBarColor">@color/white</item>
-        <item name="android:navigationBarColor">@color/white</item>
-        <item name="android:windowLightStatusBar">true</item>
-
-    </style>
 </resources>

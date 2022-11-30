@@ -1,0 +1,25 @@
+package com.example.ecarchargeinfo.info.domain.entity
+
+object ChargeTpConstants {
+    const val CPTP_CODE_1 = "1"
+    const val B_TYPE_5PIN = "B타입(5핀)"
+    const val CPTP_CODE_2 = "2"
+    const val C_TYPE_5PIN = "C타입(5핀)"
+    const val CPTP_CODE_3 = "3"
+    const val BC_TYPE_5PIN = "BC타입(5핀)"
+    const val CPTP_CODE_4 = "4"
+    const val BC_TYPE_7PIN = "BC타입(7핀)"
+    const val CPTP_CODE_5 = "5"
+    const val DC_TYPE_DEMO = "DC차 데모"
+    const val CPTP_CODE_6 = "6"
+    const val AC_TYPE = "AC 3상"
+    const val CPTP_CODE_7 = "7"
+    const val DC_TYPE_COMBO = "DC콤보"
+    const val CPTP_CODE_8 = "8"
+    const val DC_TYPE_DEMO_COMBO = "DC차데모+DC콤보"
+    const val CPTP_CODE_9 = "9"
+    const val DC_TYPE_DEMO_AC = "DC차데모+AC3상"
+    const val CPTP_CODE_10 = "10"
+    const val DC_TYPE_DEMO_COMBO_AC = "DC차데모+DC콤보, AC3상"
+    const val CPTP_CODE_0_VALUE = "정보없음"
+}

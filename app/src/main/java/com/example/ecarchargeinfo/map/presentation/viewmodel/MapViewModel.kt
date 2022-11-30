@@ -3,6 +3,7 @@ package com.example.ecarchargeinfo.map.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ecarchargeinfo.config.model.ApplicationConstants
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
@@ -15,9 +16,13 @@ import com.example.ecarchargeinfo.map.domain.entity.ChargerDetailEntity
 import com.example.ecarchargeinfo.map.domain.entity.MarkerInfo
 import com.example.ecarchargeinfo.map.domain.model.ChargerDetailConstants
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
+import com.example.ecarchargeinfo.map.domain.usecase.allmarker.IGetAllMarkerUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.chargerinfo.IChargerInfoUseCase
+import com.example.ecarchargeinfo.map.domain.usecase.filteredmarker.IGetFilteredMarkerUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.geocoder.IGeocoderUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.location.ILocationUseCase
+import com.example.ecarchargeinfo.map.domain.util.MyItem
+import com.example.ecarchargeinfo.retrofit.model.charger.ChargerInfo
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,6 +38,8 @@ class MapViewModel @Inject constructor(
     private val getLocationUseCase: ILocationUseCase,
     private val getGeocoderUseCase: IGeocoderUseCase,
     private val getChargerInfoUseCase: IChargerInfoUseCase,
+    private val getFilteredMarkerUseCase: IGetFilteredMarkerUseCase,
+    private val getAllMarkerUseCase: IGetAllMarkerUseCase,
 ) :
     ViewModel(), MainInputs, MainOutputs {
     val inputs: MainInputs = this
@@ -52,26 +59,44 @@ class MapViewModel @Inject constructor(
         get() = _chargerDetailState
     private val _geocoderEvent: MutableSharedFlow<String> =
         MutableSharedFlow(
-            replay = MapConstants.REPLAY,
-            extraBufferCapacity = MapConstants.EXTRA_BUFFER_CAPAVITY,
-            onBufferOverflow = MapConstants.ON_BUFFER_OVERFLOW
+            replay = ApplicationConstants.REPLAY,
+            extraBufferCapacity = ApplicationConstants.EXTRA_BUFFER_CAPAVITY,
+            onBufferOverflow = ApplicationConstants.ON_BUFFER_OVERFLOW
         )
     override val geocoderEvent: SharedFlow<String>
         get() = _geocoderEvent
     private val koreaAddressArray = ArrayList<String>()
+    private var chargerMarkerArray = ArrayList<MyItem>()
+
 
     private fun handleException() = CoroutineExceptionHandler { _, throwable ->
         Log.e("ECarChargeInfo", throwable.message ?: "")
-    }
-
-    fun clearKoreaAddress() {
-        koreaAddressArray.clear()
     }
 
     init {
         initSearchFilter()
         initChagerDetail()
     }
+
+
+    fun clearKoreaAddress() {
+        koreaAddressArray.clear()
+    }
+
+    fun getMarkerByFiltered(type: String): ArrayList<MyItem> =
+        getFilteredMarkerUseCase(chargerMarkerArray, type)
+
+    fun setMarkerArray(list: List<ChargerInfo>) {
+        getAllMarkerUseCase(list).forEach {
+            chargerMarkerArray.add(it)
+        }
+    }
+
+    fun clearChargerMarkerArray()   {
+        chargerMarkerArray.clear()
+    }
+
+    fun getMarkerArray(): ArrayList<MyItem> = chargerMarkerArray
 
     fun updateNowLocation(): LatLng = getLocationUseCase()
 
@@ -265,4 +290,5 @@ class MapViewModel @Inject constructor(
             )
         )
     }
+
 }

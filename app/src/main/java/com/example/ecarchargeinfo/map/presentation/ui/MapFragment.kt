@@ -3,15 +3,12 @@ package com.example.ecarchargeinfo.map.presentation.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -30,8 +27,6 @@ import com.example.ecarchargeinfo.map.domain.model.MapConstants.CHARGER_TYPE_AC
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.CHARGER_TYPE_COMBO
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.CHARGER_TYPE_DEMO
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.CHARGER_TYPE_SLOW
-import com.example.ecarchargeinfo.map.domain.model.MapConstants.IMAGE_HEIGHT
-import com.example.ecarchargeinfo.map.domain.model.MapConstants.IMAGE_WIDTH
 import com.example.ecarchargeinfo.map.domain.util.ClusterRenderer
 import com.example.ecarchargeinfo.map.domain.util.MyClusterManager
 import com.example.ecarchargeinfo.map.domain.util.MyItem
@@ -40,17 +35,17 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.stream.Collectors
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MapFragment : Fragment(), OnMapReadyCallback,
-    GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener {
+class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
+                    GoogleMap.OnMapClickListener {
     private lateinit var gMap: MapView
     private lateinit var binding: FragmentMapBinding
     private lateinit var mMap: GoogleMap
@@ -59,31 +54,28 @@ class MapFragment : Fragment(), OnMapReadyCallback,
 
     @Inject
     lateinit var mapViewModel: MapViewModel
+    private val slowMarker = ArrayList<MyItem>()
+    private val allMarker = ArrayList<MyItem>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
         binding.inputs = mapViewModel.inputs
         binding.lifecycleOwner = this
         gMap = binding.mapview
         gMap.onCreate(savedInstanceState)
         gMap.getMapAsync(this)
+
         binding.btnDetail?.setOnClickListener {
-            clusterManager.removeItems(allMarker)
-            clusterManager.removeItems(demoMarker)
-            clusterManager.removeItems(comboMarker)
-            clusterManager.removeItems(acMarker)
-            clusterManager.cluster()
             val intent = Intent(activity, InfoActivity::class.java)
             intent.putExtra("address", binding.tvDetailAddr?.text.toString())
+            intent.putExtra("lat", mapViewModel.updateNowLocation().latitude.toString())
+            intent.putExtra("lon", mapViewModel.updateNowLocation().longitude.toString())
             startActivity(intent)
         }
         return binding.root
     }
-
 
     private fun observeUIState() {
         lifecycleScope.launch {
@@ -93,48 +85,44 @@ class MapFragment : Fragment(), OnMapReadyCallback,
                         binding.searchFilterEntity = it.searchFilters
                         it.searchFilters.let {
                             if (it.combo) {
-                                clusterManager.addItems(comboMarker)
-
+                                clusterManager.addItems(
+                                    mapViewModel.getMarkerByFiltered(CHARGER_TYPE_COMBO)
+                                )
                             } else {
-                                allMarker.forEach {
-                                    if (it.getCptp() == CHARGER_TYPE_COMBO) {
-                                        comboMarker.add(it)
-                                    }
-                                }
-                                clusterManager.removeItems(comboMarker)
+                                clusterManager.removeItems(
+                                    mapViewModel.getMarkerByFiltered(CHARGER_TYPE_COMBO)
+                                )
                             }
-
                             if (it.demo) {
-                                clusterManager.addItems(demoMarker)
+                                clusterManager.addItems(
+                                    mapViewModel.getMarkerByFiltered(CHARGER_TYPE_DEMO)
+                                )
                             } else {
-                                allMarker.forEach {
-                                    if (it.getCptp() == CHARGER_TYPE_DEMO) {
-                                        comboMarker.add(it)
-                                    }
-                                }
-                                clusterManager.removeItems(demoMarker)
+                                clusterManager.removeItems(
+                                    mapViewModel.getMarkerByFiltered(CHARGER_TYPE_DEMO)
+                                )
                             }
-
                             if (it.ac) {
-                                clusterManager.addItems(acMarker)
+                                clusterManager.addItems(
+                                    mapViewModel.getMarkerByFiltered(CHARGER_TYPE_AC)
+                                )
                             } else {
-                                allMarker.forEach {
-                                    if (it.getCptp() == CHARGER_TYPE_AC) {
-                                        comboMarker.add(it)
-                                    }
-                                }
-                                clusterManager.removeItems(acMarker)
+                                clusterManager.removeItems(
+                                    mapViewModel.getMarkerByFiltered(CHARGER_TYPE_AC)
+                                )
                             }
-
                             if (it.slow) {
-                                clusterManager.addItems(slowMarker)
+                                clusterManager.addItems(
+                                    mapViewModel.getMarkerArray().stream().filter { it ->
+                                        it.getChargeTp() == CHARGER_TYPE_SLOW
+                                    }.collect(Collectors.toList())
+                                )
                             } else {
-                                allMarker.forEach {
-                                    if (it.getChargeTp() == CHARGER_TYPE_SLOW) {
-                                        slowMarker.add(it)
-                                    }
-                                }
-                                clusterManager.removeItems(slowMarker)
+                                clusterManager.removeItems(
+                                    mapViewModel.getMarkerArray().stream().filter { it ->
+                                        it.getChargeTp() == CHARGER_TYPE_SLOW
+                                    }.collect(Collectors.toList())
+                                )
                             }
                         }
                         clusterManager.cluster()
@@ -159,18 +147,15 @@ class MapFragment : Fragment(), OnMapReadyCallback,
         gMap.onSaveInstanceState(outState)
     }
 
-
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        val nowLocation = mapViewModel.updateNowLocation()
-        val nowLocationMarker = MarkerOptions().position(nowLocation)
+        val nowLocationMarker = MarkerOptions().position(mapViewModel.updateNowLocation())
             .title(resources.getString(R.string.now_location))
         mMap.addMarker(nowLocationMarker)?.showInfoWindow()
         mMap.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
-                nowLocation,
-                MapConstants.DEFAULT_ZOOM
+                mapViewModel.updateNowLocation(), MapConstants.DEFAULT_ZOOM
             )
         )
         mMap.isMyLocationEnabled = true
@@ -184,7 +169,7 @@ class MapFragment : Fragment(), OnMapReadyCallback,
         mMap.setOnMapClickListener(this)
     }
 
-    fun initCluster() {
+    private fun initCluster() {
         clusterManager = MyClusterManager(requireContext(), mMap, this)
         clusterManager.renderer = ClusterRenderer(requireContext(), mMap, clusterManager)
         mMap.setOnMarkerClickListener(clusterManager)
@@ -194,28 +179,23 @@ class MapFragment : Fragment(), OnMapReadyCallback,
             val clusterLocation = LatLng(it.position.latitude, it.position.longitude)
             mMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
-                    clusterLocation,
-                    MapConstants.CLUSTER_ZOOM
+                    clusterLocation, MapConstants.CLUSTER_ZOOM
                 )
             )
             return@setOnClusterClickListener false
         }
 
+
         clusterManager.setOnClusterItemClickListener {
             val itemLocation = LatLng(it.position.latitude, it.position.longitude)
             mMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
-                    itemLocation,
-                    MapConstants.MARKER_ZOOM
+                    itemLocation, MapConstants.MARKER_ZOOM
                 )
             )
             mapViewModel.onMarkerClick(
-                visible = true,
-                MarkerInfo(
-                    it.title,
-                    it.getAddr(),
-                    it.getChargeTp(),
-                    it.snippet
+                visible = true, MarkerInfo(
+                    it.title, it.getAddr(), it.getChargeTp(), it.snippet
                 )
             )
             return@setOnClusterItemClickListener false
@@ -239,18 +219,11 @@ class MapFragment : Fragment(), OnMapReadyCallback,
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 mapViewModel.outputs.geocoderEvent.collect() {
-                    if (it != "")
-                        mapViewModel.updateChargerInfo(it)
+                    if (it != "") mapViewModel.updateChargerInfo(it)
                 }
             }
         }
     }
-
-    private val comboMarker = ArrayList<MyItem>()
-    private val demoMarker = ArrayList<MyItem>()
-    private val acMarker = ArrayList<MyItem>()
-    private val slowMarker = ArrayList<MyItem>()
-    private val allMarker = mutableSetOf<MyItem>()
 
     private fun observeChargerInfoState() {
         lifecycleScope.launch {
@@ -258,41 +231,13 @@ class MapFragment : Fragment(), OnMapReadyCallback,
                 mapViewModel.outputs.chargerInfoState.collect() {
                     if (it is MainChargerInfoState.Main) {
                         it.chargerInfo.let {
-                            it.forEachIndexed { index, data ->
-                                if (index > 0) {
-                                    if (it[index - 1].csNm == data.csNm)
-                                        return@forEachIndexed
-                                }
-
-                                val location = LatLng(data.lat.toDouble(), data.longi.toDouble())
-                                val markerImage =
-                                    ResourcesCompat.getDrawable(
-                                        resources,
-                                        when (data.chargeTp) {
-                                            CHARGER_TYPE_SLOW -> R.drawable.volt_slow
-                                            else -> R.drawable.volt
-                                        },
-                                        null
-                                    ) as BitmapDrawable
-                                val resizeImage =
-                                    Bitmap.createScaledBitmap(
-                                        markerImage.bitmap,
-                                        IMAGE_WIDTH,
-                                        IMAGE_HEIGHT,
-                                        false
-                                    )
-                                val item = MyItem(
-                                    location,
-                                    data.csNm,
-                                    data.cpStat,
-                                    BitmapDescriptorFactory.fromBitmap((resizeImage)),
-                                    data.addr,
-                                    data.chargeTp,
-                                    data.cpTp
-                                )
-                                allMarker.add(item)
+                            mapViewModel.setMarkerArray(it)
+                            clusterManager.addItems(mapViewModel.getMarkerArray())
+                            //
+                            mapViewModel.getMarkerArray().forEach {
+                                allMarker.add(it)
                             }
-                            clusterManager.addItems(allMarker)
+                            //
                             clusterManager.cluster()
                         }
                     }
@@ -328,11 +273,8 @@ class MapFragment : Fragment(), OnMapReadyCallback,
     override fun onPause() {
         clusterManager.clearItems()
         allMarker.clear()
-        comboMarker.clear()
-        demoMarker.clear()
-        acMarker.clear()
-        allMarker.clear()
         mapViewModel.clearKoreaAddress()
+        mapViewModel.clearChargerMarkerArray()
         super.onPause()
         gMap.onPause()
     }
@@ -350,8 +292,7 @@ class MapFragment : Fragment(), OnMapReadyCallback,
     override fun onMyLocationButtonClick(): Boolean {
         mMap.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
-                mapViewModel.updateNowLocation(),
-                MapConstants.DEFAULT_ZOOM
+                mapViewModel.updateNowLocation(), MapConstants.DEFAULT_ZOOM
             )
         )
         return true

@@ -14,9 +14,12 @@ import java.util.concurrent.TimeUnit
 class ApplicationClass : Application() {
 
     val API_URL = "https://api.odcloud.kr/"
-        companion object    {
+
+    companion object {
         lateinit var sRetrofit: Retrofit
         lateinit var API_KEY: String
+
+
     }
 
     override fun onCreate() {
@@ -25,7 +28,7 @@ class ApplicationClass : Application() {
         API_KEY = resources.getString(R.string.ev_charger_key)
     }
 
-    private fun initRetrofit()  {
+    private fun initRetrofit() {
         val client: OkHttpClient = OkHttpClient.Builder()
             .readTimeout(5000, TimeUnit.MILLISECONDS)
             .connectTimeout(5000, TimeUnit.MILLISECONDS)
@@ -38,4 +41,5 @@ class ApplicationClass : Application() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
 }
