@@ -2,11 +2,11 @@ package com.example.ecarchargeinfo.map.domain.util
 
 import android.content.Context
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_OK
-import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_OK_VALUE
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_AVAILABLE
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_ON_UES
-import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_ON_UES_VALUE
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_CHARGING
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_BREAK
-import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_BREAK_VALUE
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_FAULT_MAINT
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_NETWORK_ERROR
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_NETWORK_ERROR_VALUE
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_NETWORK_DISCONNECT
@@ -36,9 +36,9 @@ class MyItem(
 
     override fun getSnippet(): String =
         when (_snippet) {
-            CHARGER_STAT_OK -> CHARGER_STAT_OK_VALUE
-            CHARGER_STAT_ON_UES -> CHARGER_STAT_ON_UES_VALUE
-            CHARGER_STAT_BREAK -> CHARGER_STAT_BREAK_VALUE
+            CHARGER_STAT_OK -> CHARGER_STAT_AVAILABLE
+            CHARGER_STAT_ON_UES -> CHARGER_STAT_CHARGING
+            CHARGER_STAT_BREAK -> CHARGER_STAT_FAULT_MAINT
             CHARGER_STAT_NETWORK_ERROR -> CHARGER_STAT_NETWORK_ERROR_VALUE
             CHARGER_STAT_NETWORK_DISCONNECT -> CHARGER_STAT_NETWORK_DISCONNECT_VALUE
             else -> CHARGER_STAT_EMPTY

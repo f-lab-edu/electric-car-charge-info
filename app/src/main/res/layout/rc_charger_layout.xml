@@ -28,8 +28,6 @@
 
         <TextView
             android:id="@+id/rc_tv_cp_stat"
-            canColor="@{@color/can_charge}"
-            cantColor="@{@color/cannot_charge}"
             chargerStat="@{charger.cpStat}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

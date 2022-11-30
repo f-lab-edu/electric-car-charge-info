@@ -1,7 +1,5 @@
 package com.example.ecarchargeinfo.map.domain.model
 
-import kotlinx.coroutines.channels.BufferOverflow
-
 object MapConstants {
     const val DEFAULT_ZOOM = 15f
     const val DEFAULT_LAT = 37.5666805
@@ -21,17 +19,16 @@ object MapConstants {
     //Charger stat
     object ChargerStat {
         const val CHARGER_STAT_OK = "1"
-        const val CHARGER_STAT_OK_VALUE = "충전가능"
+        const val CHARGER_STAT_AVAILABLE = "충전가능"
         const val CHARGER_STAT_ON_UES = "2"
-        const val CHARGER_STAT_ON_UES_VALUE = "충전중"
+        const val CHARGER_STAT_CHARGING = "충전중"
         const val CHARGER_STAT_BREAK = "3"
-        const val CHARGER_STAT_BREAK_VALUE = "고장/점검"
+        const val CHARGER_STAT_FAULT_MAINT = "고장/점검"
         const val CHARGER_STAT_NETWORK_ERROR = "4"
         const val CHARGER_STAT_NETWORK_ERROR_VALUE = "통신장애"
         const val CHARGER_STAT_NETWORK_DISCONNECT = "5"
         const val CHARGER_STAT_NETWORK_DISCONNECT_VALUE = "통신미연결"
         const val CHARGER_STAT_EMPTY = "상태 조회 불가"
-
     }
 
 }
