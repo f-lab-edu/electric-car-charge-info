@@ -14,49 +14,53 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class AllMarkerRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context) :
-    AllMarkerRepository {
-    override fun getAllMarker(list: List<ChargerInfo>): ArrayList<MyItem> {
-        val markerArray = ArrayList<MyItem>()
+        AllMarkerRepository {
+    override fun getAllMarker(list: List<ChargerInfo>): List<MyItem> {
+        val markerArray = mutableListOf<MyItem>()
         list.forEachIndexed { index, chargerInfo ->
             if (index > 0) {
-                if (list[index - 1].csNm == chargerInfo.csNm) return@forEachIndexed
+                if (list[index - 1].csNm == chargerInfo.csNm) {
+                    return@forEachIndexed
+                }
             }
             val markerImage = getMarkerImage(chargerInfo.chargeTp)
-
             val item = MyItem(
-                _position = LatLng(chargerInfo.lat.toDouble(), chargerInfo.longi.toDouble()),
-                _title = chargerInfo.csNm,
-                _snippet = chargerInfo.cpStat,
-                _icon = BitmapDescriptorFactory.fromBitmap(
-                    getResizedImage(
-                        getMarkerImage(chargeTp = chargerInfo.chargeTp)
-                    )
-                ),
-                _addr = chargerInfo.addr,
-                _chargeTp = chargerInfo.chargeTp,
-                _cpTp = chargerInfo.cpTp
+                    _position = LatLng(chargerInfo.lat.toDouble(), chargerInfo.longi.toDouble()),
+                    _title = chargerInfo.csNm,
+                    _snippet = chargerInfo.cpStat,
+                    _icon = BitmapDescriptorFactory.fromBitmap(
+                            getResizedImage(
+                                    getMarkerImage(chargeTp = chargerInfo.chargeTp)
+                            )
+                    ),
+                    _addr = chargerInfo.addr,
+                    _chargeTp = chargerInfo.chargeTp,
+                    _cpTp = chargerInfo.cpTp
             )
             markerArray.add(item)
         }
         return markerArray
     }
 
-    override fun getMarkerImage(chargeTp: String): BitmapDrawable = ResourcesCompat.getDrawable(
-        context.resources, when (chargeTp) {
-            MapConstants.CHARGER_TYPE_SLOW -> R.drawable.volt_slow
-            else -> R.drawable.volt
-        }, null
-    ) as BitmapDrawable
+    override fun getMarkerImage(chargeTp: String): BitmapDrawable =
+            ResourcesCompat.getDrawable(
+                    context.resources,
+                    when (chargeTp) {
+                        MapConstants.CHARGER_TYPE_SLOW -> R.drawable.volt_slow
+                        else -> R.drawable.volt
+                    },
+                    null
+            ) as BitmapDrawable
 
     override fun getResizedImage(markerImage: BitmapDrawable): Bitmap =
-        markerImage.let {
-            Bitmap.createScaledBitmap(
-                /* src = */ markerImage.bitmap,
-                /* dstWidth = */ MapConstants.IMAGE_WIDTH,
-                /* dstHeight = */ MapConstants.IMAGE_HEIGHT,
-                /* filter = */ false
-            )
-        }
+            markerImage.let {
+                Bitmap.createScaledBitmap(
+                        markerImage.bitmap,
+                        MapConstants.IMAGE_WIDTH,
+                        MapConstants.IMAGE_HEIGHT,
+                        false
+                )
+            }
 
 
 }

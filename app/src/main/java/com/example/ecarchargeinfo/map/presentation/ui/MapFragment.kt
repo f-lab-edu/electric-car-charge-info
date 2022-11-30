@@ -37,9 +37,9 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.stream.Collectors
 import javax.inject.Inject
 
 
@@ -112,15 +112,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
                                 )
                             }
                             if (it.slow) {
-                                clusterManager.addItems(slowMarker)
+                                clusterManager.addItems(
+                                    mapViewModel.getMarkerArray().stream().filter { it ->
+                                        it.getChargeTp() == CHARGER_TYPE_SLOW
+                                    }.collect(Collectors.toList())
+                                )
                             } else {
-                                slowMarker.clear()
-                                mapViewModel.getMarkerArray().forEach {
-                                    if (it.getChargeTp() == CHARGER_TYPE_SLOW) {
-                                        slowMarker.add(it)
-                                    }
-                                }
-                                clusterManager.removeItems(slowMarker)
+                                clusterManager.removeItems(
+                                    mapViewModel.getMarkerArray().stream().filter { it ->
+                                        it.getChargeTp() == CHARGER_TYPE_SLOW
+                                    }.collect(Collectors.toList())
+                                )
                             }
                         }
                         clusterManager.cluster()
@@ -272,6 +274,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         clusterManager.clearItems()
         allMarker.clear()
         mapViewModel.clearKoreaAddress()
+        mapViewModel.clearChargerMarkerArray()
         super.onPause()
         gMap.onPause()
     }

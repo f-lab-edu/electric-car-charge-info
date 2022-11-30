@@ -9,24 +9,24 @@ import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_0_VALUE
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_1
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_10
-import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_10_VALUE
-import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_1_VALUE
+import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.DC_TYPE_DEMO_COMBO_AC
+import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.B_TYPE_5PIN
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_2
-import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_2_VALUE
+import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.C_TYPE_5PIN
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_3
-import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_3_VALUE
+import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.BC_TYPE_5PIN
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_4
-import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_4_VALUE
+import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.BC_TYPE_7PIN
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_5
-import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_5_VALUE
+import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.DC_TYPE_DEMO
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_6
-import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_6_VALUE
+import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.AC_TYPE
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_7
-import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_7_VALUE
+import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.DC_TYPE_COMBO
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_8
-import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_8_VALUE
+import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.DC_TYPE_DEMO_COMBO
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_9
-import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.CPTP_CODE_9_VALUE
+import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.DC_TYPE_DEMO_AC
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.CHARGER_TYPE_FAST
@@ -100,8 +100,10 @@ object BindingAdapter {
     }
 
     @JvmStatic
-    @BindingAdapter("chargerStat", "canColor", "cantColor")
-    fun setChargerStat(view: TextView, cpStat: String?, canColor: Int, cantColor: Int) {
+    @BindingAdapter("chargerStat")
+    fun setChargerStat(view: TextView, cpStat: String?) {
+        view.context.resources.getColor(Color.alpha(R.color.can_charge), null)
+
         cpStat.let {
             view.setTextColor(
                 when (cpStat) {
@@ -133,16 +135,16 @@ object BindingAdapter {
     @BindingAdapter("chargerType")
     fun setChargerType(view: TextView, chargeTp: String) {
         view.text = when (chargeTp) {
-            CPTP_CODE_1 -> CPTP_CODE_1_VALUE
-            CPTP_CODE_2 -> CPTP_CODE_2_VALUE
-            CPTP_CODE_3 -> CPTP_CODE_3_VALUE
-            CPTP_CODE_4 -> CPTP_CODE_4_VALUE
-            CPTP_CODE_5 -> CPTP_CODE_5_VALUE
-            CPTP_CODE_6 -> CPTP_CODE_6_VALUE
-            CPTP_CODE_7 -> CPTP_CODE_7_VALUE
-            CPTP_CODE_8 -> CPTP_CODE_8_VALUE
-            CPTP_CODE_9 -> CPTP_CODE_9_VALUE
-            CPTP_CODE_10 -> CPTP_CODE_10_VALUE
+            CPTP_CODE_1 -> B_TYPE_5PIN
+            CPTP_CODE_2 -> C_TYPE_5PIN
+            CPTP_CODE_3 -> BC_TYPE_5PIN
+            CPTP_CODE_4 -> BC_TYPE_7PIN
+            CPTP_CODE_5 -> DC_TYPE_DEMO
+            CPTP_CODE_6 -> AC_TYPE
+            CPTP_CODE_7 -> DC_TYPE_COMBO
+            CPTP_CODE_8 -> DC_TYPE_DEMO_COMBO
+            CPTP_CODE_9 -> DC_TYPE_DEMO_AC
+            CPTP_CODE_10 -> DC_TYPE_DEMO_COMBO_AC
             else -> CPTP_CODE_0_VALUE.also {
                 view.setTextColor(Color.alpha(R.color.red))
             }

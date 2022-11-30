@@ -6,11 +6,10 @@ import javax.inject.Inject
 
 class FilteredMarkerRepositoryImpl @Inject constructor() : FilteredMarkerRepository {
     override fun getFilteredMarkerArray(
-        chargerMarkerArray: ArrayList<MyItem>,
+        chargerMarkerArray: List<MyItem>,
         type: String
-    ): ArrayList<MyItem> =
-        chargerMarkerArray.stream()
-            .filter { it -> it.getCptp() == type }
-            .collect(Collectors.toList()) as ArrayList<MyItem>
-
+    ): List<MyItem> =
+        chargerMarkerArray.filter {
+            it.getCptp() == type
+        }
 }

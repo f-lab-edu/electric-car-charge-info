@@ -87,7 +87,13 @@ class MapViewModel @Inject constructor(
         getFilteredMarkerUseCase(chargerMarkerArray, type)
 
     fun setMarkerArray(list: List<ChargerInfo>) {
-        chargerMarkerArray = getAllMarkerUseCase(list)
+        getAllMarkerUseCase(list).forEach {
+            chargerMarkerArray.add(it)
+        }
+    }
+
+    fun clearChargerMarkerArray()   {
+        chargerMarkerArray.clear()
     }
 
     fun getMarkerArray(): ArrayList<MyItem> = chargerMarkerArray
