@@ -1,9 +1,11 @@
 package com.example.ecarchargeinfo.main.presentation.binding
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.AC_TYPE
@@ -30,6 +32,7 @@ import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.DC_TYPE_D
 import com.example.ecarchargeinfo.info.domain.enum.ChargerStat
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
+import com.example.ecarchargeinfo.map.domain.model.MapConstants
 import com.example.ecarchargeinfo.map.domain.model.MapConstants.CHARGER_TYPE_FAST
 import com.google.android.material.slider.RangeSlider
 
@@ -91,15 +94,18 @@ object BindingAdapter {
 
     @JvmStatic
     @BindingAdapter("chargerStat")
-    fun setChargerStat(view: TextView, cpStat: ChargerStat?) {
+    fun setChargerStat(view: TextView, cpStat: String?) {
+        val chargeStat = when (cpStat) {
+            MapConstants.ChargerStat.CHARGER_STAT_OK -> ChargerStat.CHARGER_STAT_OK
+            MapConstants.ChargerStat.CHARGER_STAT_ON_UES -> ChargerStat.CHARGER_STAT_ON_UES
+            MapConstants.ChargerStat.CHARGER_STAT_BREAK -> ChargerStat.CHARGER_STAT_BREAK
+            MapConstants.ChargerStat.CHARGER_STAT_NETWORK_ERROR -> ChargerStat.CHARGER_STAT_NETWORK_ERROR
+            MapConstants.ChargerStat.CHARGER_STAT_NETWORK_DISCONNECT -> ChargerStat.CHARGER_STAT_NETWORK_DISCONNECT
+            else -> ChargerStat.CHARGER_STAT_EMPTY
+        }
         view.apply {
-            setTextColor(
-                view.context.resources.getColor(
-                    Color.alpha(cpStat?.colorResource ?: R.color.cannot_charge),
-                    null
-                )
-            )
-            text = cpStat?.message
+            text = chargeStat.message.toString()
+            setTextColor(view.context.getColor(chargeStat.colorResource))
         }
     }
 

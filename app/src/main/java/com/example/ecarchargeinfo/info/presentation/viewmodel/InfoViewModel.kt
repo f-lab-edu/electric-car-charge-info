@@ -75,25 +75,15 @@ class InfoViewModel @Inject constructor(
                 array.add(
                     Charger(
                         chargeTp = it.chargeTp,
-                        cpStat = getChargerStat(it.cpStat),
+                        cpStat = it.cpStat,
                         cpTp = it.cpTp
                     )
                 )
             }
         }
 
-    private fun getChargerStat(cpStat: String): ChargerStat =
-        when (cpStat) {
-            CHARGER_STAT_OK -> ChargerStat.CHARGER_STAT_OK
-            CHARGER_STAT_ON_UES -> ChargerStat.CHARGER_STAT_ON_UES
-            CHARGER_STAT_BREAK -> ChargerStat.CHARGER_STAT_BREAK
-            CHARGER_STAT_NETWORK_ERROR -> ChargerStat.CHARGER_STAT_NETWORK_ERROR
-            CHARGER_STAT_NETWORK_DISCONNECT -> ChargerStat.CHARGER_STAT_NETWORK_DISCONNECT
-            else -> ChargerStat.CHARGER_STAT_EMPTY
-        }
-
-    fun getRecyclerArray(chargeInfo: List<ChargerInfo>): ArrayList<ChargerInfo> {
-        val result = ArrayList<ChargerInfo>()
+    fun getRecyclerArray(chargeInfo: List<ChargerInfo>): List<ChargerInfo> {
+        val result = mutableListOf<ChargerInfo>()
         chargeInfo.forEach {
             result.add(it)
         }

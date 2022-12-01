@@ -36,5 +36,6 @@
     <string name="info_detail_addr">상세위치</string>
     <string name="complete_copy">주소가 복사되었습니다.</string>
     <string name="incomplete_copy">주소가 복사되지 않았습니다.</string>
+    <string name="test">test</string>
 
 </resources>

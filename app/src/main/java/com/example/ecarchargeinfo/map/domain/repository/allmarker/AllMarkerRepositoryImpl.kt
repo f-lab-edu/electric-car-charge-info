@@ -14,7 +14,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class AllMarkerRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context) :
-        AllMarkerRepository {
+    AllMarkerRepository {
     override fun getAllMarker(list: List<ChargerInfo>): List<MyItem> {
         val markerArray = mutableListOf<MyItem>()
         list.forEachIndexed { index, chargerInfo ->
@@ -25,17 +25,17 @@ class AllMarkerRepositoryImpl @Inject constructor(@ApplicationContext private va
             }
             val markerImage = getMarkerImage(chargerInfo.chargeTp)
             val item = MyItem(
-                    _position = LatLng(chargerInfo.lat.toDouble(), chargerInfo.longi.toDouble()),
-                    _title = chargerInfo.csNm,
-                    _snippet = chargerInfo.cpStat,
-                    _icon = BitmapDescriptorFactory.fromBitmap(
-                            getResizedImage(
-                                    getMarkerImage(chargeTp = chargerInfo.chargeTp)
-                            )
-                    ),
-                    _addr = chargerInfo.addr,
-                    _chargeTp = chargerInfo.chargeTp,
-                    _cpTp = chargerInfo.cpTp
+                _position = LatLng(chargerInfo.lat.toDouble(), chargerInfo.longi.toDouble()),
+                _title = chargerInfo.csNm,
+                _snippet = chargerInfo.cpStat,
+                _icon = BitmapDescriptorFactory.fromBitmap(
+                    getResizedImage(
+                        getMarkerImage(chargeTp = chargerInfo.chargeTp)
+                    )
+                ),
+                _addr = chargerInfo.addr,
+                _chargeTp = chargerInfo.chargeTp,
+                _cpTp = chargerInfo.cpTp
             )
             markerArray.add(item)
         }
@@ -43,24 +43,24 @@ class AllMarkerRepositoryImpl @Inject constructor(@ApplicationContext private va
     }
 
     override fun getMarkerImage(chargeTp: String): BitmapDrawable =
-            ResourcesCompat.getDrawable(
-                    context.resources,
-                    when (chargeTp) {
-                        MapConstants.CHARGER_TYPE_SLOW -> R.drawable.volt_slow
-                        else -> R.drawable.volt
-                    },
-                    null
-            ) as BitmapDrawable
+        ResourcesCompat.getDrawable(
+            context.resources,
+            when (chargeTp) {
+                MapConstants.CHARGER_TYPE_SLOW -> R.drawable.volt_slow
+                else -> R.drawable.volt
+            },
+            null
+        ) as BitmapDrawable
 
     override fun getResizedImage(markerImage: BitmapDrawable): Bitmap =
-            markerImage.let {
-                Bitmap.createScaledBitmap(
-                        markerImage.bitmap,
-                        MapConstants.IMAGE_WIDTH,
-                        MapConstants.IMAGE_HEIGHT,
-                        false
-                )
-            }
+        markerImage.let {
+            Bitmap.createScaledBitmap(
+                markerImage.bitmap,
+                MapConstants.IMAGE_WIDTH,
+                MapConstants.IMAGE_HEIGHT,
+                false
+            )
+        }
 
 
 }

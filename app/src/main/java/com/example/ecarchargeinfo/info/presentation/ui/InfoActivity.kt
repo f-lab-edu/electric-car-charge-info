@@ -39,8 +39,7 @@ class InfoActivity : AppCompatActivity() {
         binding.inputs = viewModel.inPuts
         layoutManager = GridLayoutManager(applicationContext, 2)
         initIntent()
-        if (getLocationLat != null && getLocationLon != null)
-            currentLocation = LatLng(getLocationLat.toDouble(), getLocationLon.toDouble())
+        currentLocation = LatLng(getLocationLat.toDouble(), getLocationLon.toDouble())
         observeChargerInfoState()
         viewModel.updateChargerInfo(getAddress.toString())
         observeDistance()

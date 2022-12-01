@@ -1,5 +1,6 @@
 package com.example.ecarchargeinfo.info.domain.enum
 
+import android.content.Context
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
 
@@ -35,7 +36,7 @@ enum class ChargerStat(
     ),
     CHARGER_STAT_EMPTY(
         status = "",
-        message = MapConstants.ChargerStat.CHARGER_STAT_AVAILABLE,
+        message = MapConstants.ChargerStat.CHARGER_STAT_EMPTY,
         colorResource = R.color.cannot_charge
     )
 }

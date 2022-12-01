@@ -4,6 +4,6 @@ import com.example.ecarchargeinfo.info.domain.enum.ChargerStat
 
 data class Charger(
     val chargeTp : String,
-    val cpStat: ChargerStat,
+    val cpStat: String,
     val cpTp: String
 )

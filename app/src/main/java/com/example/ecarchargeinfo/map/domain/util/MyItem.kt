@@ -34,15 +34,7 @@ class MyItem(
 
     override fun getTitle(): String = _title
 
-    override fun getSnippet(): String =
-        when (_snippet) {
-            CHARGER_STAT_OK -> CHARGER_STAT_AVAILABLE
-            CHARGER_STAT_ON_UES -> CHARGER_STAT_CHARGING
-            CHARGER_STAT_BREAK -> CHARGER_STAT_FAULT_MAINT
-            CHARGER_STAT_NETWORK_ERROR -> CHARGER_STAT_NETWORK_ERROR_VALUE
-            CHARGER_STAT_NETWORK_DISCONNECT -> CHARGER_STAT_NETWORK_DISCONNECT_VALUE
-            else -> CHARGER_STAT_EMPTY
-        }
+    override fun getSnippet(): String = _snippet
 
     fun getIcon(): BitmapDescriptor = _icon
     fun getAddr(): String = _addr
@@ -61,7 +53,14 @@ class ClusterRenderer(
 
     override fun onBeforeClusterItemRendered(item: MyItem, markerOptions: MarkerOptions) {
         markerOptions.icon(item.getIcon())
-        markerOptions.snippet(item.snippet)
+        markerOptions.snippet(when (item.snippet) {
+            CHARGER_STAT_OK -> CHARGER_STAT_AVAILABLE
+            CHARGER_STAT_ON_UES -> CHARGER_STAT_CHARGING
+            CHARGER_STAT_BREAK -> CHARGER_STAT_FAULT_MAINT
+            CHARGER_STAT_NETWORK_ERROR -> CHARGER_STAT_NETWORK_ERROR_VALUE
+            CHARGER_STAT_NETWORK_DISCONNECT -> CHARGER_STAT_NETWORK_DISCONNECT_VALUE
+            else -> CHARGER_STAT_EMPTY
+        })
         markerOptions.title(item.title)
         markerOptions.visible(true)
 
