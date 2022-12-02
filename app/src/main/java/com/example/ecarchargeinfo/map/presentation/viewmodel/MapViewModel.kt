@@ -1,6 +1,8 @@
 package com.example.ecarchargeinfo.map.presentation.viewmodel
 
 import android.util.Log
+import android.widget.EditText
+import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecarchargeinfo.config.model.ApplicationConstants
@@ -15,21 +17,19 @@ import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.example.ecarchargeinfo.map.domain.entity.ChargerDetailEntity
 import com.example.ecarchargeinfo.map.domain.entity.MarkerInfo
 import com.example.ecarchargeinfo.map.domain.model.ChargerDetailConstants
-import com.example.ecarchargeinfo.map.domain.model.MapConstants
 import com.example.ecarchargeinfo.map.domain.usecase.allmarker.IGetAllMarkerUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.chargerinfo.IChargerInfoUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.filteredmarker.IGetFilteredMarkerUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.geocoder.IGeocoderUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.location.ILocationUseCase
+import com.example.ecarchargeinfo.map.domain.util.MyClusterManager
 import com.example.ecarchargeinfo.map.domain.util.MyItem
+import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
 import com.example.ecarchargeinfo.retrofit.model.charger.ChargerInfo
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,9 +42,11 @@ class MapViewModel @Inject constructor(
     private val getAllMarkerUseCase: IGetAllMarkerUseCase,
 ) :
     ViewModel(), MainInputs, MainOutputs {
+
+
     val inputs: MainInputs = this
     val outputs: MainOutputs = this
-
+    var inputAddressText = ObservableField<String>("")
     private val _searchFilterState: MutableStateFlow<MainSearchFilterState> =
         MutableStateFlow(MainSearchFilterState.Initial)
     override val searchFilterState: StateFlow<MainSearchFilterState>
@@ -65,19 +67,25 @@ class MapViewModel @Inject constructor(
         )
     override val geocoderEvent: SharedFlow<String>
         get() = _geocoderEvent
+    private val _searchEvent: MutableSharedFlow<List<ChargerInfo>> =
+        MutableSharedFlow(
+            replay = ApplicationConstants.REPLAY,
+            extraBufferCapacity = ApplicationConstants.EXTRA_BUFFER_CAPAVITY,
+            onBufferOverflow = ApplicationConstants.ON_BUFFER_OVERFLOW
+        )
+    override val searchEvent: SharedFlow<List<ChargerInfo>>
+        get() = _searchEvent
     private val koreaAddressArray = mutableListOf<String>()
     private var chargerMarkerArray = mutableListOf<MyItem>()
-
-
-    private fun handleException() = CoroutineExceptionHandler { _, throwable ->
-        Log.e("ECarChargeInfo", throwable.message ?: "")
-    }
 
     init {
         initSearchFilter()
         initChagerDetail()
     }
 
+    private fun handleException() = CoroutineExceptionHandler { _, throwable ->
+        Log.e("ECarChargeInfo", throwable.message ?: "")
+    }
 
     fun clearKoreaAddress() {
         koreaAddressArray.clear()
@@ -92,7 +100,8 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    fun clearChargerMarkerArray()   {
+
+    fun clearChargerMarkerArray() {
         chargerMarkerArray.clear()
     }
 
@@ -104,6 +113,7 @@ class MapViewModel @Inject constructor(
         if (address != "") {
             viewModelScope.launch {
                 val result = getGeocoderUseCase(address)
+                println("@@@지오결과" + result)
                 if (koreaAddressArray.contains(result)) {
                     return@launch
                 } else {
@@ -113,6 +123,23 @@ class MapViewModel @Inject constructor(
             }
         }
     }
+
+    private suspend fun updateSearchData(cond: String) {
+        viewModelScope.launch {
+            _searchEvent.emit(getChargerInfoUseCase(cond = cond))
+        }
+    }
+
+    override fun onSearchButtonClick(searchTxt: String, view: EditText) {
+        view.clearFocus()
+        clearChargerMarkerArray()
+        clearKoreaAddress()
+        viewModelScope.launch(Dispatchers.Main) {
+            updateSearchData(cond = searchTxt)
+
+        }
+    }
+
 
     fun updateChargerInfo(address: String) {
         viewModelScope.launch {
@@ -290,5 +317,7 @@ class MapViewModel @Inject constructor(
             )
         )
     }
+
+    fun getKoreaAddress() = koreaAddressArray
 
 }

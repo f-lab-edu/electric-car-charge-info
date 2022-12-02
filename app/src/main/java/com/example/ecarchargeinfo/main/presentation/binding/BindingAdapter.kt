@@ -3,6 +3,7 @@ package com.example.ecarchargeinfo.main.presentation.binding
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.View
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -128,5 +129,6 @@ object BindingAdapter {
             }
         }
     }
+
 }
 

@@ -1,12 +1,14 @@
 <resources>
     <string name="app_name">ECarChargeInfo</string>
 
-    <string name="search">충전소 검색</string>
+    <string name="search">EX)서울특별시 서초구</string>
     <string name="combo">DC콤보</string>
     <string name="demo">DC차데모</string>
     <string name="ac">AC3상</string>
     <string name="slow">완속</string>
     <string name="charge_speed">속도</string>
+    <string name="search_button">검색</string>
+
 
     <string name="denied_permission">권한이 거부되었습니다. 다시실행해주세요"</string>
 

@@ -11,6 +11,7 @@ interface MainOutputs {
     val searchFilterState: StateFlow<MainSearchFilterState>
     val chargerInfoState: StateFlow<MainChargerInfoState>
     val geocoderEvent: SharedFlow<String>
+    val searchEvent: SharedFlow<List<ChargerInfo>>
 }
 
 sealed class MainChargerDetailState {

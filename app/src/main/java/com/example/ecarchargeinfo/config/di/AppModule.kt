@@ -1,6 +1,8 @@
 package com.example.ecarchargeinfo.config.di
 
 import android.content.Context
+import com.example.ecarchargeinfo.map.domain.util.MyClusterManager
+import com.example.ecarchargeinfo.map.domain.util.MyItem
 import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
 import com.example.ecarchargeinfo.retrofit.ChargerInfoApi
 import com.example.ecarchargeinfo.retrofit.GeoCoderApi

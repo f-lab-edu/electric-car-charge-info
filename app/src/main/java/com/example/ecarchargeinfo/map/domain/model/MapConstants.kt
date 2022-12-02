@@ -8,6 +8,7 @@ object MapConstants {
     const val MARKER_ZOOM = 17f
     const val IMAGE_WIDTH = 120
     const val IMAGE_HEIGHT = 120
+    const val SEARCH_ZOOM = 11f
 
     const val CHARGER_TYPE_COMBO = "7"
     const val CHARGER_TYPE_DEMO = "5"

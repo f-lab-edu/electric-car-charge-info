@@ -4,11 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -31,6 +27,7 @@ import com.example.ecarchargeinfo.map.domain.util.ClusterRenderer
 import com.example.ecarchargeinfo.map.domain.util.MyClusterManager
 import com.example.ecarchargeinfo.map.domain.util.MyItem
 import com.example.ecarchargeinfo.map.presentation.viewmodel.MapViewModel
+import com.example.ecarchargeinfo.retrofit.model.charger.ChargerInfo
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -39,13 +36,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.util.stream.Collectors
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
-                    GoogleMap.OnMapClickListener {
+    GoogleMap.OnMapClickListener {
     private lateinit var gMap: MapView
     private lateinit var binding: FragmentMapBinding
     private lateinit var mMap: GoogleMap
@@ -57,9 +53,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
     private val slowMarker = mutableListOf<MyItem>()
     private val allMarker = mutableListOf<MyItem>()
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
         binding.inputs = mapViewModel.inputs
         binding.lifecycleOwner = this
@@ -147,26 +145,29 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         gMap.onSaveInstanceState(outState)
     }
 
-    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        val nowLocationMarker = MarkerOptions().position(mapViewModel.updateNowLocation())
-            .title(resources.getString(R.string.now_location))
-        mMap.addMarker(nowLocationMarker)?.showInfoWindow()
+
+        initMap()
+        initCluster()
+        observeUIState()
+        observeGeocoder()
+        observeChargerDetailState()
+        observeChargerInfoState()
+        observeSearchData()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun initMap() {
         mMap.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
                 mapViewModel.updateNowLocation(), MapConstants.DEFAULT_ZOOM
             )
         )
-        mMap.isMyLocationEnabled = true
-        initCluster()
-        observeChargerDetailState()
-        observeChargerInfoState()
-        observeGeocoder()
-        observeUIState()
         mMap.setOnMyLocationButtonClickListener(this)
         mMap.uiSettings.isMapToolbarEnabled = false
         mMap.setOnMapClickListener(this)
+        mMap.isMyLocationEnabled = true
     }
 
     private fun initCluster() {
@@ -219,10 +220,58 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 mapViewModel.outputs.geocoderEvent.collect() {
-                    if (it != "") mapViewModel.updateChargerInfo(it)
+                    if (it != "")
+                        mapViewModel.updateChargerInfo(it).also { println("@@@@@@@@@@@@@"+it.toString()) }
                 }
             }
         }
+    }
+
+    private fun observeSearchData() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                mapViewModel.outputs.searchEvent.collect() {
+                    it.let {
+                        clusterManager.clearItems()
+                        mapViewModel.clearKoreaAddress()
+                        mapViewModel.clearChargerMarkerArray()
+                        mapViewModel.setMarkerArray(it)
+                        clusterManager.addItems(mapViewModel.getMarkerArray())
+                        mapViewModel.getMarkerArray().forEach {
+                            allMarker.add(it)
+                        }
+                        val location = LatLng(
+                            calculateLocation(it, "lat"),
+                            calculateLocation(it, "lon")
+                        )
+
+                        //val location = LatLng(it[0].lat.toDouble(), it[0].longi.toDouble())
+                        mMap.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                location, MapConstants.SEARCH_ZOOM
+                            )
+                        )
+                        clusterManager.cluster()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun calculateLocation(list: List<ChargerInfo>, type: String): Double {
+        var result = 0.0
+        list.forEach {
+            when (type) {
+                "lat" -> {
+                    result += it.lat.toDouble()
+                }
+                else -> {
+                    result += it.longi.toDouble()
+                }
+            }
+        }
+        result /= list.lastIndex + 1
+        return result
     }
 
     private fun observeChargerInfoState() {
@@ -271,10 +320,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
     }
 
     override fun onPause() {
-        clusterManager.clearItems()
+        /*clusterManager.clearItems()
         allMarker.clear()
         mapViewModel.clearKoreaAddress()
-        mapViewModel.clearChargerMarkerArray()
+        mapViewModel.clearChargerMarkerArray()*/
+
+        mapViewModel.getKoreaAddress().forEach {
+            println("@@@@" + it)
+        }
         super.onPause()
         gMap.onPause()
     }

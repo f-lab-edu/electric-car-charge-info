@@ -12,6 +12,10 @@
         <import type="kotlin.Unit" />
 
         <variable
+            name="fm"
+            type="com.example.ecarchargeinfo.map.presentation.ui.MapFragment" />
+
+        <variable
             name="searchFilterEntity"
             type="com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity" />
 
@@ -29,7 +33,7 @@
 
         <variable
             name="vm"
-            type="com.example.ecarchargeinfo.main.presentation.viewmodel.MainViewModel" />
+            type="com.example.ecarchargeinfo.map.presentation.viewmodel.MapViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,13 +50,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <EditText
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@drawable/layout_background"
-                android:hint="@string/search"
-                android:paddingStart="12dp"
-                android:textSize="20sp" />
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_input_address"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/layout_background"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/search"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:nextFocusDown="@id/mapview"
+                    android:paddingStart="12dp"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_search"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btn_search"
+                    android:layout_width="60dp"
+                    android:layout_height="0dp"
+                    android:onClick="@{() -> inputs.onSearchButtonClick(etInputAddress.getText().toString(), etInputAddress)}"
+                    android:text="@string/search_button"
+                    app:layout_constraintBottom_toBottomOf="@+id/et_input_address"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/et_input_address"
+                    app:layout_constraintTop_toTopOf="@+id/et_input_address" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -155,15 +185,15 @@
             visible="@{chargeDetailEntity.visible}"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:background="@color/white"
             android:layout_gravity="bottom"
+            android:background="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
-                slowFastImageResource= "@{chargeDetailEntity.markerInfo.chargeTp, default = @drawable/volt}"
                 android:id="@+id/iv_detail_image"
+                slowFastImageResource="@{chargeDetailEntity.markerInfo.chargeTp, default = @drawable/volt}"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_marginStart="16dp"
@@ -204,12 +234,12 @@
                 tools:text="주소" />
 
             <TextView
-                android:textColor="@color/can_charge"
+                chargerStat="@{chargeDetailEntity.markerInfo.cpStat}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/test"
-                chargerStat="@{chargeDetailEntity.markerInfo.cpStat}"
+                android:textColor="@color/can_charge"
                 app:layout_constraintStart_toStartOf="@+id/iv_detail_image"
                 app:layout_constraintTop_toBottomOf="@+id/tv_detail_addr"
                 tools:text="충전가능" />
