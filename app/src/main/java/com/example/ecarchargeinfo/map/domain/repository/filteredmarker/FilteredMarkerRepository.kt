@@ -4,7 +4,7 @@ import com.example.ecarchargeinfo.map.domain.util.MyItem
 
 interface FilteredMarkerRepository {
     fun getFilteredMarkerArray(
-        chargerMarkerArray: List<MyItem>,
+        chargerMarkerList: List<MyItem>,
         type: String
     ): List<MyItem>
 }

@@ -7,9 +7,9 @@ import javax.inject.Inject
 class GetFilteredMarkerUseCase @Inject constructor(
     private val filteredMarkerRepository: FilteredMarkerRepository
 ) : IGetFilteredMarkerUseCase {
-    override fun invoke(chargerMarkerArray: ArrayList<MyItem>, type: String): ArrayList<MyItem> =
+    override fun invoke(chargerMarkerArray: List<MyItem>, type: String): List<MyItem> =
         filteredMarkerRepository.getFilteredMarkerArray(
-            chargerMarkerArray = chargerMarkerArray,
+            chargerMarkerList = chargerMarkerArray,
             type = type
         )
 }

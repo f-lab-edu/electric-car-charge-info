@@ -8,6 +8,6 @@ import javax.inject.Inject
 class GetAllMarkerUseCase @Inject constructor(
     private val allMarkerRepository: AllMarkerRepository
 ) : IGetAllMarkerUseCase {
-    override fun invoke(list :List<ChargerInfo>): ArrayList<MyItem> =
+    override fun invoke(list :List<ChargerInfo>): List<MyItem> =
         allMarkerRepository.getAllMarker(list)
 }

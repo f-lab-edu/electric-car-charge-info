@@ -3,12 +3,18 @@ package com.example.ecarchargeinfo.info.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecarchargeinfo.config.model.ApplicationConstants
+import com.example.ecarchargeinfo.info.domain.enum.ChargerStat
 import com.example.ecarchargeinfo.info.domain.model.Charger
 import com.example.ecarchargeinfo.info.domain.usecase.copyaddress.CopyAddressUseCase
 import com.example.ecarchargeinfo.info.domain.usecase.distance.DistanceUseCase
 import com.example.ecarchargeinfo.info.presentation.input.InfoInputs
 import com.example.ecarchargeinfo.info.presentation.output.InfoChargerInfoState
 import com.example.ecarchargeinfo.info.presentation.output.InfoOutPuts
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_BREAK
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_NETWORK_DISCONNECT
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_NETWORK_ERROR
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_OK
+import com.example.ecarchargeinfo.map.domain.model.MapConstants.ChargerStat.CHARGER_STAT_ON_UES
 import com.example.ecarchargeinfo.map.domain.usecase.chargerinfo.GetChargerInfoUseCase
 import com.example.ecarchargeinfo.retrofit.model.charger.ChargerInfo
 import com.google.android.gms.maps.model.LatLng
@@ -40,12 +46,12 @@ class InfoViewModel @Inject constructor(
     )
     override val distanceEvent: SharedFlow<String>
         get() = _distanceEvent
-    private val _chargersEvent: MutableSharedFlow<ArrayList<Charger>> = MutableSharedFlow(
+    private val _chargersEvent: MutableSharedFlow<List<Charger>> = MutableSharedFlow(
         replay = ApplicationConstants.REPLAY,
         extraBufferCapacity = ApplicationConstants.EXTRA_BUFFER_CAPAVITY,
         onBufferOverflow = ApplicationConstants.ON_BUFFER_OVERFLOW
     )
-    override val chargersEvent: SharedFlow<ArrayList<Charger>>
+    override val chargersEvent: SharedFlow<List<Charger>>
         get() = _chargersEvent
 
     fun updateChargerInfo(address: String) {
@@ -54,20 +60,30 @@ class InfoViewModel @Inject constructor(
             _chargerInfoState.value = InfoChargerInfoState.Main(
                 chargerInfo = chargerInfo
             )
-            val tempArray = ArrayList<Charger>()
-            chargerInfo.forEach {
-                tempArray.add(
-                    Charger(
-                        chargeTp = it.chargeTp, cpStat = it.cpStat, cpTp = it.cpTp
-                    )
+
+            _chargersEvent.emit(
+                getChargerInfoArray(
+                    chargerInfo = chargerInfo
                 )
-            }
-            _chargersEvent.emit(tempArray)
+            )
         }
     }
 
-    fun getRecyclerArray(chargeInfo: List<ChargerInfo>): ArrayList<ChargerInfo> {
-        val result = ArrayList<ChargerInfo>()
+    private fun getChargerInfoArray(chargerInfo: List<ChargerInfo>): List<Charger> =
+        mutableListOf<Charger>().also { array ->
+            chargerInfo.forEach {
+                array.add(
+                    Charger(
+                        chargeTp = it.chargeTp,
+                        cpStat = it.cpStat,
+                        cpTp = it.cpTp
+                    )
+                )
+            }
+        }
+
+    fun getRecyclerArray(chargeInfo: List<ChargerInfo>): List<ChargerInfo> {
+        val result = mutableListOf<ChargerInfo>()
         chargeInfo.forEach {
             result.add(it)
         }

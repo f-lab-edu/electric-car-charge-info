@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface InfoOutPuts {
     val chargerInfoState: StateFlow<InfoChargerInfoState>
     val distanceEvent: SharedFlow<String>
-    val chargersEvent: SharedFlow<ArrayList<Charger>>
+    val chargersEvent: SharedFlow<List<Charger>>
 }
 
 sealed class InfoChargerInfoState {

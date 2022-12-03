@@ -51,7 +51,7 @@
                 android:layout_height="40dp"
                 android:background="@drawable/layout_background"
                 android:hint="@string/search"
-                android:paddingLeft="12dp"
+                android:paddingStart="12dp"
                 android:textSize="20sp" />
 
             <LinearLayout
@@ -208,10 +208,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="test"
-                chargerStat= "@{chargeDetailEntity.markerInfo.cpStat}"
-                canColor="@{@color/can_charge}"
-                cantColor="@{@color/cannot_charge}"
+                android:text="@string/test"
+                chargerStat="@{chargeDetailEntity.markerInfo.cpStat}"
                 app:layout_constraintStart_toStartOf="@+id/iv_detail_image"
                 app:layout_constraintTop_toBottomOf="@+id/tv_detail_addr"
                 tools:text="충전가능" />

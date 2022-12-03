@@ -54,8 +54,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
 
     @Inject
     lateinit var mapViewModel: MapViewModel
-    private val slowMarker = ArrayList<MyItem>()
-    private val allMarker = ArrayList<MyItem>()
+    private val slowMarker = mutableListOf<MyItem>()
+    private val allMarker = mutableListOf<MyItem>()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -113,15 +113,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
                             }
                             if (it.slow) {
                                 clusterManager.addItems(
-                                    mapViewModel.getMarkerArray().stream().filter { it ->
+                                    mapViewModel.getMarkerArray().filter { it ->
                                         it.getChargeTp() == CHARGER_TYPE_SLOW
-                                    }.collect(Collectors.toList())
+                                    }
                                 )
                             } else {
                                 clusterManager.removeItems(
-                                    mapViewModel.getMarkerArray().stream().filter { it ->
+                                    mapViewModel.getMarkerArray().filter { it ->
                                         it.getChargeTp() == CHARGER_TYPE_SLOW
-                                    }.collect(Collectors.toList())
+                                    }
                                 )
                             }
                         }

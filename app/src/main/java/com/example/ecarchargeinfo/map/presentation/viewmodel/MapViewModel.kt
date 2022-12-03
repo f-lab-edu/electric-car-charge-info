@@ -65,8 +65,8 @@ class MapViewModel @Inject constructor(
         )
     override val geocoderEvent: SharedFlow<String>
         get() = _geocoderEvent
-    private val koreaAddressArray = ArrayList<String>()
-    private var chargerMarkerArray = ArrayList<MyItem>()
+    private val koreaAddressArray = mutableListOf<String>()
+    private var chargerMarkerArray = mutableListOf<MyItem>()
 
 
     private fun handleException() = CoroutineExceptionHandler { _, throwable ->
@@ -83,7 +83,7 @@ class MapViewModel @Inject constructor(
         koreaAddressArray.clear()
     }
 
-    fun getMarkerByFiltered(type: String): ArrayList<MyItem> =
+    fun getMarkerByFiltered(type: String): List<MyItem> =
         getFilteredMarkerUseCase(chargerMarkerArray, type)
 
     fun setMarkerArray(list: List<ChargerInfo>) {
@@ -96,7 +96,7 @@ class MapViewModel @Inject constructor(
         chargerMarkerArray.clear()
     }
 
-    fun getMarkerArray(): ArrayList<MyItem> = chargerMarkerArray
+    fun getMarkerArray(): List<MyItem> = chargerMarkerArray
 
     fun updateNowLocation(): LatLng = getLocationUseCase()
 

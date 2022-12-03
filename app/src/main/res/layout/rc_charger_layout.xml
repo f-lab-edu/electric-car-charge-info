@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="charger"
             type="com.example.ecarchargeinfo.info.domain.model.Charger" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="150dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content">
 
         <ImageView
@@ -28,13 +29,12 @@
 
         <TextView
             android:id="@+id/rc_tv_cp_stat"
-            canColor="@{@color/can_charge}"
-            cantColor="@{@color/cannot_charge}"
             chargerStat="@{charger.cpStat}"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="start"
             android:textColor="@color/black"
             app:layout_constraintBottom_toTopOf="@+id/rc_tv_cp_type"
             app:layout_constraintEnd_toEndOf="parent"
@@ -45,11 +45,14 @@
         <TextView
             android:id="@+id/rc_tv_cp_type"
             chargerType="@{charger.cpTp}"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:gravity="start"
             android:textColor="@color/black"
             android:textSize="12sp"
+            android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/rc_tv_cp_stat"
             app:layout_constraintTop_toBottomOf="@+id/rc_tv_cp_stat"
             tools:text="TEST" />
