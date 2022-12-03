@@ -1,13 +1,13 @@
 package com.example.ecarchargeinfo.map.domain.repository.filteredmarker
 
-import com.example.ecarchargeinfo.map.domain.util.MyItem
+import com.example.ecarchargeinfo.map.domain.util.MapCluster
 import javax.inject.Inject
 
 class FilteredMarkerRepositoryImpl @Inject constructor() : FilteredMarkerRepository {
     override fun getFilteredMarkerArray(
-        chargerMarkerList: List<MyItem>,
+        chargerMarkerList: List<MapCluster>,
         type: String
-    ): List<MyItem> =
+    ): List<MapCluster> =
         chargerMarkerList.filter {
             it.getCptp() == type
         }

@@ -28,14 +28,6 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideGoogleMap(@ApplicationContext googleMap: GoogleMap) = googleMap
-
-    @Singleton
-    @Provides
-    fun provideMapFragment(@ApplicationContext mapFragment: MapFragment) = mapFragment
-
-    @Singleton
-    @Provides
     fun provideOkHttpClient() =
         OkHttpClient.Builder()
             .readTimeout(5000, TimeUnit.MILLISECONDS)

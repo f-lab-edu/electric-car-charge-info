@@ -20,6 +20,7 @@ import com.example.ecarchargeinfo.map.domain.usecase.geocoder.GetGeocoderUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.geocoder.IGeocoderUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.location.GetLocationUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.location.ILocationUseCase
+import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -29,7 +30,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class MapModule {
-
     @Singleton
     @Binds
     abstract fun bindChangeLocationRepository(repository: ChargerInfoRepositoryImpl): ChargerInfoRepository

@@ -1,7 +1,7 @@
 package com.example.ecarchargeinfo.map.domain.usecase.filteredmarker
 
-import com.example.ecarchargeinfo.map.domain.util.MyItem
+import com.example.ecarchargeinfo.map.domain.util.MapCluster
 
 interface IGetFilteredMarkerUseCase {
-    operator fun invoke(chargerMarkerArray: List<MyItem>, type: String): List<MyItem>
+    operator fun invoke(chargerMarkerArray: List<MapCluster>, type: String): List<MapCluster>
 }

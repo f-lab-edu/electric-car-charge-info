@@ -12,7 +12,7 @@ class GeocoderRepositoryImpl @Inject constructor(
             if (getApi.isSuccessful) {
                 getApi.body()?.let {
                     if (it.results[0].name != "no results") {
-                        return (it.results[0].region.area1.name + " " + it.results[0].region.area2.name)
+                        return (it.results[0].region.area1.name).toString()
                     }
                 }
             }
