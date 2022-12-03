@@ -1,12 +1,9 @@
 package com.example.ecarchargeinfo.main.presentation.binding
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.View
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.info.domain.entity.ChargeTpConstants.AC_TYPE

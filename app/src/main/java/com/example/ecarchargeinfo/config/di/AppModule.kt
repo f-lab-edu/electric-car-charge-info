@@ -1,8 +1,6 @@
 package com.example.ecarchargeinfo.config.di
 
 import android.content.Context
-import com.example.ecarchargeinfo.map.domain.util.MyClusterManager
-import com.example.ecarchargeinfo.map.domain.util.MyItem
 import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
 import com.example.ecarchargeinfo.retrofit.ChargerInfoApi
 import com.example.ecarchargeinfo.retrofit.GeoCoderApi
@@ -27,14 +25,6 @@ class AppModule {
     @Singleton
     @Provides
     fun provideContext(@ApplicationContext context: Context): Context = context
-
-    @Singleton
-    @Provides
-    fun provideGoogleMap(@ApplicationContext googleMap: GoogleMap) = googleMap
-
-    @Singleton
-    @Provides
-    fun provideMapFragment(@ApplicationContext mapFragment: MapFragment) = mapFragment
 
     @Singleton
     @Provides

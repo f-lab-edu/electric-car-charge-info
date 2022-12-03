@@ -6,7 +6,7 @@ import android.graphics.drawable.BitmapDrawable
 import androidx.core.content.res.ResourcesCompat
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.map.domain.model.MapConstants
-import com.example.ecarchargeinfo.map.domain.util.MyItem
+import com.example.ecarchargeinfo.map.domain.util.MapCluster
 import com.example.ecarchargeinfo.retrofit.model.charger.ChargerInfo
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -15,8 +15,8 @@ import javax.inject.Inject
 
 class AllMarkerRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context) :
     AllMarkerRepository {
-    override fun getAllMarker(list: List<ChargerInfo>): List<MyItem> {
-        val markerArray = mutableListOf<MyItem>()
+    override fun getAllMarker(list: List<ChargerInfo>): List<MapCluster> {
+        val markerArray = mutableListOf<MapCluster>()
         list.forEachIndexed { index, chargerInfo ->
             if (index > 0) {
                 if (list[index - 1].csNm == chargerInfo.csNm) {
@@ -24,7 +24,7 @@ class AllMarkerRepositoryImpl @Inject constructor(@ApplicationContext private va
                 }
             }
             val markerImage = getMarkerImage(chargerInfo.chargeTp)
-            val item = MyItem(
+            val item = MapCluster(
                 _position = LatLng(chargerInfo.lat.toDouble(), chargerInfo.longi.toDouble()),
                 _title = chargerInfo.csNm,
                 _snippet = chargerInfo.cpStat,

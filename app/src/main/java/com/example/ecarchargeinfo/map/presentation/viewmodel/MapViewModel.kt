@@ -3,17 +3,13 @@ package com.example.ecarchargeinfo.map.presentation.viewmodel
 import android.util.Log
 import android.widget.EditText
 import androidx.databinding.ObservableField
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.ecarchargeinfo.config.model.ApplicationConstants
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
-import com.example.ecarchargeinfo.main.presentation.output.MainChargerDetailState
-import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
-import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
-import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
+import com.example.ecarchargeinfo.main.presentation.output.*
 import com.example.ecarchargeinfo.map.domain.entity.ChargerDetailEntity
 import com.example.ecarchargeinfo.map.domain.entity.MarkerInfo
 import com.example.ecarchargeinfo.map.domain.model.ChargerDetailConstants
@@ -22,9 +18,7 @@ import com.example.ecarchargeinfo.map.domain.usecase.chargerinfo.IChargerInfoUse
 import com.example.ecarchargeinfo.map.domain.usecase.filteredmarker.IGetFilteredMarkerUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.geocoder.IGeocoderUseCase
 import com.example.ecarchargeinfo.map.domain.usecase.location.ILocationUseCase
-import com.example.ecarchargeinfo.map.domain.util.MyClusterManager
-import com.example.ecarchargeinfo.map.domain.util.MyItem
-import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
+import com.example.ecarchargeinfo.map.domain.util.MapCluster
 import com.example.ecarchargeinfo.retrofit.model.charger.ChargerInfo
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -40,12 +34,12 @@ class MapViewModel @Inject constructor(
     private val getChargerInfoUseCase: IChargerInfoUseCase,
     private val getFilteredMarkerUseCase: IGetFilteredMarkerUseCase,
     private val getAllMarkerUseCase: IGetAllMarkerUseCase,
-) :
-    ViewModel(), MainInputs, MainOutputs {
+) : ViewModel(), MainInputs, MainOutputs {
 
 
     val inputs: MainInputs = this
     val outputs: MainOutputs = this
+
     var inputAddressText = ObservableField<String>("")
     private val _searchFilterState: MutableStateFlow<MainSearchFilterState> =
         MutableStateFlow(MainSearchFilterState.Initial)
@@ -59,6 +53,16 @@ class MapViewModel @Inject constructor(
         MutableStateFlow(MainChargerDetailState.Initial)
     override val chargerDetailState: StateFlow<MainChargerDetailState>
         get() = _chargerDetailState
+
+    private val _mainEffects: MutableSharedFlow<MainEffect> =
+        MutableSharedFlow(
+            replay = ApplicationConstants.REPLAY,
+            extraBufferCapacity = ApplicationConstants.EXTRA_BUFFER_CAPAVITY,
+            onBufferOverflow = ApplicationConstants.ON_BUFFER_OVERFLOW
+        )
+    override val mainEffects: SharedFlow<MainEffect>
+        get() = _mainEffects
+
     private val _geocoderEvent: MutableSharedFlow<String> =
         MutableSharedFlow(
             replay = ApplicationConstants.REPLAY,
@@ -75,23 +79,37 @@ class MapViewModel @Inject constructor(
         )
     override val searchEvent: SharedFlow<List<ChargerInfo>>
         get() = _searchEvent
+
     private val koreaAddressArray = mutableListOf<String>()
-    private var chargerMarkerArray = mutableListOf<MyItem>()
+    private var chargerMarkerArray = mutableListOf<MapCluster>()
 
     init {
         initSearchFilter()
         initChagerDetail()
+        observeGeocoder()
     }
 
     private fun handleException() = CoroutineExceptionHandler { _, throwable ->
         Log.e("ECarChargeInfo", throwable.message ?: "")
     }
 
+    fun observeGeocoder() {
+        viewModelScope.launch {
+            geocoderEvent.collect {
+                if (it != "") {
+                    updateChargerInfo(it).also {
+                        println("@@@@@@@@@@@@@" + it.toString())
+                    }
+                }
+            }
+        }
+    }
+
     fun clearKoreaAddress() {
         koreaAddressArray.clear()
     }
 
-    fun getMarkerByFiltered(type: String): List<MyItem> =
+    fun getMarkerByFiltered(type: String): List<MapCluster> =
         getFilteredMarkerUseCase(chargerMarkerArray, type)
 
     fun setMarkerArray(list: List<ChargerInfo>) {
@@ -100,12 +118,11 @@ class MapViewModel @Inject constructor(
         }
     }
 
-
     fun clearChargerMarkerArray() {
         chargerMarkerArray.clear()
     }
 
-    fun getMarkerArray(): List<MyItem> = chargerMarkerArray
+    fun getMarkerArray(): List<MapCluster> = chargerMarkerArray
 
     fun updateNowLocation(): LatLng = getLocationUseCase()
 
@@ -130,13 +147,12 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    override fun onSearchButtonClick(searchTxt: String, view: EditText) {
-        view.clearFocus()
+    override fun onSearchButtonClick(searchTxt: String) {
         clearChargerMarkerArray()
         clearKoreaAddress()
         viewModelScope.launch(Dispatchers.Main) {
+            _mainEffects.emit(MainEffect.SearchText(searchTxt))
             updateSearchData(cond = searchTxt)
-
         }
     }
 
@@ -174,15 +190,39 @@ class MapViewModel @Inject constructor(
     override fun onMarkerClick(visible: Boolean) {
         if (_chargerDetailState.value is MainChargerDetailState.Main) {
             _chargerDetailState.update {
-                if (it is MainChargerDetailState.Main) {
-                    it.copy(
-                        it.chargerDetail.copy(
-                            visible = visible
-                        )
+                (it as MainChargerDetailState.Main).copy(
+                    chargerDetail = it.chargerDetail.copy(
+                        visible = visible
                     )
-                } else {
-                    it
-                }
+                )
+            }
+        }
+    }
+
+    override fun onSearchButtonClick(searchTxt: String, view: EditText) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onMoveCamera(position: LatLng, zoom: Float) {
+        viewModelScope.launch {
+            _mainEffects.emit(
+                MainEffect.MoveCamera(
+                    position = position,
+                    zoom = zoom
+                )
+            )
+        }
+    }
+
+    override fun onDetailClick() {
+        viewModelScope.launch {
+            if (_chargerDetailState.value is MainChargerDetailState.Main) {
+                val detailState = _chargerDetailState.value as MainChargerDetailState.Main
+                _mainEffects.emit(
+                    MainEffect.ShowDetail(
+                        chargerDetail = detailState.chargerDetail
+                    )
+                )
             }
         }
     }

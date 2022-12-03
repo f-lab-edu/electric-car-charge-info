@@ -19,51 +19,27 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 
-class MyItem(
-    private val _position: LatLng,
-    private val _title: String,
-    private val _snippet: String,
-    private val _icon: BitmapDescriptor,
-    private val _addr: String,
-    private val _chargeTp: String,
-    private val _cpTp: String
-
+class MapCluster(
+    val _position: LatLng,
+    val _title: String,
+    val _snippet: String,
+    val _icon: BitmapDescriptor,
+    val _addr: String,
+    val _chargeTp: String,
+    val _cpTp: String
 ) : ClusterItem {
-
     override fun getPosition(): LatLng = _position
-
     override fun getTitle(): String = _title
-
     override fun getSnippet(): String = _snippet
-
-    fun getIcon(): BitmapDescriptor = _icon
-    fun getAddr(): String = _addr
-    fun getChargeTp(): String = _chargeTp
-    fun getCptp(): String = _cpTp
+    val icon: BitmapDescriptor
+        get() = _icon
+    val addr: String
+        get() = _addr
+    val chargeTp: String
+        get() = _chargeTp
+    val cpTp: String
+        get() = _cpTp
 }
 
 
-class ClusterRenderer(
-    context: Context, map: GoogleMap, clusterManager: MyClusterManager<MyItem>
-) : DefaultClusterRenderer<MyItem>(context, map, clusterManager) {
-    init {
-        clusterManager.renderer = this
 
-    }
-
-    override fun onBeforeClusterItemRendered(item: MyItem, markerOptions: MarkerOptions) {
-        markerOptions.icon(item.getIcon())
-        markerOptions.snippet(when (item.snippet) {
-            CHARGER_STAT_OK -> CHARGER_STAT_AVAILABLE
-            CHARGER_STAT_ON_UES -> CHARGER_STAT_CHARGING
-            CHARGER_STAT_BREAK -> CHARGER_STAT_FAULT_MAINT
-            CHARGER_STAT_NETWORK_ERROR -> CHARGER_STAT_NETWORK_ERROR_VALUE
-            CHARGER_STAT_NETWORK_DISCONNECT -> CHARGER_STAT_NETWORK_DISCONNECT_VALUE
-            else -> CHARGER_STAT_EMPTY
-        })
-        markerOptions.title(item.title)
-        markerOptions.visible(true)
-
-        super.onBeforeClusterItemRendered(item, markerOptions)
-    }
-}
