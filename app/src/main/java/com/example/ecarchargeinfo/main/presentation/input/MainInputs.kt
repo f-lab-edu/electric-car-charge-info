@@ -15,7 +15,7 @@ interface MainInputs {
     fun onSpeedChange(thisSpeedEntity: MainSearchFilterSpeedEntity)
     fun onMarkerClick(visible: Boolean, markerInfo: MarkerInfo)
     fun onMarkerClick(visible: Boolean)
-    fun onSearchButtonClick(searchTxt: String, view: EditText)
+    fun onSearchButtonClick(searchTxt: String)
     fun onMoveCamera(position: LatLng, zoom: Float)
     fun onDetailClick()
 }

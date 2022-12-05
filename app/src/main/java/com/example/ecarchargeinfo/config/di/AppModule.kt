@@ -1,7 +1,9 @@
 package com.example.ecarchargeinfo.config.di
 
 import android.content.Context
+import com.example.ecarchargeinfo.map.domain.usecase.allmarker.IGetAllMarkerUseCase
 import com.example.ecarchargeinfo.map.presentation.ui.MapFragment
+import com.example.ecarchargeinfo.map.presentation.viewmodel.MapViewModel
 import com.example.ecarchargeinfo.retrofit.ChargerInfoApi
 import com.example.ecarchargeinfo.retrofit.GeoCoderApi
 import com.example.ecarchargeinfo.retrofit.NetworkConstants
@@ -10,6 +12,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

@@ -9,6 +9,6 @@ class FilteredMarkerRepositoryImpl @Inject constructor() : FilteredMarkerReposit
         type: String
     ): List<MapCluster> =
         chargerMarkerList.filter {
-            it.getCptp() == type
+            it.cpTp == type
         }
 }

@@ -107,7 +107,7 @@
             android:layout_height="18dp"
             android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
-            android:onClick="@{() -> inputs.onCopyClick()}"
+            android:onClick="@{() -> inputs.onCopyClick(chargeInfo.addr.toString())}"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_baseline_content_copy_24"
             app:layout_constraintEnd_toEndOf="parent"

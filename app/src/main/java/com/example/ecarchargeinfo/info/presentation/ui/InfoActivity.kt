@@ -1,14 +1,17 @@
 package com.example.ecarchargeinfo.info.presentation.ui
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.ecarchargeinfo.R
 import com.example.ecarchargeinfo.databinding.ActivityInfoBinding
 import com.example.ecarchargeinfo.info.presentation.output.InfoChargerInfoState
+import com.example.ecarchargeinfo.info.presentation.output.InfoEffect
 import com.example.ecarchargeinfo.info.presentation.viewmodel.InfoViewModel
 import com.example.ecarchargeinfo.info.util.ChargerAdapter
 import com.google.android.gms.maps.model.LatLng
@@ -22,42 +25,54 @@ class InfoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInfoBinding
 
     @Inject
-    lateinit var viewModel: InfoViewModel
+    lateinit var infoViewModel: InfoViewModel
     lateinit var chargerLocation: LatLng
-    lateinit var currentLocation: LatLng
     lateinit var getAddress: String
-    lateinit var getLocationLat: String
-    lateinit var getLocationLon: String
     lateinit var distance: String
     lateinit var adapter: ChargerAdapter
     lateinit var layoutManager: GridLayoutManager
+    lateinit var currentLocation: LatLng
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_info)
         binding.lifecycleOwner = this
-        binding.inputs = viewModel.inPuts
-        layoutManager = GridLayoutManager(applicationContext, 2)
+        binding.inputs = infoViewModel.inPuts
         initIntent()
-        currentLocation = LatLng(getLocationLat.toDouble(), getLocationLon.toDouble())
+        currentLocation = infoViewModel.updateNowLocation()
         observeChargerInfoState()
-        viewModel.updateChargerInfo(getAddress.toString())
         observeDistance()
         observeChargers()
+        observeUIEffect()
+        infoViewModel.updateChargerInfo(getAddress.toString())
+    }
+
+    private fun observeUIEffect() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                infoViewModel.outPuts.infoEffect.collect {
+                    when (it) {
+                        is InfoEffect.CopyAddress -> {
+                            Toast.makeText(this@InfoActivity, resources.getText(R.string.complete_copy), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun observeChargerInfoState() {
         lifecycleScope.launch {
             repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.RESUMED) {
-                viewModel.outPuts.chargerInfoState.collect() {
+                infoViewModel.outPuts.chargerInfoState.collect() {
                     if (it is InfoChargerInfoState.Main) {
                         binding.chargeInfo = it.chargerInfo.get(0)
-                        viewModel.getRecyclerArray(chargeInfo = it.chargerInfo)
+                        infoViewModel.getRecyclerArray(chargeInfo = it.chargerInfo)
                         chargerLocation = LatLng(
                             it.chargerInfo[0].lat.toDouble(),
                             it.chargerInfo[0].longi.toDouble()
                         )
-                        viewModel.updateDistance(currentLocation, chargerLocation)
+                        infoViewModel.updateDistance(currentLocation, chargerLocation)
                     }
                 }
             }
@@ -67,13 +82,11 @@ class InfoActivity : AppCompatActivity() {
 
     private fun initIntent() {
         getAddress = intent.getStringExtra("address").toString()
-        getLocationLat = intent.getStringExtra("lat").toString()
-        getLocationLon = intent.getStringExtra("lon").toString()
     }
 
     private fun observeDistance() {
         lifecycleScope.launchWhenStarted {
-            viewModel.distanceEvent.collect {
+            infoViewModel.distanceEvent.collect {
                 binding.tvDistance.text = it
             }
         }
@@ -81,7 +94,8 @@ class InfoActivity : AppCompatActivity() {
 
     private fun observeChargers() {
         lifecycleScope.launchWhenStarted {
-            viewModel.chargersEvent.collect() {
+            infoViewModel.chargersEvent.collect() {
+                layoutManager = GridLayoutManager(applicationContext, 2)
                 binding.infoRc.adapter = ChargerAdapter(it)
                 binding.infoRc.layoutManager = layoutManager
             }

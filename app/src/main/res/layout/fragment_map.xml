@@ -76,7 +76,7 @@
                     android:id="@+id/btn_search"
                     android:layout_width="60dp"
                     android:layout_height="0dp"
-                    android:onClick="@{() -> inputs.onSearchButtonClick(etInputAddress.getText().toString(), etInputAddress)}"
+                    android:onClick="@{() -> inputs.onSearchButtonClick(etInputAddress.getText().toString())}"
                     android:text="@string/search_button"
                     app:layout_constraintBottom_toBottomOf="@+id/et_input_address"
                     app:layout_constraintEnd_toEndOf="parent"
