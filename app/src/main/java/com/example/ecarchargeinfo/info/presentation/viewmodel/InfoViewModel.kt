@@ -61,11 +61,10 @@ class InfoViewModel @Inject constructor(
 
     fun updateChargerInfo(address: String) {
         viewModelScope.launch {
-            val chargerInfo = getChargerInfoUseCase(address)
+            val chargerInfo: List<ChargerInfo> = getChargerInfoUseCase(address)
             _chargerInfoState.value = InfoChargerInfoState.Main(
                 chargerInfo = chargerInfo
             )
-
             _chargersEvent.emit(
                 getChargerInfoArray(
                     chargerInfo = chargerInfo
@@ -108,6 +107,12 @@ class InfoViewModel @Inject constructor(
         viewModelScope.launch {
             copyAddressUseCase(address)
             _infoEffect.emit(InfoEffect.CopyAddress(address))
+        }
+    }
+
+    override fun onNavigationClick(lat: String, lon: String) {
+        viewModelScope.launch {
+            _infoEffect.emit(InfoEffect.Navigation(LatLng(lat.toDouble(), lon.toDouble())))
         }
     }
 }

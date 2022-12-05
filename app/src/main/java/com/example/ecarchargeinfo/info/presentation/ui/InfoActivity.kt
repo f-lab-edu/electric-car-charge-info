@@ -1,5 +1,7 @@
 package com.example.ecarchargeinfo.info.presentation.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +34,7 @@ class InfoActivity : AppCompatActivity() {
     lateinit var adapter: ChargerAdapter
     lateinit var layoutManager: GridLayoutManager
     lateinit var currentLocation: LatLng
+    lateinit var csNm: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +56,25 @@ class InfoActivity : AppCompatActivity() {
                 infoViewModel.outPuts.infoEffect.collect {
                     when (it) {
                         is InfoEffect.CopyAddress -> {
-                            Toast.makeText(this@InfoActivity, resources.getText(R.string.complete_copy), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@InfoActivity,
+                                resources.getText(R.string.complete_copy),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        is InfoEffect.Navigation -> {
+                            startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(
+                                        "tmap://route?goalx=${it.location.longitude}" +
+                                                "&goaly=${it.location.latitude}"
+                                    )
+                                ).apply {
+                                    `package` = "com.skt.tmap.ku"
+                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                })
                         }
                     }
                 }
@@ -72,7 +93,18 @@ class InfoActivity : AppCompatActivity() {
                             it.chargerInfo[0].lat.toDouble(),
                             it.chargerInfo[0].longi.toDouble()
                         )
+                        csNm = it.chargerInfo.get(0).csNm
                         infoViewModel.updateDistance(currentLocation, chargerLocation)
+                        var fast = 0
+                        var slow = 0
+                        it.chargerInfo.forEach { data ->
+                            if (data.cpNm.toString().contains("급속")) {
+                                fast++
+                            } else {
+                                slow++
+                            }
+                        }
+                        binding.tvChargerTypeCount.text = getString(R.string.info_charger_type_count, fast, slow)
                     }
                 }
             }

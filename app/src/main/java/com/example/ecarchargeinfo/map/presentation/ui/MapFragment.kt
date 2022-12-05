@@ -57,7 +57,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
         binding.inputs = mapViewModel.inputs
-        binding.lifecycleOwner = this
         gMap = binding.mapview
         gMap.onCreate(savedInstanceState)
         gMap.getMapAsync(this)
@@ -139,10 +138,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
 
         initMap()
         initCluster()
+        observeChargerInfoState()
         observeUIState()
         observeUIEffect()
         observeChargerDetailState()
-        observeChargerInfoState()
         observeSearchData()
     }
 
@@ -265,12 +264,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 mapViewModel.outputs.chargerInfoState.collect() {
                     if (it is MainChargerInfoState.Main) {
-                        it.chargerInfo.let {
-                            mapViewModel.setMarkerArray(it)
-                            clusterManager.addItems(mapViewModel.getMarkerArray())
+                        it.chargerInfo.let { list ->
+                            mapViewModel.setMarkerArray(list)
+
+                            mapViewModel.getMarkerArray().forEach { data ->
+                                if (data.chargeTp != MapConstants.CHARGER_TYPE_SLOW)
+                                    clusterManager.addItem(data)
+                            }
                             //
-                            mapViewModel.getMarkerArray().forEach {
-                                allMarker.add(it)
+                            mapViewModel.getMarkerArray().forEach { data ->
+                                allMarker.add(data)
                             }
                             //
                             clusterManager.cluster()

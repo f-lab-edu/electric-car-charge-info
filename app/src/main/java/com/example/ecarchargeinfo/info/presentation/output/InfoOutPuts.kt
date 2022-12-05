@@ -1,8 +1,8 @@
 package com.example.ecarchargeinfo.info.presentation.output
 
 import com.example.ecarchargeinfo.info.domain.model.Charger
-import com.example.ecarchargeinfo.main.presentation.output.MainEffect
 import com.example.ecarchargeinfo.retrofit.model.charger.ChargerInfo
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -15,6 +15,7 @@ interface InfoOutPuts {
 
 sealed class InfoEffect {
     data class CopyAddress(val address: String) : InfoEffect()
+    data class Navigation(val location: LatLng) : InfoEffect()
 }
 
 sealed class InfoChargerInfoState {
