@@ -31,7 +31,6 @@ class InfoActivity : AppCompatActivity() {
     lateinit var chargerLocation: LatLng
     lateinit var getAddress: String
     lateinit var distance: String
-    lateinit var adapter: ChargerAdapter
     lateinit var layoutManager: GridLayoutManager
     lateinit var currentLocation: LatLng
     lateinit var csNm: String
@@ -48,6 +47,19 @@ class InfoActivity : AppCompatActivity() {
         observeChargers()
         observeUIEffect()
         infoViewModel.updateChargerInfo(getAddress.toString())
+    }
+
+    private fun initMap(lat: String, lon: String) {
+        val transaction = supportFragmentManager.beginTransaction()
+        val bundle = Bundle()
+        val infoMapFragment = InfoMapFragment()
+
+        bundle.apply {
+            putString("lat", lat)
+            putString("lon", lon)
+        }
+        infoMapFragment.arguments = bundle
+        transaction.replace(R.id.info_map, infoMapFragment, "MAP").commit()
     }
 
     private fun observeUIEffect() {
@@ -104,7 +116,10 @@ class InfoActivity : AppCompatActivity() {
                                 slow++
                             }
                         }
-                        binding.tvChargerTypeCount.text = getString(R.string.info_charger_type_count, fast, slow)
+                        binding.tvChargerTypeCount.text =
+                            getString(R.string.info_charger_type_count, fast, slow)
+
+                        initMap(it.chargerInfo[0].lat, it.chargerInfo[0].longi)
                     }
                 }
             }
@@ -133,5 +148,4 @@ class InfoActivity : AppCompatActivity() {
             }
         }
     }
-
 }

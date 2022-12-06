@@ -147,22 +147,9 @@
                         android:text="@string/slow"
                         android:textColor="@color/white"
                         android:textSize="12sp"
-                        app:layout_constraintEnd_toStartOf="@id/btn_speed"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/btn_ac" />
 
-                    <Button
-                        android:id="@+id/btn_speed"
-                        background="@{searchFilterEntity.speedEntity.speed}"
-                        android:layout_width="70dp"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/custom_button_false"
-                        android:lineSpacingExtra="2dp"
-                        android:onClick="@{() -> inputs.onSpeedClick()}"
-                        android:text="@string/charge_speed"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/btn_slow" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
