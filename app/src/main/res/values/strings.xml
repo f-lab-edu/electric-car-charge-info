@@ -39,5 +39,8 @@
     <string name="complete_copy">주소가 복사되었습니다.</string>
     <string name="incomplete_copy">주소가 복사되지 않았습니다.</string>
     <string name="test">test</string>
+    <string name="info_charger_info_title">충전기 정보</string>
+    <string name="info_navigation_button">길안내</string>
+    <string name="info_charger_type_count">급속%1$d / 완속%2$d</string>
 
 </resources>

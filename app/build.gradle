@@ -11,6 +11,12 @@ android {
     buildFeatures {
         dataBinding = true
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
 
     defaultConfig {
         applicationId "com.example.ecarchargeinfo"
