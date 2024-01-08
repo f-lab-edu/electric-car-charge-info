@@ -32,7 +32,7 @@ sealed class MainChargerInfoState {
 }
 
 sealed class MainEffect {
-    data class SearchText(val text: String): MainEffect()
-    data class MoveCamera(val position: LatLng, val zoom: Float): MainEffect()
-    data class ShowDetail(val chargerDetail: ChargerDetailEntity): MainEffect()
+    data class SearchText(val text: String) : MainEffect()
+    data class MoveCamera(val position: LatLng, val zoom: Float) : MainEffect()
+    data class ShowDetail(val chargerDetail: ChargerDetailEntity) : MainEffect()
 }

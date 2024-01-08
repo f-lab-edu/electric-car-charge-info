@@ -54,39 +54,27 @@
         <View
             android:id="@+id/view_tabbar"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
+            android:layout_height="2dp"
             android:layout_marginTop="16dp"
-            android:background="@color/gray"
+            android:background="@color/empty_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_info_title" />
-
-        <ImageButton
-            android:id="@+id/btn_star"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_baseline_star_border_24"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view_tabbar" />
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:layout_marginEnd="18dp"
+            android:layout_marginTop="16dp"
             android:ellipsize="end"
             android:text="@{chargeInfo.csNm}"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_star"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btn_star"
-            app:layout_constraintTop_toTopOf="@+id/btn_star"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_tabbar"
             tools:text="@string/info_title" />
 
         <TextView
@@ -94,11 +82,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="@color/can_charge"
-            android:textSize="14sp"
             android:text="@{vm.distanceEvent.toString()}"
-            app:layout_constraintStart_toStartOf="@+id/btn_star"
-            app:layout_constraintTop_toBottomOf="@+id/btn_star"
+            android:textColor="@color/text_blue"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/tv_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
             tools:text="1.8km" />
 
         <ImageButton
@@ -107,7 +95,7 @@
             android:layout_height="18dp"
             android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
-            android:onClick="@{() -> inputs.onCopyClick()}"
+            android:onClick="@{() -> inputs.onCopyClick(chargeInfo.addr.toString())}"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_baseline_content_copy_24"
             app:layout_constraintEnd_toEndOf="parent"
@@ -117,9 +105,9 @@
             android:id="@+id/tv_detail_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:text="@string/info_detail_addr"
-            android:textColor="@color/can_charge"
+            android:textColor="@color/text_blue"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="@+id/tv_distance"
             app:layout_constraintTop_toBottomOf="@+id/tv_distance" />
@@ -138,25 +126,82 @@
             app:layout_constraintTop_toTopOf="@+id/tv_detail_info"
             tools:text="@string/info_address" />
 
+        <Button
+            android:id="@+id/btn_navigation"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/text_blue"
+            android:onClick="@{() -> inputs.onNavigationClick(chargeInfo.lat, chargeInfo.longi)}"
+            android:text="@string/info_navigation_button"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/ib_copy_address"
+            app:layout_constraintStart_toStartOf="@+id/tv_detail_info"
+            app:layout_constraintTop_toBottomOf="@+id/tv_address" />
+
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:layout_marginTop="16dp"
-            android:background="@color/gray"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/empty_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_address" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_navigation" />
+
+        <TextView
+            android:id="@+id/tv_charger_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/info_charger_info_title"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view" />
+
+        <TextView
+            android:id="@+id/tv_charger_type_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_charger_info"
+            app:layout_constraintStart_toEndOf="@+id/tv_charger_info"
+            tools:text="급속2 / 완속1" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/info_rc"
-            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_charger_info" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/empty_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/info_rc" />
+
+        <FrameLayout
+            android:layout_margin="12dp"
+            android:id="@+id/info_map"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view2"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

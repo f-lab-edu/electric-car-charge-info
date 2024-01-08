@@ -1,15 +1,18 @@
 package com.example.ecarchargeinfo.map.presentation.viewmodel
 
 import android.util.Log
-import android.widget.EditText
-import androidx.databinding.ObservableField
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.ecarchargeinfo.config.model.ApplicationConstants
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterEntity
 import com.example.ecarchargeinfo.main.domain.entity.MainSearchFilterSpeedEntity
 import com.example.ecarchargeinfo.main.domain.model.SearchFilter
 import com.example.ecarchargeinfo.main.presentation.input.MainInputs
-import com.example.ecarchargeinfo.main.presentation.output.*
+import com.example.ecarchargeinfo.main.presentation.output.MainChargerDetailState
+import com.example.ecarchargeinfo.main.presentation.output.MainChargerInfoState
+import com.example.ecarchargeinfo.main.presentation.output.MainEffect
+import com.example.ecarchargeinfo.main.presentation.output.MainOutputs
+import com.example.ecarchargeinfo.main.presentation.output.MainSearchFilterState
 import com.example.ecarchargeinfo.map.domain.entity.ChargerDetailEntity
 import com.example.ecarchargeinfo.map.domain.entity.MarkerInfo
 import com.example.ecarchargeinfo.map.domain.model.ChargerDetailConstants
@@ -21,13 +24,18 @@ import com.example.ecarchargeinfo.map.domain.usecase.location.ILocationUseCase
 import com.example.ecarchargeinfo.map.domain.util.MapCluster
 import com.example.ecarchargeinfo.retrofit.model.charger.ChargerInfo
 import com.google.android.gms.maps.model.LatLng
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
+@HiltViewModel
 class MapViewModel @Inject constructor(
     private val getLocationUseCase: ILocationUseCase,
     private val getGeocoderUseCase: IGeocoderUseCase,
@@ -36,11 +44,8 @@ class MapViewModel @Inject constructor(
     private val getAllMarkerUseCase: IGetAllMarkerUseCase,
 ) : ViewModel(), MainInputs, MainOutputs {
 
-
     val inputs: MainInputs = this
     val outputs: MainOutputs = this
-
-    var inputAddressText = ObservableField<String>("")
     private val _searchFilterState: MutableStateFlow<MainSearchFilterState> =
         MutableStateFlow(MainSearchFilterState.Initial)
     override val searchFilterState: StateFlow<MainSearchFilterState>
@@ -62,7 +67,6 @@ class MapViewModel @Inject constructor(
         )
     override val mainEffects: SharedFlow<MainEffect>
         get() = _mainEffects
-
     private val _geocoderEvent: MutableSharedFlow<String> =
         MutableSharedFlow(
             replay = ApplicationConstants.REPLAY,
@@ -85,7 +89,7 @@ class MapViewModel @Inject constructor(
 
     init {
         initSearchFilter()
-        initChagerDetail()
+        initChargerDetail()
         observeGeocoder()
     }
 
@@ -97,9 +101,7 @@ class MapViewModel @Inject constructor(
         viewModelScope.launch {
             geocoderEvent.collect {
                 if (it != "") {
-                    updateChargerInfo(it).also {
-                        println("@@@@@@@@@@@@@" + it.toString())
-                    }
+                    updateChargerInfo(it)
                 }
             }
         }
@@ -118,6 +120,7 @@ class MapViewModel @Inject constructor(
         }
     }
 
+
     fun clearChargerMarkerArray() {
         chargerMarkerArray.clear()
     }
@@ -130,7 +133,6 @@ class MapViewModel @Inject constructor(
         if (address != "") {
             viewModelScope.launch {
                 val result = getGeocoderUseCase(address)
-                println("@@@지오결과" + result)
                 if (koreaAddressArray.contains(result)) {
                     return@launch
                 } else {
@@ -141,7 +143,7 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateSearchData(cond: String) {
+    fun updateSearchData(cond: String) {
         viewModelScope.launch {
             _searchEvent.emit(getChargerInfoUseCase(cond = cond))
         }
@@ -168,24 +170,21 @@ class MapViewModel @Inject constructor(
     override fun onMarkerClick(visible: Boolean, markerInfo: MarkerInfo) {
         if (_chargerDetailState.value is MainChargerDetailState.Main) {
             _chargerDetailState.update {
-                if (it is MainChargerDetailState.Main) {
-                    it.copy(
-                        it.chargerDetail.copy(
-                            visible = visible,
-                            markerInfo = MarkerInfo(
-                                cpNm = markerInfo.cpNm,
-                                addr = markerInfo.addr,
-                                chargeTp = markerInfo.chargeTp,
-                                cpStat = markerInfo.cpStat
-                            )
+                (it as MainChargerDetailState.Main).copy(
+                    it.chargerDetail.copy(
+                        visible = visible,
+                        markerInfo = MarkerInfo(
+                            cpNm = markerInfo.cpNm,
+                            addr = markerInfo.addr,
+                            chargeTp = markerInfo.chargeTp,
+                            cpStat = markerInfo.cpStat
                         )
                     )
-                } else {
-                    it
-                }
+                )
             }
         }
     }
+
 
     override fun onMarkerClick(visible: Boolean) {
         if (_chargerDetailState.value is MainChargerDetailState.Main) {
@@ -197,10 +196,6 @@ class MapViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    override fun onSearchButtonClick(searchTxt: String, view: EditText) {
-        TODO("Not yet implemented")
     }
 
     override fun onMoveCamera(position: LatLng, zoom: Float) {
@@ -230,15 +225,12 @@ class MapViewModel @Inject constructor(
     override fun onComboClick() {
         if (_searchFilterState.value is MainSearchFilterState.Main) {
             _searchFilterState.update {
-                if (it is MainSearchFilterState.Main) {
-                    it.copy(
-                        searchFilters = it.searchFilters.copy(
-                            combo = !it.searchFilters.combo
-                        )
+                (it as MainSearchFilterState.Main)
+                it.copy(
+                    searchFilters = it.searchFilters.copy(
+                        combo = !it.searchFilters.combo
                     )
-                } else {
-                    it
-                }
+                )
             }
         }
     }
@@ -246,15 +238,12 @@ class MapViewModel @Inject constructor(
     override fun onDemoClick() {
         if (_searchFilterState.value is MainSearchFilterState.Main) {
             _searchFilterState.update {
-                if (it is MainSearchFilterState.Main) {
-                    it.copy(
-                        searchFilters = it.searchFilters.copy(
-                            demo = !it.searchFilters.demo
-                        )
+                (it as MainSearchFilterState.Main)
+                it.copy(
+                    searchFilters = it.searchFilters.copy(
+                        demo = !it.searchFilters.demo
                     )
-                } else {
-                    it
-                }
+                )
             }
         }
     }
@@ -262,15 +251,13 @@ class MapViewModel @Inject constructor(
     override fun onACClick() {
         if (_searchFilterState.value is MainSearchFilterState.Main) {
             _searchFilterState.update {
-                if (it is MainSearchFilterState.Main) {
-                    it.copy(
-                        searchFilters = it.searchFilters.copy(
-                            ac = !it.searchFilters.ac
-                        )
+                (it as MainSearchFilterState.Main)
+                it.copy(
+                    searchFilters = it.searchFilters.copy(
+                        ac = !it.searchFilters.ac
                     )
-                } else {
-                    it
-                }
+                )
+
             }
         }
     }
@@ -278,15 +265,13 @@ class MapViewModel @Inject constructor(
     override fun onSlowClick() {
         if (_searchFilterState.value is MainSearchFilterState.Main) {
             _searchFilterState.update {
-                if (it is MainSearchFilterState.Main) {
-                    it.copy(
-                        searchFilters = it.searchFilters.copy(
-                            slow = !it.searchFilters.slow
-                        )
+                (it as MainSearchFilterState.Main)
+                it.copy(
+                    searchFilters = it.searchFilters.copy(
+                        slow = !it.searchFilters.slow
                     )
-                } else {
-                    it
-                }
+                )
+
             }
         }
     }
@@ -294,17 +279,14 @@ class MapViewModel @Inject constructor(
     override fun onSpeedClick() {
         if (_searchFilterState.value is MainSearchFilterState.Main) {
             _searchFilterState.update {
-                if (it is MainSearchFilterState.Main) {
-                    it.copy(
-                        searchFilters = it.searchFilters.copy(
-                            speedEntity = it.searchFilters.speedEntity.copy(
-                                speed = !it.searchFilters.speedEntity.speed
-                            )
+                (it as MainSearchFilterState.Main)
+                it.copy(
+                    searchFilters = it.searchFilters.copy(
+                        speedEntity = it.searchFilters.speedEntity.copy(
+                            speed = !it.searchFilters.speedEntity.speed
                         )
                     )
-                } else {
-                    it
-                }
+                )
             }
         }
     }
@@ -312,18 +294,15 @@ class MapViewModel @Inject constructor(
     override fun onSpeedChange(thisSpeedEntity: MainSearchFilterSpeedEntity) {
         if (_searchFilterState.value is MainSearchFilterState.Main) {
             _searchFilterState.update {
-                if (it is MainSearchFilterState.Main) {
-                    it.copy(
-                        searchFilters = it.searchFilters.copy(
-                            speedEntity = it.searchFilters.speedEntity.copy(
-                                startRange = thisSpeedEntity.startRange,
-                                endRange = thisSpeedEntity.endRange
-                            )
+                (it as MainSearchFilterState.Main)
+                it.copy(
+                    searchFilters = it.searchFilters.copy(
+                        speedEntity = it.searchFilters.speedEntity.copy(
+                            startRange = thisSpeedEntity.startRange,
+                            endRange = thisSpeedEntity.endRange
                         )
                     )
-                } else {
-                    it
-                }
+                )
             }
         }
     }
@@ -344,7 +323,7 @@ class MapViewModel @Inject constructor(
         )
     }
 
-    private fun initChagerDetail() {
+    private fun initChargerDetail() {
         _chargerDetailState.value = MainChargerDetailState.Main(
             chargerDetail = ChargerDetailEntity(
                 visible = ChargerDetailConstants.DEFAULT_VISIBLE,
@@ -359,5 +338,4 @@ class MapViewModel @Inject constructor(
     }
 
     fun getKoreaAddress() = koreaAddressArray
-
 }

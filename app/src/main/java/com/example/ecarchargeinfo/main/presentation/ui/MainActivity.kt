@@ -12,7 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val mapFragment = MapFragment()
+
 
     companion object {
         const val LOCATION_PERMISSION = 100
@@ -22,6 +22,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         PermissionHelper.checkPermission(this@MainActivity)
+        val mapFragment = MapFragment()
         supportFragmentManager.beginTransaction().replace(R.id.main_map, mapFragment, "MAP")
             .commit()
     }
